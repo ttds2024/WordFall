@@ -1,9 +1,10 @@
 import './style.css';
-import { detectLanguage, t } from './i18n';
+import { Game } from './game/game';
+import { detectLanguage } from './i18n';
 
-const app = document.querySelector<HTMLElement>('#app');
-if (app) {
+const canvas = document.querySelector<HTMLCanvasElement>('#field');
+if (canvas) {
   const lang = detectLanguage(navigator.languages);
   document.documentElement.lang = lang;
-  app.innerHTML = `<div><h1>${t(lang, 'title')}</h1><p>${t(lang, 'comingSoon')}</p></div>`;
+  new Game(canvas, lang).start();
 }

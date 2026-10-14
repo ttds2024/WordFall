@@ -21,13 +21,12 @@ body {
 }
 
 #app {
-  display: grid;
-  place-items: center;
   height: 100%;
-  text-align: center;
 }
 
-h1 {
-  color: var(--accent);
-  letter-spacing: 0.1em;
+#field {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
 }
