@@ -1,0 +1,33 @@
+:root {
+  --bg: #0d0a1a;
+  --fg: #f3e9d2;
+  --accent: #ff7a18;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, sans-serif;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+#app {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+h1 {
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
