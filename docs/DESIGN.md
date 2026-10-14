@@ -52,9 +52,9 @@ Minimum word length is 3 letters in both languages.
 
 Small pull requests, in order:
 
-1. Project setup (this PR)
+1. Project setup
 2. Physics: falling, tappable pumpkin tiles
 3. Words: selection, validation, scoring, submit modes
 4. Screens: start, game, results, settings
 5. Artwork and sound
-6. Deployment to GitHub Pages
+6. ~~Deployment to GitHub Pages~~ (done early)
