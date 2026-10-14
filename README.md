@@ -13,3 +13,9 @@ npm run dev      # start the dev server
 npm run check    # typecheck, lint, format check, unit tests
 npm run build    # production build in dist/
 ```
+
+## Deployment
+
+Every push to `main` is built and deployed to GitHub Pages by
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
+<https://ttds2024.github.io/WordFall/>.
