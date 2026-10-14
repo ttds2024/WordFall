@@ -8,6 +8,13 @@ const STEP_MS = 1000 / 60;
 const MAX_FRAME_MS = 250;
 const SPAWN_INTERVAL_MS = 900;
 
+export interface GameHandlers {
+  /** A tile was tapped. */
+  onTap(tile: Tile): void;
+  /** Called once per animation frame while running, with the frame time. */
+  onFrame?(now: number): void;
+}
+
 /** Runs the falling-letter field on a canvas: spawning, physics, drawing and taps. */
 export class Game {
   private readonly ctx: CanvasRenderingContext2D;
@@ -17,11 +24,12 @@ export class Game {
   private last = 0;
   private acc = 0;
   private frame = 0;
+  private running = false;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
-    private readonly lang: Language,
-    private readonly onTap: (tile: Tile) => void = (tile) => (tile.selected = !tile.selected),
+    private lang: Language,
+    private readonly handlers: GameHandlers,
   ) {
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('Canvas 2D is not supported');
@@ -36,12 +44,26 @@ export class Game {
   }
 
   start(): void {
+    if (this.running) return;
+    this.running = true;
     this.last = performance.now();
     this.frame = requestAnimationFrame(this.tick);
   }
 
   stop(): void {
+    this.running = false;
     cancelAnimationFrame(this.frame);
+  }
+
+  /** Empties the field and switches to a new language's letters. */
+  reset(lang: Language): void {
+    this.lang = lang;
+    for (const tile of this.world.all()) this.world.remove(tile);
+    this.draw();
+  }
+
+  removeTiles(tiles: readonly Tile[]): void {
+    for (const tile of tiles) this.world.remove(tile);
   }
 
   private readonly tick = (now: number): void => {
@@ -52,8 +74,9 @@ export class Game {
       this.spawnDue(STEP_MS);
       this.world.step(STEP_MS);
     }
+    this.handlers.onFrame?.(now);
     this.draw();
-    this.frame = requestAnimationFrame(this.tick);
+    if (this.running) this.frame = requestAnimationFrame(this.tick);
   };
 
   private spawnDue(ms: number): void {
@@ -75,15 +98,17 @@ export class Game {
   }
 
   private readonly handlePointer = (e: PointerEvent): void => {
+    if (!this.running) return;
     const rect = this.canvas.getBoundingClientRect();
     const tile = this.world.tileAt(e.clientX - rect.left, e.clientY - rect.top, this.radius * 0.25);
-    if (tile) this.onTap(tile);
+    if (tile) this.handlers.onTap(tile);
   };
 
   private readonly handleResize = (): void => {
     const { width, height } = this.fitCanvas();
     this.world.resize(width, height);
     this.spawner = new Spawner(SPAWN_INTERVAL_MS, maxTilesFor(width, height, this.radius));
+    this.draw();
   };
 
   /** Matches the canvas backing store to its CSS size and pixel ratio. */

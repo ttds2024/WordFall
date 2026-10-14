@@ -11,7 +11,55 @@
     <title>WordFall</title>
   </head>
   <body>
-    <main id="app"><canvas id="field"></canvas></main>
+    <main id="app">
+      <header class="hud">
+        <div class="score">
+          <span class="score-label" data-i18n="score"></span>
+          <span id="score">0</span>
+        </div>
+        <div class="word-box">
+          <div id="word" class="word" aria-live="polite"></div>
+          <div id="status" class="status"></div>
+        </div>
+        <button id="settings-button" class="icon-button" type="button">⚙</button>
+      </header>
+      <div class="field-wrap">
+        <canvas id="field"></canvas>
+        <div id="toast" class="toast" aria-live="polite"></div>
+      </div>
+      <footer class="controls">
+        <button id="clear-button" type="button" data-i18n="clear"></button>
+        <button id="submit-button" class="primary" type="button" data-i18n="submit"></button>
+      </footer>
+      <dialog id="settings">
+        <form method="dialog">
+          <h2 data-i18n="settings"></h2>
+          <fieldset>
+            <legend data-i18n="submitMode"></legend>
+            <label>
+              <input type="radio" name="mode" value="button" />
+              <span><b data-i18n="modeButton"></b><small data-i18n="modeButtonHint"></small></span>
+            </label>
+            <label>
+              <input type="radio" name="mode" value="auto" />
+              <span><b data-i18n="modeAuto"></b><small data-i18n="modeAutoHint"></small></span>
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend data-i18n="language"></legend>
+            <label>
+              <input type="radio" name="lang" value="en" />
+              <span><b>English</b></span>
+            </label>
+            <label>
+              <input type="radio" name="lang" value="ru" />
+              <span><b>Русский</b><small id="ru-note"></small></span>
+            </label>
+          </fieldset>
+          <button class="primary" value="done" data-i18n="done"></button>
+        </form>
+      </dialog>
+    </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

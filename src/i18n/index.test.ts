@@ -18,6 +18,6 @@ describe('detectLanguage', () => {
 
 describe('t', () => {
   it('returns the string for the language', () => {
-    expect(t('ru', 'comingSoon')).toBe('Скоро…');
+    expect(t('ru', 'clear')).toBe('Стереть');
   });
 });

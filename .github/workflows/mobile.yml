@@ -20,7 +20,9 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: npm ci
-      - run: npm run cap:sync
+      - run: npm run build
+      - name: Generate the Android project
+        run: npx cap add android
       - name: Build debug APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
@@ -41,7 +43,9 @@ jobs:
         with:
           xcode-version: latest-stable
       - run: npm ci
-      - run: npm run cap:sync
+      - run: npm run build
+      - name: Generate the iOS project
+        run: npx cap add ios --packagemanager SPM
       - name: Build for the iOS simulator (unsigned)
         working-directory: ios/App
         run: >

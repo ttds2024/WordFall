@@ -1,7 +1,12 @@
 :root {
   --bg: #0d0a1a;
+  --panel: #1a1430;
+  --panel-border: #2e2550;
   --fg: #f3e9d2;
+  --muted: #a99fc0;
   --accent: #ff7a18;
+  --good: #7bd88f;
+  --bad: #ff6b6b;
   color-scheme: dark;
 }
 
@@ -18,10 +23,107 @@ body {
   font-family: system-ui, sans-serif;
   overscroll-behavior: none;
   touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 #app {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+button {
+  font: inherit;
+  color: var(--fg);
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #2a1300;
+  font-weight: 700;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.hud {
+  display: grid;
+  grid-template-columns: 72px 1fr 72px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+#score {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.word-box {
+  text-align: center;
+  min-width: 0;
+}
+
+.word {
+  min-height: 36px;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.status[data-status='valid'] {
+  color: var(--good);
+}
+
+.status[data-status='unknown'],
+.status[data-status='used'] {
+  color: var(--bad);
+}
+
+.icon-button {
+  justify-self: end;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 22px;
+}
+
+.field-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
 }
 
 #field {
@@ -29,4 +131,110 @@ body {
   width: 100%;
   height: 100%;
   touch-action: none;
+}
+
+.toast {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translate(-50%, -8px);
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--panel);
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.toast.good {
+  color: var(--good);
+}
+
+.toast.bad {
+  color: var(--bad);
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.controls button {
+  flex: 1;
+  max-width: 220px;
+}
+
+dialog {
+  width: min(420px, calc(100% - 32px));
+  padding: 20px;
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  background: var(--panel);
+  color: var(--fg);
+}
+
+dialog::backdrop {
+  background: rgba(5, 3, 12, 0.7);
+}
+
+dialog h2 {
+  margin: 0 0 12px;
+}
+
+fieldset {
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+fieldset label {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+fieldset label:has(input:checked) {
+  border-color: var(--accent);
+}
+
+fieldset input {
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+
+fieldset span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+fieldset small {
+  color: var(--muted);
+}
+
+dialog .primary {
+  width: 100%;
 }
