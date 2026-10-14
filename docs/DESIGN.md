@@ -45,6 +45,8 @@ Minimum word length is 3 letters in both languages.
 ## Tech
 
 - TypeScript, Vite, Vitest, ESLint, Prettier.
+- Platforms: desktop browser (default), Android and iOS apps via Capacitor. Phones are portrait
+  only. App id `io.github.ttds2024.wordfall`.
 - Deployed to GitHub Pages by GitHub Actions on every push to `main`. A repository admin must set
   **Settings → Pages → Source** to **GitHub Actions**.
 
