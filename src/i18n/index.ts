@@ -1,13 +1,52 @@
 export type Language = 'en' | 'ru';
 
+/** Each language's name, written in that language. */
+export const LANGUAGE_NAMES: Record<Language, string> = { en: 'English', ru: 'Русский' };
+
 const strings = {
   en: {
     title: 'WordFall',
-    comingSoon: 'Coming soon…',
+    score: 'Score',
+    clear: 'Clear',
+    submit: 'Submit',
+    settings: 'Settings',
+    done: 'Done',
+    submitMode: 'Submitting words',
+    modeButton: 'Submit button',
+    modeButtonHint: 'Tap Submit when your word is ready.',
+    modeAuto: 'Automatic',
+    modeAutoHint: 'A word is sent once it is complete, or after a short pause.',
+    language: 'Language',
+    statusEmpty: 'Tap pumpkins to make a word',
+    statusShort: 'At least 3 letters',
+    statusValid: 'In the word list',
+    statusUnknown: 'Not in the word list',
+    statusUsed: 'Already found',
+    loading: 'Loading words…',
+    noDictionary: 'No word list for this language yet',
+    loadFailed: 'Could not load the word list',
   },
   ru: {
     title: 'WordFall',
-    comingSoon: 'Скоро…',
+    score: 'Очки',
+    clear: 'Стереть',
+    submit: 'Отправить',
+    settings: 'Настройки',
+    done: 'Готово',
+    submitMode: 'Отправка слов',
+    modeButton: 'Кнопкой',
+    modeButtonHint: 'Нажмите «Отправить», когда слово готово.',
+    modeAuto: 'Автоматически',
+    modeAutoHint: 'Слово отправляется, когда оно закончено, или после короткой паузы.',
+    language: 'Язык',
+    statusEmpty: 'Нажимайте на тыквы, чтобы составить слово',
+    statusShort: 'Минимум 3 буквы',
+    statusValid: 'Есть в словаре',
+    statusUnknown: 'Нет в словаре',
+    statusUsed: 'Уже найдено',
+    loading: 'Загрузка слов…',
+    noDictionary: 'Для этого языка пока нет словаря',
+    loadFailed: 'Не удалось загрузить словарь',
   },
 } satisfies Record<Language, Record<string, string>>;
 

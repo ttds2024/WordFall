@@ -13,7 +13,7 @@ Letters fall from the top of the screen. The player taps letters to build words 
 
 ## Submitting words
 
-A setting chooses the mode:
+A setting chooses the mode (default: Submit button):
 
 - **Submit button:** the player taps **Submit** when the word is ready.
 - **Auto:** the word is submitted when it is valid and no longer word can follow it, or after about
@@ -28,7 +28,8 @@ Minimum word length is 3 letters in both languages.
 - English and Russian. A setting switches the letters, the dictionary and the interface text
   together. The first language follows the device language.
 - Ё and Е count as the same letter.
-- Dictionaries will be supplied later.
+- English words come from `data/words_en.txt` (any lower-case entry of 3+ letters counts).
+  Russian words will be supplied later.
 
 ## Temporary rules
 
@@ -46,7 +47,8 @@ Minimum word length is 3 letters in both languages.
 
 - TypeScript, Vite, Vitest, ESLint, Prettier.
 - Platforms: desktop browser (default), Android and iOS apps via Capacitor. Phones are portrait
-  only. App id `io.github.ttds2024.wordfall`.
+  only (not enforced while the native projects are generated in CI). App id
+  `io.github.ttds2024.wordfall`.
 - Deployed to GitHub Pages by GitHub Actions on every push to `main`. A repository admin must set
   **Settings → Pages → Source** to **GitHub Actions**.
 
