@@ -2,9 +2,13 @@ import Matter from 'matter-js';
 
 const { Bodies, Composite, Engine } = Matter;
 
+/** A pumpkin is an ordinary letter; a skull doubles the score of a word that uses it. */
+export type TileKind = 'pumpkin' | 'skull';
+
 export interface Tile {
   readonly id: number;
   readonly letter: string;
+  readonly kind: TileKind;
   readonly body: Matter.Body;
   selected: boolean;
 }
@@ -48,14 +52,14 @@ export class PhysicsWorld {
   }
 
   /** Adds a tile centred at (x, y). */
-  spawn(letter: string, x: number, y: number, radius: number): Tile {
+  spawn(letter: string, x: number, y: number, radius: number, kind: TileKind = 'pumpkin'): Tile {
     const body = Bodies.circle(x, y, radius, {
       restitution: 0.3,
       friction: 0.05,
       frictionAir: 0.02,
       density: 0.002,
     });
-    const tile: Tile = { id: body.id, letter, body, selected: false };
+    const tile: Tile = { id: body.id, letter, kind, body, selected: false };
     this.tiles.set(tile.id, tile);
     Composite.add(this.engine.world, body);
     return tile;

@@ -18,7 +18,9 @@ the round, including the timer. Changing the language restarts the round in the 
 - **Engine:** Matter.js.
 - **Floor:** letters land on a floor and pile up. Piled letters can still be tapped. The pile never
   ends the game in v1.
-- **Tiles:** round (pumpkins), so they roll and bounce.
+- **Tiles:** round (pumpkins), so they roll and bounce. About 1 tile in 10 is a **skull**: it carries a
+  letter like a pumpkin, and a correct word that uses at least one skull scores **×2** (two skulls
+  still ×2). The word bar shows 💀×2 while the word holds a skull.
 - **Speed:** constant; no difficulty curve yet.
 
 ## Submitting words

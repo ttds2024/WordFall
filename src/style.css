@@ -5,6 +5,7 @@
   --fg: #f3e9d2;
   --muted: #a99fc0;
   --accent: #ff7a18;
+  --bone: #e9e4d4;
   --good: #7bd88f;
   --bad: #ff6b6b;
   color-scheme: dark;
@@ -104,7 +105,26 @@ button:disabled {
   min-width: 0;
 }
 
+.word-line {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.multiplier {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bone);
+  color: #1a1424;
+  font-size: 14px;
+  font-weight: 800;
+}
+
 .word {
+  min-width: 0;
   min-height: 36px;
   font-size: 30px;
   font-weight: 800;
