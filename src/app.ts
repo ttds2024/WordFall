@@ -64,7 +64,6 @@ export function startApp(defaultLanguage: Language): void {
     word: element('#word'),
     status: element('#status'),
     toast: element('#toast'),
-    clear: element<HTMLButtonElement>('#clear-button'),
     settingsButton: element<HTMLButtonElement>('#settings-button'),
     dialog: element<HTMLDialogElement>('#settings'),
     ruNote: element('#ru-note'),
@@ -172,7 +171,6 @@ export function startApp(defaultLanguage: Language): void {
     ui.word.textContent = tracker.word;
     ui.status.textContent = statusText(status);
     ui.status.dataset.status = dictionaryState === 'ready' ? status : 'empty';
-    ui.clear.disabled = status === 'empty';
   }
 
   function translate(): void {
@@ -236,7 +234,6 @@ export function startApp(defaultLanguage: Language): void {
     }
   }
 
-  ui.clear.addEventListener('click', clearWord);
   ui.settingsButton.addEventListener('click', openSettings);
   ui.menuSettings.addEventListener('click', openSettings);
   ui.menuButton.addEventListener('click', endRound);
