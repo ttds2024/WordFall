@@ -30,8 +30,8 @@ letter clears it. A setting chooses the mode (default: by tap):
 - **Auto:** the word is submitted when it is valid and no longer word can follow it, or after about
   1.5 seconds with no new letter.
 
-In both modes a tap on one of the word's letters checks it straight away, and the **Clear** button
-(or Esc/Backspace) also clears the word.
+In both modes a tap on one of the word's letters checks it straight away. There are no Submit or
+Clear buttons; on a keyboard, Enter checks the word and Esc/Backspace clears it.
 
 Minimum word length is 3 letters in both languages.
 

@@ -179,19 +179,6 @@ button:disabled {
   color: var(--bad);
 }
 
-.controls {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  padding: 10px 16px;
-  border-top: 1px solid var(--panel-border);
-}
-
-.controls button {
-  flex: 1;
-  max-width: 220px;
-}
-
 dialog {
   width: min(420px, calc(100% - 32px));
   padding: 20px;

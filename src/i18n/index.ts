@@ -7,7 +7,6 @@ const strings = {
   en: {
     title: 'WordFall',
     score: 'Score',
-    clear: 'Clear',
     settings: 'Settings',
     done: 'Done',
     submitMode: 'Submitting words',
@@ -37,7 +36,6 @@ const strings = {
   ru: {
     title: 'WordFall',
     score: 'Очки',
-    clear: 'Стереть',
     settings: 'Настройки',
     done: 'Готово',
     submitMode: 'Отправка слов',
