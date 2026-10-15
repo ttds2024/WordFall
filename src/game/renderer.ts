@@ -1,3 +1,4 @@
+import boneUrl from '../images/bone.png';
 import type { Tile } from './physics';
 
 const COLORS = {
@@ -11,7 +12,26 @@ const COLORS = {
   boneSelected: '#fff2b0',
   boneShade: 'rgba(60, 50, 70, 0.25)',
   socket: '#1a1424',
+  halo: 'rgba(255, 210, 63, 0.85)',
+  /** The light fill of bone.png. */
+  skullBone: '#eaf5ff',
 };
+
+/** The skull picture is drawn this much wider than the tile so it fills the circle. */
+const SKULL_SCALE = 2.15;
+/** Where the letter sits on the skull picture: over the nose and jaw, as a fraction of its size. */
+const SKULL_LETTER_Y = 0.27;
+
+let skullImage: HTMLImageElement | undefined;
+
+/** The skull picture (src/images/bone.png), once it has loaded; loading starts on first use. */
+function loadedSkull(): HTMLImageElement | undefined {
+  if (!skullImage) {
+    skullImage = new Image();
+    skullImage.src = boneUrl;
+  }
+  return skullImage.complete && skullImage.naturalWidth > 0 ? skullImage : undefined;
+}
 
 /** Draws the tiles as simple pumpkins and skulls. Proper SVG artwork comes in a later PR. */
 export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[]): void {
@@ -27,16 +47,37 @@ export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[])
       ctx.shadowColor = COLORS.glow;
       ctx.shadowBlur = r * 0.6;
     }
-    if (tile.kind === 'skull') drawSkull(ctx, r, tile.selected);
-    else drawPumpkin(ctx, r, tile.selected);
+    const image = tile.kind === 'skull' ? loadedSkull() : undefined;
+    let letterY = r * 0.06;
+    let letterSize = 1.05;
+    if (image) {
+      // The picture stays upright, like the letters, so the letter stays readable in the jaw.
+      ctx.rotate(-tile.body.angle);
+      drawSkullImage(ctx, image, r, tile.selected);
+      letterY = r * SKULL_SCALE * SKULL_LETTER_Y;
+      letterSize = 0.8;
+    } else if (tile.kind === 'skull') {
+      // Until the picture has loaded.
+      drawSkull(ctx, r, tile.selected);
+      letterY = r * 0.12;
+      letterSize = 0.9;
+    } else {
+      drawPumpkin(ctx, r, tile.selected);
+    }
 
-    ctx.rotate(-tile.body.angle);
     ctx.fillStyle = tile.kind === 'skull' ? COLORS.socket : COLORS.letter;
-    const size = tile.kind === 'skull' ? 0.9 : 1.05;
-    ctx.font = `bold ${Math.round(r * size)}px system-ui, sans-serif`;
+    ctx.font = `bold ${Math.round(r * letterSize)}px system-ui, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(tile.letter, 0, tile.kind === 'skull' ? r * 0.12 : r * 0.06);
+    if (!image) ctx.rotate(-tile.body.angle);
+    if (image) {
+      // A bone-coloured outline keeps the letter clear of the nose and teeth behind it.
+      ctx.strokeStyle = COLORS.skullBone;
+      ctx.lineWidth = r * 0.16;
+      ctx.lineJoin = 'round';
+      ctx.strokeText(tile.letter, 0, letterY);
+    }
+    ctx.fillText(tile.letter, 0, letterY);
     ctx.restore();
   }
 }
@@ -60,7 +101,26 @@ function drawPumpkin(ctx: CanvasRenderingContext2D, r: number, selected: boolean
   ctx.fillRect(-r * 0.1, -r * 1.12, r * 0.2, r * 0.28);
 }
 
-/** A skull filling the tile's circle: round cranium, narrower jaw, eye sockets above the letter. */
+/** The skull picture, crisp (it is pixel art), with a golden halo behind it when selected. */
+function drawSkullImage(
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  r: number,
+  selected: boolean,
+): void {
+  if (selected) {
+    ctx.fillStyle = COLORS.halo;
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.shadowBlur = 0;
+  const size = r * SKULL_SCALE;
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(image, -size / 2, -size / 2, size, size);
+}
+
+/** Fallback while the picture loads: a skull filling the tile's circle: round cranium, narrower jaw, eye sockets above the letter. */
 function drawSkull(ctx: CanvasRenderingContext2D, r: number, selected: boolean): void {
   ctx.fillStyle = selected ? COLORS.boneSelected : COLORS.bone;
   ctx.beginPath();
