@@ -1,6 +1,6 @@
 import { Dictionary } from './core/dictionary';
 import { formatTime, RoundTimer, type RoundKind } from './core/round';
-import { scoreWord } from './core/scoring';
+import { scoreWord, wordMultiplier } from './core/scoring';
 import { WordTracker, type SubmitResult, type WordStatus } from './core/word-tracker';
 import { Game } from './game/game';
 import type { Tile } from './game/physics';
@@ -62,6 +62,7 @@ export function startApp(defaultLanguage: Language): void {
     menuButton: element<HTMLButtonElement>('#menu-button'),
     menuSettings: element<HTMLButtonElement>('#menu-settings'),
     word: element('#word'),
+    multiplier: element('#multiplier'),
     status: element('#status'),
     toast: element('#toast'),
     settingsButton: element<HTMLButtonElement>('#settings-button'),
@@ -102,10 +103,11 @@ export function startApp(defaultLanguage: Language): void {
   function handleResult(result: SubmitResult<Tile> | undefined): boolean {
     if (!result) return false;
     if (result.ok) {
-      const points = scoreWord(result.word, settings.lang);
+      const multiplier = wordMultiplier(result.items);
+      const points = scoreWord(result.word, settings.lang) * multiplier;
       score += points;
       game.removeTiles(result.items);
-      showToast(`+${points}  ${result.word}`, 'good');
+      showToast(`+${points}  ${result.word}${multiplier > 1 ? `  ×${multiplier}` : ''}`, 'good');
     } else {
       showToast(t(settings.lang, STATUS_TEXT[result.reason]), 'bad');
     }
@@ -169,6 +171,9 @@ export function startApp(defaultLanguage: Language): void {
     ui.timer.textContent = remaining === undefined ? '∞' : formatTime(remaining);
     ui.timer.classList.toggle('low', remaining !== undefined && remaining <= LOW_TIME_MS);
     ui.word.textContent = tracker.word;
+    const multiplier = wordMultiplier(tracker.items);
+    ui.multiplier.textContent = multiplier > 1 ? `💀×${multiplier}` : '';
+    ui.multiplier.hidden = multiplier === 1;
     ui.status.textContent = statusText(status);
     ui.status.dataset.status = dictionaryState === 'ready' ? status : 'empty';
   }

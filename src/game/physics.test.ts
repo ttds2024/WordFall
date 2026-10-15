@@ -58,3 +58,11 @@ describe('PhysicsWorld', () => {
     expect(tile.body.position.x).toBeLessThanOrEqual(180);
   });
 });
+
+describe('tile kinds', () => {
+  it('spawns pumpkins by default and skulls on request', () => {
+    const world = new PhysicsWorld(400, 600);
+    expect(world.spawn('A', 100, 100, 30).kind).toBe('pumpkin');
+    expect(world.spawn('B', 200, 100, 30, 'skull').kind).toBe('skull');
+  });
+});
