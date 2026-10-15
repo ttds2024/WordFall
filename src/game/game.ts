@@ -1,5 +1,6 @@
 import type { Language } from '../i18n';
 import { pickLetter } from '../core/letters';
+import { JOKER } from '../core/word';
 import { PhysicsWorld, type Tile } from './physics';
 import { drawTiles } from './renderer';
 import { maxTilesFor, Spawner, tileRadius } from './spawner';
@@ -9,6 +10,8 @@ const MAX_FRAME_MS = 250;
 const SPAWN_INTERVAL_MS = 900;
 /** Share of falling tiles that are skulls. */
 export const SKULL_CHANCE = 0.1;
+/** Share of falling tiles that are jokers. */
+export const JOKER_CHANCE = 0.04;
 
 export interface GameHandlers {
   /** A tile was tapped. */
@@ -90,9 +93,13 @@ export class Game {
     const r = this.radius;
     for (let i = 0; i < due; i++) {
       const x = r + Math.random() * Math.max(0, width - 2 * r);
-      const letter = pickLetter(this.lang);
-      const kind = Math.random() < SKULL_CHANCE ? 'skull' : 'pumpkin';
-      this.world.spawn(letter, x, -r - i * r * 2.2, r, kind);
+      const y = -r - i * r * 2.2;
+      const roll = Math.random();
+      if (roll < JOKER_CHANCE) this.world.spawn(JOKER, x, y, r, 'joker');
+      else {
+        const kind = roll < JOKER_CHANCE + SKULL_CHANCE ? 'skull' : 'pumpkin';
+        this.world.spawn(pickLetter(this.lang), x, y, r, kind);
+      }
     }
   }
 

@@ -6,6 +6,7 @@ export type SubmitMode = 'button' | 'auto';
 /** How the word being built looks right now. */
 export type WordStatus = 'empty' | 'short' | 'valid' | 'unknown' | 'used';
 
+/** On success, `word` is the dictionary word spelled (jokers filled in), in capitals. */
 export type SubmitResult<T> =
   | { ok: true; word: string; items: T[] }
   | { ok: false; word: string; reason: Exclude<WordStatus, 'empty' | 'valid'> };
@@ -22,6 +23,8 @@ export class WordTracker<T extends { readonly letter: string }> {
   private picked: T[] = [];
   private readonly used = new Set<string>();
   private lastAddAt = 0;
+  /** The last lookup, since a word with jokers can mean scanning much of the dictionary. */
+  private cache: { key: string; status: WordStatus; resolved?: string } | undefined;
 
   constructor(
     private dictionary: Dictionary | undefined,
@@ -30,12 +33,14 @@ export class WordTracker<T extends { readonly letter: string }> {
 
   setDictionary(dictionary: Dictionary | undefined): void {
     this.dictionary = dictionary;
+    this.cache = undefined;
     this.reset();
   }
 
   /** Starts over: forgets found words and the word being built. */
   reset(): void {
     this.used.clear();
+    this.cache = undefined;
     this.clear();
   }
 
@@ -52,12 +57,37 @@ export class WordTracker<T extends { readonly letter: string }> {
   }
 
   status(): WordStatus {
+    return this.lookup().status;
+  }
+
+  /** The dictionary word a valid word spells, jokers filled in (lower case); else undefined. */
+  get resolved(): string | undefined {
+    return this.lookup().resolved;
+  }
+
+  /**
+   * Checks the word. With jokers, it spells the first matching word not found yet; if every
+   * match has been found it is 'used'.
+   */
+  private lookup(): { status: WordStatus; resolved?: string } {
     const word = normalizeWord(this.word);
-    if (word.length === 0) return 'empty';
-    if (word.length < MIN_WORD_LENGTH) return 'short';
-    if (!this.dictionary?.has(word)) return 'unknown';
-    if (this.used.has(word)) return 'used';
-    return 'valid';
+    const key = `${word}|${this.used.size}`;
+    if (this.cache?.key === key) return this.cache;
+    let result: { status: WordStatus; resolved?: string };
+    if (word.length === 0) result = { status: 'empty' };
+    else if (word.length < MIN_WORD_LENGTH) result = { status: 'short' };
+    else {
+      result = { status: 'unknown' };
+      for (const match of this.dictionary?.matches(word) ?? []) {
+        if (!this.used.has(match)) {
+          result = { status: 'valid', resolved: match };
+          break;
+        }
+        result = { status: 'used' };
+      }
+    }
+    this.cache = { key, ...result };
+    return result;
   }
 
   /** Adds a letter. In auto mode this may submit the word straight away. */
@@ -90,14 +120,18 @@ export class WordTracker<T extends { readonly letter: string }> {
   /** Submits the word. A valid word is recorded and cleared; anything else stays for editing. */
   submit(): SubmitResult<T> {
     const word = this.word;
-    const status = this.status();
-    if (status !== 'valid') {
-      return { ok: false, word, reason: status === 'empty' ? 'short' : status };
+    const { status, resolved } = this.lookup();
+    if (status !== 'valid' || !resolved) {
+      return {
+        ok: false,
+        word,
+        reason: status === 'empty' || status === 'valid' ? 'short' : status,
+      };
     }
     const items = this.picked;
-    this.used.add(normalizeWord(word));
+    this.used.add(resolved);
     this.picked = [];
-    return { ok: true, word, items };
+    return { ok: true, word: resolved.toUpperCase(), items };
   }
 
   clear(): void {

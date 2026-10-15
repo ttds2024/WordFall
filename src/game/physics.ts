@@ -2,8 +2,11 @@ import Matter from 'matter-js';
 
 const { Bodies, Composite, Engine } = Matter;
 
-/** A pumpkin is an ordinary letter; a skull doubles the score of a word that uses it. */
-export type TileKind = 'pumpkin' | 'skull';
+/**
+ * A pumpkin is an ordinary letter; a skull doubles the score of a word that uses it; a joker
+ * (a star, letter JOKER) stands for any one letter.
+ */
+export type TileKind = 'pumpkin' | 'skull' | 'joker';
 
 export interface Tile {
   readonly id: number;

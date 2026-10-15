@@ -92,3 +92,41 @@ describe('WordTracker in auto mode', () => {
     expect(tracker.word).toBe('CAX');
   });
 });
+
+describe('WordTracker with jokers', () => {
+  const words = new Dictionary(['cat', 'cot', 'cut', 'cats', 'dog']);
+
+  it('fills a joker with a letter that makes a word', () => {
+    const tracker = new WordTracker(words, 'button');
+    typeWord(tracker, 'C★T');
+    expect(tracker.status()).toBe('valid');
+    expect(tracker.resolved).toBe('cat');
+    expect(tracker.submit()).toMatchObject({ ok: true, word: 'CAT' });
+  });
+
+  it('picks a word not found yet, then reports used', () => {
+    const tracker = new WordTracker(words, 'button');
+    for (const expected of ['CAT', 'COT', 'CUT']) {
+      typeWord(tracker, 'C★T');
+      expect(tracker.submit()).toMatchObject({ ok: true, word: expected });
+    }
+    typeWord(tracker, 'C★T');
+    expect(tracker.status()).toBe('used');
+  });
+
+  it('rejects a joker word that matches nothing', () => {
+    const tracker = new WordTracker(words, 'button');
+    typeWord(tracker, 'X★Z');
+    expect(tracker.status()).toBe('unknown');
+    expect(tracker.resolved).toBeUndefined();
+  });
+
+  it('waits in auto mode while a longer word could follow', () => {
+    const tracker = new WordTracker(words, 'auto');
+    expect(typeWord(tracker, 'C★T')).toBeUndefined();
+    expect(typeWord(new WordTracker(words, 'auto'), 'D★G')).toMatchObject({
+      ok: true,
+      word: 'DOG',
+    });
+  });
+});
