@@ -28,6 +28,7 @@ body {
 }
 
 #app {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -59,7 +60,7 @@ button:disabled {
 
 .hud {
   display: grid;
-  grid-template-columns: 72px 1fr 72px;
+  grid-template-columns: 96px 1fr 96px;
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
@@ -80,6 +81,22 @@ button:disabled {
 #score {
   font-size: 22px;
   font-weight: 700;
+}
+
+.timer {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.timer.low {
+  color: var(--bad);
+  font-weight: 700;
+}
+
+.hud-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .word-box {
@@ -113,7 +130,6 @@ button:disabled {
 }
 
 .icon-button {
-  justify-self: end;
   width: 44px;
   height: 44px;
   padding: 0;
@@ -237,4 +253,69 @@ fieldset small {
 
 dialog .primary {
   width: 100%;
+}
+
+.menu {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 16px;
+  background: var(--bg);
+  text-align: center;
+}
+
+.menu[hidden] {
+  display: none;
+}
+
+.menu h1 {
+  margin: 0;
+  font-size: 44px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.result-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.result-score {
+  display: flex;
+  flex-direction: column;
+  color: var(--muted);
+}
+
+.result-score b {
+  font-size: 40px;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.menu-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(320px, 100%);
+}
+
+.menu-options button {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px;
+}
+
+.menu-options b {
+  font-size: 20px;
+}
+
+.menu-options small {
+  font-weight: 400;
+  opacity: 0.8;
 }

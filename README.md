@@ -1,6 +1,7 @@
 # WordFall
 
-A Halloween word game: letters fall, tap them to make words before time runs out. English and
+A Halloween word game: letters fall, tap them to make words in a 5-minute round or with no timer
+(Infinity). English and
 Russian.
 
 See [docs/DESIGN.md](docs/DESIGN.md) for the design decisions.

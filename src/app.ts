@@ -1,4 +1,5 @@
 import { Dictionary } from './core/dictionary';
+import { formatTime, RoundTimer, type RoundKind } from './core/round';
 import { scoreWord } from './core/scoring';
 import { WordTracker, type SubmitResult, type WordStatus } from './core/word-tracker';
 import { Game } from './game/game';
@@ -22,6 +23,8 @@ const DICTIONARY_TEXT: Record<Exclude<DictionaryState, 'ready'>, StringKey> = {
 };
 
 const TOAST_MS = 1400;
+/** The timer turns red in the last this-many milliseconds. */
+const LOW_TIME_MS = 30_000;
 
 function element<T extends HTMLElement>(selector: string): T {
   const el = document.querySelector<T>(selector);
@@ -36,7 +39,7 @@ async function fetchDictionary(lang: Language): Promise<Dictionary | undefined> 
   return Dictionary.fromText(await response.text());
 }
 
-/** Wires the game field to the word bar, score, buttons and settings dialog. */
+/** Wires the start menu, game field, word bar, score, timer, buttons and settings dialog. */
 export function startApp(defaultLanguage: Language): void {
   const storage = (() => {
     try {
@@ -49,6 +52,15 @@ export function startApp(defaultLanguage: Language): void {
 
   const ui = {
     score: element('#score'),
+    timer: element('#timer'),
+    menu: element('#menu'),
+    result: element('#result'),
+    resultTitle: element('#result-title'),
+    resultScore: element('#result-score'),
+    playTimed: element<HTMLButtonElement>('#play-timed'),
+    playEndless: element<HTMLButtonElement>('#play-endless'),
+    menuButton: element<HTMLButtonElement>('#menu-button'),
+    menuSettings: element<HTMLButtonElement>('#menu-settings'),
     word: element('#word'),
     status: element('#status'),
     toast: element('#toast'),
@@ -64,6 +76,7 @@ export function startApp(defaultLanguage: Language): void {
   let loadToken = 0;
   let score = 0;
   let toastTimer = 0;
+  let round: RoundTimer | undefined;
 
   const game = new Game(element<HTMLCanvasElement>('#field'), settings.lang, {
     onTap(tile) {
@@ -72,8 +85,14 @@ export function startApp(defaultLanguage: Language): void {
       handleResult(tracker.add(tile, performance.now()));
       render();
     },
-    onFrame(now) {
-      if (handleResult(tracker.update(now))) render();
+    onFrame(now, elapsed) {
+      if (!round) return;
+      if (round.advance(elapsed)) {
+        endRound();
+        return;
+      }
+      handleResult(tracker.update(now));
+      render();
     },
   });
 
@@ -88,6 +107,30 @@ export function startApp(defaultLanguage: Language): void {
       showToast(t(settings.lang, STATUS_TEXT[result.reason]), 'bad');
     }
     return true;
+  }
+
+  function startRound(kind: RoundKind): void {
+    round = new RoundTimer(kind);
+    score = 0;
+    tracker.reset();
+    game.reset();
+    ui.menu.hidden = true;
+    render();
+    game.start();
+  }
+
+  /** Stops play and shows the menu with the score; timeUp says the clock ran out. */
+  function endRound(): void {
+    if (!round) return;
+    const timeUp = round.over;
+    round = undefined;
+    game.stop();
+    clearWord();
+    ui.resultTitle.textContent = timeUp ? t(settings.lang, 'timeUp') : '';
+    ui.resultTitle.hidden = !timeUp;
+    ui.resultScore.textContent = String(score);
+    ui.result.hidden = false;
+    ui.menu.hidden = false;
   }
 
   function clearWord(): void {
@@ -119,6 +162,9 @@ export function startApp(defaultLanguage: Language): void {
   function render(): void {
     const status = tracker.status();
     ui.score.textContent = String(score);
+    const remaining = round?.remaining;
+    ui.timer.textContent = remaining === undefined ? '∞' : formatTime(remaining);
+    ui.timer.classList.toggle('low', remaining !== undefined && remaining <= LOW_TIME_MS);
     ui.word.textContent = tracker.word;
     ui.status.textContent = statusText(status);
     ui.status.dataset.status = dictionaryState === 'ready' ? status : 'empty';
@@ -134,6 +180,8 @@ export function startApp(defaultLanguage: Language): void {
       el.textContent = t(lang, el.dataset.i18n as StringKey);
     });
     ui.settingsButton.setAttribute('aria-label', t(lang, 'settings'));
+    ui.menuButton.setAttribute('aria-label', t(lang, 'menu'));
+    ui.timer.setAttribute('aria-label', t(lang, 'time'));
     ui.ruNote.textContent = __DICTIONARIES__.includes('ru') ? '' : t(lang, 'noDictionary');
   }
 
@@ -168,24 +216,34 @@ export function startApp(defaultLanguage: Language): void {
     const lang = (form.elements.namedItem('lang') as RadioNodeList).value as Language;
     settings.mode = mode;
     tracker.mode = mode;
-    if (lang !== settings.lang) {
+    const changedLanguage = lang !== settings.lang;
+    if (changedLanguage) {
       settings.lang = lang;
-      score = 0;
       game.reset(lang);
       translate();
       void loadWords();
     }
     saveSettings(settings, storage);
-    render();
-    game.start();
+    if (!round) return;
+    if (changedLanguage) {
+      // A new language means new letters and words, so the round starts over.
+      startRound(round.kind);
+    } else {
+      render();
+      game.start();
+    }
   }
 
   ui.clear.addEventListener('click', clearWord);
   ui.submit.addEventListener('click', submitWord);
   ui.settingsButton.addEventListener('click', openSettings);
+  ui.menuSettings.addEventListener('click', openSettings);
+  ui.menuButton.addEventListener('click', endRound);
+  ui.playTimed.addEventListener('click', () => startRound('timed'));
+  ui.playEndless.addEventListener('click', () => startRound('endless'));
   ui.dialog.addEventListener('close', applySettings);
   window.addEventListener('keydown', (e) => {
-    if (ui.dialog.open) return;
+    if (ui.dialog.open || !round) return;
     if (e.key === 'Enter') submitWord();
     else if (e.key === 'Escape' || e.key === 'Backspace') clearWord();
   });
@@ -193,5 +251,4 @@ export function startApp(defaultLanguage: Language): void {
   translate();
   render();
   void loadWords();
-  game.start();
 }

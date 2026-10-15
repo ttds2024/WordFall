@@ -30,6 +30,11 @@ export class WordTracker<T extends { readonly letter: string }> {
 
   setDictionary(dictionary: Dictionary | undefined): void {
     this.dictionary = dictionary;
+    this.reset();
+  }
+
+  /** Starts over: forgets found words and the word being built. */
+  reset(): void {
     this.used.clear();
     this.clear();
   }
