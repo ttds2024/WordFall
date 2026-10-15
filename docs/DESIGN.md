@@ -54,6 +54,12 @@ Minimum word length is 3 letters in both languages.
 ## Look and sound
 
 - Dark Halloween theme only; no light mode.
+- The interface follows the player's device, in the same dark colours: Material Design 3 on Android
+  (pill buttons, round icon buttons, a rounded dialog with a text button, a snackbar at the bottom)
+  and Apple's iOS style on iPhone and iPad (system font, translucent bar, Settings as a bottom sheet
+  with grouped lists and checkmarks). This applies to the apps and to phone browsers alike
+  (`src/ui-android.css`, `src/ui-ios.css`); computers keep the game's own design. The game field
+  looks the same everywhere.
 - All artwork drawn in code as SVG (pumpkins, bats, moon, gravestones).
 - Skull tiles use the pixel-art picture `src/images/bone.png`, kept upright with the letter over its
   jaw (a bone-white outline keeps it readable); a code-drawn skull stands in until it loads.

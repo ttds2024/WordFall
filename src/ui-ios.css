@@ -1,0 +1,201 @@
+/*
+ * Apple's iOS look for iPhone and iPad (the app, or Safari), in the game's dark Halloween colours:
+ * the system font, a translucent bar, plain icon buttons, grey filled buttons that dim when
+ * pressed, and Settings as a bottom sheet with grouped lists and checkmarks.
+ */
+
+:root[data-ui='ios'] {
+  --fill: rgba(120, 120, 128, 0.24);
+  --separator: rgba(84, 84, 88, 0.65);
+  --grouped: #14102a;
+  --cell: #221b3c;
+}
+
+:root[data-ui='ios'] body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+:root[data-ui='ios'] button {
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--fill);
+  font-size: 17px;
+  transition: opacity 0.15s;
+}
+
+:root[data-ui='ios'] button:active {
+  opacity: 0.55;
+}
+
+:root[data-ui='ios'] button.primary {
+  background: var(--accent);
+  color: #2a1300;
+  font-weight: 600;
+}
+
+:root[data-ui='ios'] .hud {
+  border-bottom: 0.5px solid var(--separator);
+  background: rgba(26, 20, 48, 0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+:root[data-ui='ios'] .icon-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 24px;
+}
+
+:root[data-ui='ios'] .menu h1 {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+:root[data-ui='ios'] .menu-options button {
+  padding: 16px 20px;
+  border-radius: 14px;
+}
+
+:root[data-ui='ios'] .menu-options b {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+:root[data-ui='ios'] .menu-options small {
+  font-size: 15px;
+}
+
+/* Settings on the menu: a plain button. */
+:root[data-ui='ios'] #menu-settings {
+  background: transparent;
+  color: var(--accent);
+}
+
+/* Settings: a sheet that slides up from the bottom. */
+:root[data-ui='ios'] dialog {
+  width: 100%;
+  max-width: 600px;
+  max-height: 92%;
+  margin: auto auto 0;
+  padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+  border: 0;
+  border-radius: 12px 12px 0 0;
+  background: var(--grouped);
+}
+
+:root[data-ui='ios'] dialog[open] {
+  animation: ios-sheet 0.3s ease-out;
+}
+
+@keyframes ios-sheet {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+:root[data-ui='ios'] dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* Grabber above the title. */
+:root[data-ui='ios'] dialog form::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 5px;
+  margin: 0 auto 12px;
+  border-radius: 3px;
+  background: var(--separator);
+}
+
+:root[data-ui='ios'] dialog h2 {
+  margin-bottom: 20px;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+}
+
+:root[data-ui='ios'] fieldset {
+  margin-bottom: 24px;
+}
+
+/* Section header of a grouped list. */
+:root[data-ui='ios'] legend {
+  margin-bottom: 6px;
+  padding: 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+/* Grouped list cells with a checkmark on the chosen one. */
+:root[data-ui='ios'] fieldset label {
+  position: relative;
+  align-items: center;
+  margin: 0;
+  padding: 11px 48px 11px 16px;
+  border: 0;
+  border-bottom: 0.5px solid var(--separator);
+  border-radius: 0;
+  background: var(--cell);
+}
+
+:root[data-ui='ios'] fieldset label:first-of-type {
+  border-radius: 10px 10px 0 0;
+}
+
+:root[data-ui='ios'] fieldset label:last-of-type {
+  border-bottom: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+:root[data-ui='ios'] fieldset label:active {
+  background: var(--fill);
+}
+
+:root[data-ui='ios'] fieldset input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+:root[data-ui='ios'] fieldset label:has(input:checked)::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+:root[data-ui='ios'] fieldset label:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+:root[data-ui='ios'] fieldset b {
+  font-size: 17px;
+  font-weight: 400;
+}
+
+:root[data-ui='ios'] fieldset small {
+  font-size: 13px;
+}
+
+/* A HUD-style capsule over the field. */
+:root[data-ui='ios'] .toast {
+  background: rgba(44, 36, 72, 0.82);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  font-size: 15px;
+  font-weight: 600;
+}
