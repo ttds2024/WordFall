@@ -11,6 +11,8 @@ const SPAWN_INTERVAL_MS = 900;
 export interface GameHandlers {
   /** A tile was tapped. */
   onTap(tile: Tile): void;
+  /** The field was tapped away from any tile. */
+  onTapEmpty(): void;
   /** Called once per animation frame while running, with the frame time and the play time since the last frame. */
   onFrame?(now: number, elapsed: number): void;
 }
@@ -103,6 +105,7 @@ export class Game {
     const rect = this.canvas.getBoundingClientRect();
     const tile = this.world.tileAt(e.clientX - rect.left, e.clientY - rect.top, this.radius * 0.25);
     if (tile) this.handlers.onTap(tile);
+    else this.handlers.onTapEmpty();
   };
 
   private readonly handleResize = (): void => {

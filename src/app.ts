@@ -65,7 +65,6 @@ export function startApp(defaultLanguage: Language): void {
     status: element('#status'),
     toast: element('#toast'),
     clear: element<HTMLButtonElement>('#clear-button'),
-    submit: element<HTMLButtonElement>('#submit-button'),
     settingsButton: element<HTMLButtonElement>('#settings-button'),
     dialog: element<HTMLDialogElement>('#settings'),
     ruNote: element('#ru-note'),
@@ -80,11 +79,16 @@ export function startApp(defaultLanguage: Language): void {
 
   const game = new Game(element<HTMLCanvasElement>('#field'), settings.lang, {
     onTap(tile) {
-      if (tracker.includes(tile)) return;
+      // Tapping a letter already in the word checks the word.
+      if (tracker.includes(tile)) {
+        submitWord();
+        return;
+      }
       tile.selected = true;
       handleResult(tracker.add(tile, performance.now()));
       render();
     },
+    onTapEmpty: clearWord,
     onFrame(now, elapsed) {
       if (!round) return;
       if (round.advance(elapsed)) {
@@ -140,7 +144,7 @@ export function startApp(defaultLanguage: Language): void {
   }
 
   function submitWord(): void {
-    if (settings.mode !== 'button' || tracker.status() === 'empty') return;
+    if (tracker.status() === 'empty') return;
     handleResult(tracker.submit());
     render();
   }
@@ -169,8 +173,6 @@ export function startApp(defaultLanguage: Language): void {
     ui.status.textContent = statusText(status);
     ui.status.dataset.status = dictionaryState === 'ready' ? status : 'empty';
     ui.clear.disabled = status === 'empty';
-    ui.submit.hidden = settings.mode !== 'button';
-    ui.submit.disabled = status !== 'valid';
   }
 
   function translate(): void {
@@ -235,7 +237,6 @@ export function startApp(defaultLanguage: Language): void {
   }
 
   ui.clear.addEventListener('click', clearWord);
-  ui.submit.addEventListener('click', submitWord);
   ui.settingsButton.addEventListener('click', openSettings);
   ui.menuSettings.addEventListener('click', openSettings);
   ui.menuButton.addEventListener('click', endRound);
