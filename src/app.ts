@@ -85,6 +85,10 @@ export function startApp(defaultLanguage: Language): void {
         submitWord();
         return;
       }
+      if (!tracker.canAdd(tile)) {
+        showToast(t(settings.lang, 'oneJoker'), 'bad');
+        return;
+      }
       tile.selected = true;
       handleResult(tracker.add(tile, performance.now()));
       render();

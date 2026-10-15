@@ -114,6 +114,18 @@ describe('WordTracker with jokers', () => {
     expect(tracker.status()).toBe('used');
   });
 
+  it('allows only one joker per word', () => {
+    const tracker = new WordTracker(words, 'button');
+    const second = { letter: '★' };
+    typeWord(tracker, 'C★');
+    expect(tracker.canAdd(second)).toBe(false);
+    expect(tracker.add(second, 500)).toBeUndefined();
+    expect(tracker.word).toBe('C★');
+    expect(tracker.canAdd({ letter: 'T' })).toBe(true);
+    tracker.clear();
+    expect(tracker.canAdd(second)).toBe(true);
+  });
+
   it('rejects a joker word that matches nothing', () => {
     const tracker = new WordTracker(words, 'button');
     typeWord(tracker, 'X★Z');
