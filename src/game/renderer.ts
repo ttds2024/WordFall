@@ -1,3 +1,4 @@
+import starUrl from '../images/star.svg';
 import type { Tile } from './physics';
 
 const COLORS = {
@@ -14,7 +15,22 @@ const COLORS = {
   star: '#ffc83d',
   starSelected: '#fff6d0',
   starEdge: '#b7791f',
+  starHalo: 'rgba(255, 246, 208, 0.45)',
 };
+
+/** Width over height of src/images/star.svg (its viewBox is 512 × 492.289). */
+const STAR_ASPECT = 512 / 492.289;
+
+let starImage: HTMLImageElement | undefined;
+
+/** The joker's picture (src/images/star.svg), once loaded; loading starts on first use. */
+function loadedStar(): HTMLImageElement | undefined {
+  if (!starImage) {
+    starImage = new Image();
+    starImage.src = starUrl;
+  }
+  return starImage.complete && starImage.naturalWidth > 0 ? starImage : undefined;
+}
 
 /** Draws the tiles as simple pumpkins, skulls and joker stars. Proper SVG artwork comes in a later PR. */
 export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[]): void {
@@ -31,7 +47,9 @@ export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[])
       ctx.shadowBlur = r * 0.6;
     }
     if (tile.kind === 'joker') {
-      drawStar(ctx, r, tile.selected);
+      const image = loadedStar();
+      if (image) drawStarImage(ctx, image, r, tile.selected);
+      else drawStar(ctx, r, tile.selected);
       ctx.restore();
       continue;
     }
@@ -68,7 +86,26 @@ function drawPumpkin(ctx: CanvasRenderingContext2D, r: number, selected: boolean
   ctx.fillRect(-r * 0.1, -r * 1.12, r * 0.2, r * 0.28);
 }
 
-/** The joker: a five-pointed gold star filling the tile's circle, with no letter. */
+/** The joker's picture, filling the tile's circle, on a pale glowing halo when selected. */
+function drawStarImage(
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  r: number,
+  selected: boolean,
+): void {
+  if (selected) {
+    ctx.fillStyle = COLORS.starHalo;
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.shadowBlur = 0;
+  const width = r * 2;
+  const height = width / STAR_ASPECT;
+  ctx.drawImage(image, -width / 2, -height / 2, width, height);
+}
+
+/** Stand-in while the picture loads: a five-pointed gold star filling the tile's circle. */
 function drawStar(ctx: CanvasRenderingContext2D, r: number, selected: boolean): void {
   const inner = r * 0.48;
   ctx.beginPath();
