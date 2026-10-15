@@ -1,6 +1,7 @@
 import { Dictionary } from './core/dictionary';
 import { formatTime, RoundTimer, type RoundKind } from './core/round';
 import { scoreWord, wordMultiplier } from './core/scoring';
+import { JOKER } from './core/word';
 import { WordTracker, type SubmitResult, type WordStatus } from './core/word-tracker';
 import { Game } from './game/game';
 import type { Tile } from './game/physics';
@@ -104,7 +105,9 @@ export function startApp(defaultLanguage: Language): void {
     if (!result) return false;
     if (result.ok) {
       const multiplier = wordMultiplier(result.items);
-      const points = scoreWord(result.word, settings.lang) * multiplier;
+      // Letters are scored as tapped, so a joker counts 0, like a blank in Scrabble.
+      const letters = result.items.map((tile) => tile.letter).join('');
+      const points = scoreWord(letters, settings.lang) * multiplier;
       score += points;
       game.removeTiles(result.items);
       showToast(`+${points}  ${result.word}${multiplier > 1 ? `  ×${multiplier}` : ''}`, 'good');
@@ -161,7 +164,10 @@ export function startApp(defaultLanguage: Language): void {
     if (dictionaryState !== 'ready' && status !== 'short') {
       return t(settings.lang, DICTIONARY_TEXT[dictionaryState]);
     }
-    return t(settings.lang, status === 'empty' ? 'statusEmpty' : STATUS_TEXT[status]);
+    const text = t(settings.lang, status === 'empty' ? 'statusEmpty' : STATUS_TEXT[status]);
+    // With a joker, say which word it makes.
+    const resolved = tracker.resolved;
+    return resolved && tracker.word.includes(JOKER) ? `${text}: ${resolved.toUpperCase()}` : text;
   }
 
   function render(): void {

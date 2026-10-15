@@ -29,6 +29,21 @@ describe('Dictionary', () => {
     expect(dict.hasLongerWord('zzz')).toBe(false);
   });
 
+  it('matches a joker against any one letter', () => {
+    expect([...dict.matches('c★t')]).toEqual(['cat']);
+    expect([...dict.matches('★at')]).toEqual(['cat']);
+    expect([...dict.matches('★★★')]).toEqual(['cat', 'dog']);
+    expect([...dict.matches('ca★')]).toEqual(['cat']);
+    expect([...dict.matches('x★z')]).toEqual([]);
+    expect([...dict.matches('cat')]).toEqual(['cat']);
+  });
+
+  it('knows whether a longer word can follow a joker', () => {
+    expect(dict.hasLongerWord('c★t')).toBe(true);
+    expect(dict.hasLongerWord('★og')).toBe(false);
+    expect(dict.hasLongerWord('★')).toBe(true);
+  });
+
   it('parses newline-separated text', () => {
     expect(Dictionary.fromText('cat\ndog\n').size).toBe(2);
   });

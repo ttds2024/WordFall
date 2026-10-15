@@ -11,9 +11,12 @@ const COLORS = {
   boneSelected: '#fff2b0',
   boneShade: 'rgba(60, 50, 70, 0.25)',
   socket: '#1a1424',
+  star: '#ffc83d',
+  starSelected: '#fff6d0',
+  starEdge: '#b7791f',
 };
 
-/** Draws the tiles as simple pumpkins and skulls. Proper SVG artwork comes in a later PR. */
+/** Draws the tiles as simple pumpkins, skulls and joker stars. Proper SVG artwork comes in a later PR. */
 export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[]): void {
   for (const tile of tiles) {
     const { x, y } = tile.body.position;
@@ -26,6 +29,11 @@ export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[])
     if (tile.selected) {
       ctx.shadowColor = COLORS.glow;
       ctx.shadowBlur = r * 0.6;
+    }
+    if (tile.kind === 'joker') {
+      drawStar(ctx, r, tile.selected);
+      ctx.restore();
+      continue;
     }
     if (tile.kind === 'skull') drawSkull(ctx, r, tile.selected);
     else drawPumpkin(ctx, r, tile.selected);
@@ -58,6 +66,25 @@ function drawPumpkin(ctx: CanvasRenderingContext2D, r: number, selected: boolean
 
   ctx.fillStyle = COLORS.stem;
   ctx.fillRect(-r * 0.1, -r * 1.12, r * 0.2, r * 0.28);
+}
+
+/** The joker: a five-pointed gold star filling the tile's circle, with no letter. */
+function drawStar(ctx: CanvasRenderingContext2D, r: number, selected: boolean): void {
+  const inner = r * 0.48;
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const radius = i % 2 === 0 ? r : inner;
+    const angle = -Math.PI / 2 + (i * Math.PI) / 5;
+    ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+  }
+  ctx.closePath();
+  ctx.fillStyle = selected ? COLORS.starSelected : COLORS.star;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = COLORS.starEdge;
+  ctx.lineWidth = Math.max(1.5, r * 0.08);
+  ctx.lineJoin = 'round';
+  ctx.stroke();
 }
 
 /** A skull filling the tile's circle: round cranium, narrower jaw, eye sockets above the letter. */
