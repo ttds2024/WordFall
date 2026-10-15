@@ -21,7 +21,7 @@ the round, including the timer. Changing the language restarts the round in the 
 - **Tiles:** round (pumpkins), so they roll and bounce. About 1 tile in 10 is a **skull**: it carries a
   letter like a pumpkin, and a correct word that uses at least one skull scores **×2** (two skulls
   still ×2). The word bar shows 💀×2 while the word holds a skull.
-- **Jokers:** about 1 tile in 25 is a gold **star** with no letter. It stands for any one letter: the
+- **Jokers:** about 1 tile in 25 is a gold **star** (`src/images/star.svg`) with no letter. It stands for any one letter: the
   word counts if some dictionary word fits it, and the status line names that word (e.g. C★T is
   "In the word list: CAT"). If several words fit, the first one not found yet is used, so C★T can
   score CAT, then COT, then CUT. A joker scores 0 points, like a blank in Scrabble.
