@@ -1,5 +1,5 @@
 import type { Dictionary } from './dictionary';
-import { MIN_WORD_LENGTH, normalizeWord } from './word';
+import { JOKER, MIN_WORD_LENGTH, normalizeWord } from './word';
 
 export type SubmitMode = 'button' | 'auto';
 
@@ -56,6 +56,12 @@ export class WordTracker<T extends { readonly letter: string }> {
     return this.picked.includes(item);
   }
 
+  /** Whether `item` may join the word: not already in it, and at most one joker per word. */
+  canAdd(item: T): boolean {
+    if (this.includes(item)) return false;
+    return item.letter !== JOKER || !this.picked.some((picked) => picked.letter === JOKER);
+  }
+
   status(): WordStatus {
     return this.lookup().status;
   }
@@ -90,9 +96,9 @@ export class WordTracker<T extends { readonly letter: string }> {
     return result;
   }
 
-  /** Adds a letter. In auto mode this may submit the word straight away. */
+  /** Adds a letter if canAdd allows it. In auto mode this may submit the word straight away. */
   add(item: T, now: number): SubmitResult<T> | undefined {
-    if (this.includes(item)) return undefined;
+    if (!this.canAdd(item)) return undefined;
     this.picked.push(item);
     this.lastAddAt = now;
     if (
