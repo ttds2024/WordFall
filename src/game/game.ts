@@ -11,8 +11,8 @@ const SPAWN_INTERVAL_MS = 900;
 export interface GameHandlers {
   /** A tile was tapped. */
   onTap(tile: Tile): void;
-  /** Called once per animation frame while running, with the frame time. */
-  onFrame?(now: number): void;
+  /** Called once per animation frame while running, with the frame time and the play time since the last frame. */
+  onFrame?(now: number, elapsed: number): void;
 }
 
 /** Runs the falling-letter field on a canvas: spawning, physics, drawing and taps. */
@@ -55,8 +55,8 @@ export class Game {
     cancelAnimationFrame(this.frame);
   }
 
-  /** Empties the field and switches to a new language's letters. */
-  reset(lang: Language): void {
+  /** Empties the field, optionally switching to a new language's letters. */
+  reset(lang: Language = this.lang): void {
     this.lang = lang;
     for (const tile of this.world.all()) this.world.remove(tile);
     this.draw();
@@ -67,14 +67,15 @@ export class Game {
   }
 
   private readonly tick = (now: number): void => {
-    this.acc += Math.min(now - this.last, MAX_FRAME_MS);
+    const elapsed = Math.min(now - this.last, MAX_FRAME_MS);
+    this.acc += elapsed;
     this.last = now;
     while (this.acc >= STEP_MS) {
       this.acc -= STEP_MS;
       this.spawnDue(STEP_MS);
       this.world.step(STEP_MS);
     }
-    this.handlers.onFrame?.(now);
+    this.handlers.onFrame?.(now, elapsed);
     this.draw();
     if (this.running) this.frame = requestAnimationFrame(this.tick);
   };

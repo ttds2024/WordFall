@@ -1,13 +1,23 @@
 # WordFall — design decisions (v1)
 
-Letters fall from the top of the screen. The player taps letters to build words before the
-120-second round ends.
+Letters fall from the top of the screen. The player taps letters to build words.
+
+## Start menu
+
+The game opens on a start menu with two modes:
+
+- **Play 5 min:** a 5-minute round. The timer under the score turns red in the last 30 seconds;
+  when it runs out the menu comes back with the final score.
+- **Infinity:** no timer; the round lasts until the player leaves it.
+
+The **☰** button ends the round and returns to the menu, showing the score. Opening Settings pauses
+the round, including the timer. Changing the language restarts the round in the same mode.
 
 ## Physics
 
 - **Engine:** Matter.js.
 - **Floor:** letters land on a floor and pile up. Piled letters can still be tapped. The pile never
-  ends the game in v1; the round always lasts 120 seconds.
+  ends the game in v1.
 - **Tiles:** round (pumpkins), so they roll and bounce.
 - **Speed:** constant; no difficulty curve yet.
 

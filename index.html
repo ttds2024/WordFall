@@ -16,17 +16,42 @@
         <div class="score">
           <span class="score-label" data-i18n="score"></span>
           <span id="score">0</span>
+          <span id="timer" class="timer"></span>
         </div>
         <div class="word-box">
           <div id="word" class="word" aria-live="polite"></div>
           <div id="status" class="status"></div>
         </div>
-        <button id="settings-button" class="icon-button" type="button">⚙</button>
+        <div class="hud-buttons">
+          <button id="menu-button" class="icon-button" type="button">☰</button>
+          <button id="settings-button" class="icon-button" type="button">⚙</button>
+        </div>
       </header>
       <div class="field-wrap">
         <canvas id="field"></canvas>
         <div id="toast" class="toast" aria-live="polite"></div>
       </div>
+      <section id="menu" class="menu">
+        <h1 data-i18n="title"></h1>
+        <div id="result" class="result" hidden>
+          <div id="result-title" class="result-title"></div>
+          <div class="result-score">
+            <span data-i18n="finalScore"></span>
+            <b id="result-score"></b>
+          </div>
+        </div>
+        <div class="menu-options">
+          <button id="play-timed" class="primary" type="button">
+            <b data-i18n="playTimed"></b>
+            <small data-i18n="playTimedHint"></small>
+          </button>
+          <button id="play-endless" type="button">
+            <b data-i18n="playEndless"></b>
+            <small data-i18n="playEndlessHint"></small>
+          </button>
+        </div>
+        <button id="menu-settings" type="button" data-i18n="settings"></button>
+      </section>
       <footer class="controls">
         <button id="clear-button" type="button" data-i18n="clear"></button>
         <button id="submit-button" class="primary" type="button" data-i18n="submit"></button>
