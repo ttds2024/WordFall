@@ -1,0 +1,177 @@
+/*
+ * Material Design 3 look for Android (the app, or any Android browser), in the game's dark
+ * Halloween colours: pill buttons, round icon buttons, a 28px dialog with list rows and a text
+ * button, and a snackbar at the bottom instead of the toast at the top.
+ */
+
+:root[data-ui='android'] {
+  --surface: #1a1430;
+  --surface-high: #2a2244;
+  --state: rgba(243, 233, 210, 0.12);
+}
+
+:root[data-ui='android'] body {
+  font-family: Roboto, 'Noto Sans', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root[data-ui='android'] button {
+  position: relative;
+  overflow: hidden;
+  min-height: 40px;
+  padding: 10px 24px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--surface-high);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+/* State layer: Material's pressed feedback. */
+:root[data-ui='android'] button:active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--state);
+}
+
+:root[data-ui='android'] button.primary {
+  background: var(--accent);
+  color: #2a1300;
+}
+
+:root[data-ui='android'] .hud {
+  min-height: 64px;
+  padding: 8px 8px 8px 16px;
+  border-bottom: 0;
+  background: var(--surface);
+}
+
+:root[data-ui='android'] .icon-button {
+  width: 48px;
+  height: 48px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 24px;
+}
+
+:root[data-ui='android'] .hud-buttons {
+  gap: 0;
+}
+
+:root[data-ui='android'] .menu h1 {
+  font-size: 45px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+:root[data-ui='android'] .menu-options button {
+  align-items: flex-start;
+  padding: 16px 24px;
+  border-radius: 16px;
+  text-align: left;
+}
+
+:root[data-ui='android'] .menu-options b {
+  font-size: 22px;
+  font-weight: 400;
+}
+
+:root[data-ui='android'] .menu-options small {
+  font-size: 14px;
+  letter-spacing: 0.25px;
+}
+
+/* Settings on the menu: a text button. */
+:root[data-ui='android'] #menu-settings {
+  background: transparent;
+  color: var(--accent);
+}
+
+:root[data-ui='android'] dialog {
+  padding: 24px;
+  border: 0;
+  border-radius: 28px;
+  background: var(--surface-high);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-ui='android'] dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+:root[data-ui='android'] dialog h2 {
+  margin-bottom: 16px;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+:root[data-ui='android'] legend {
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+:root[data-ui='android'] fieldset label {
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  padding: 12px 0;
+  border: 0;
+  border-radius: 0;
+}
+
+:root[data-ui='android'] fieldset input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  flex: none;
+}
+
+:root[data-ui='android'] fieldset b {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root[data-ui='android'] fieldset small {
+  font-size: 14px;
+}
+
+/* Done: a text button at the end of the dialog. */
+:root[data-ui='android'] dialog .primary {
+  display: block;
+  width: auto;
+  margin-left: auto;
+  padding: 10px 12px;
+  background: transparent;
+  color: var(--accent);
+}
+
+/* Snackbar. */
+:root[data-ui='android'] .toast {
+  top: auto;
+  bottom: 16px;
+  transform: translate(-50%, 8px);
+  padding: 14px 16px;
+  border-radius: 4px;
+  background: #ece6f0;
+  color: #322f35;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-ui='android'] .toast.show {
+  transform: translate(-50%, 0);
+}
+
+:root[data-ui='android'] .toast.good {
+  color: #146c2e;
+}
+
+:root[data-ui='android'] .toast.bad {
+  color: #b3261e;
+}

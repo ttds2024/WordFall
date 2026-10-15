@@ -24,7 +24,8 @@ far; drop in `data/words_ru.txt` to enable Russian.
 
 ## Platforms
 
-Desktop (any web browser) is the default. Android and iOS apps wrap the same web build with
+Desktop (any web browser) is the default. On Android and iOS devices (in the apps or a phone browser) the interface
+switches to Material Design or Apple's iOS style. Android and iOS apps wrap the same web build with
 [Capacitor](https://capacitorjs.com/). The native projects are not kept in the repository;
 generate them once with `npx cap add android` / `npx cap add ios --packagemanager SPM`.
 
