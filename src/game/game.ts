@@ -2,13 +2,13 @@ import type { Language } from '../i18n';
 import { pickLetter } from '../core/letters';
 import { JOKER } from '../core/word';
 import { PhysicsWorld, type Tile } from './physics';
-import { drawTiles } from './renderer';
+import { drawExplosions, drawTiles, type Blast } from './renderer';
 import { maxTilesFor, Spawner, tileRadius } from './spawner';
 
 const STEP_MS = 1000 / 60;
 const MAX_FRAME_MS = 250;
 const SPAWN_INTERVAL_MS = 900;
-/** Share of falling tiles that are skulls. */
+/** Share of falling tiles that are skulls (no letter; they explode when they hit something). */
 export const SKULL_CHANCE = 0.1;
 /** Share of falling tiles that are jokers. */
 export const JOKER_CHANCE = 0.04;
@@ -18,6 +18,8 @@ export interface GameHandlers {
   onTap(tile: Tile): void;
   /** The field was tapped away from any tile. */
   onTapEmpty(): void;
+  /** A skull exploded and destroyed these tiles. */
+  onExplode?(destroyed: Tile[]): void;
   /** Called once per animation frame while running, with the frame time and the play time since the last frame. */
   onFrame?(now: number, elapsed: number): void;
 }
@@ -32,6 +34,8 @@ export class Game {
   private acc = 0;
   private frame = 0;
   private running = false;
+  /** Explosions still being drawn. */
+  private blasts: Blast[] = [];
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -66,6 +70,7 @@ export class Game {
   reset(lang: Language = this.lang): void {
     this.lang = lang;
     for (const tile of this.world.all()) this.world.remove(tile);
+    this.blasts = [];
     this.draw();
   }
 
@@ -80,7 +85,10 @@ export class Game {
     while (this.acc >= STEP_MS) {
       this.acc -= STEP_MS;
       this.spawnDue(STEP_MS);
-      this.world.step(STEP_MS);
+      for (const explosion of this.world.step(STEP_MS)) {
+        this.blasts.push({ x: explosion.x, y: explosion.y, radius: explosion.radius, start: now });
+        if (explosion.destroyed.length > 0) this.handlers.onExplode?.(explosion.destroyed);
+      }
     }
     this.handlers.onFrame?.(now, elapsed);
     this.draw();
@@ -96,10 +104,8 @@ export class Game {
       const y = -r - i * r * 2.2;
       const roll = Math.random();
       if (roll < JOKER_CHANCE) this.world.spawn(JOKER, x, y, r, 'joker');
-      else {
-        const kind = roll < JOKER_CHANCE + SKULL_CHANCE ? 'skull' : 'pumpkin';
-        this.world.spawn(pickLetter(this.lang), x, y, r, kind);
-      }
+      else if (roll < JOKER_CHANCE + SKULL_CHANCE) this.world.spawn('', x, y, r, 'skull');
+      else this.world.spawn(pickLetter(this.lang), x, y, r);
     }
   }
 
@@ -109,6 +115,7 @@ export class Game {
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this.ctx.clearRect(0, 0, width, height);
     drawTiles(this.ctx, this.world.all());
+    this.blasts = drawExplosions(this.ctx, this.blasts, performance.now());
   }
 
   private readonly handlePointer = (e: PointerEvent): void => {

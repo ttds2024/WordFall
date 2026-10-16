@@ -16,7 +16,6 @@
   --red: #ff4b4b;
   --yellow: #ffc800;
   --accent: var(--green);
-  --bone: #e9e4d4;
   --good: #79d634;
   --bad: var(--red);
   --edge: 4px;
@@ -158,16 +157,6 @@ button:disabled {
   align-items: center;
   gap: 8px;
   min-width: 0;
-}
-
-.multiplier {
-  flex: none;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--bone);
-  color: #1a1424;
-  font-size: 14px;
-  font-weight: 900;
 }
 
 .word {

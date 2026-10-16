@@ -107,6 +107,11 @@ export class WordTracker<T extends { readonly letter: string }> {
     return { ok: true, word: resolved.toUpperCase(), items };
   }
 
+  /** Takes these items out of the word (e.g. tiles that were destroyed), keeping the rest in order. */
+  remove(items: readonly T[]): void {
+    this.picked = this.picked.filter((item) => !items.includes(item));
+  }
+
   clear(): void {
     this.picked = [];
   }
