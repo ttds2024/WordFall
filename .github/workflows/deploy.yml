@@ -26,6 +26,11 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+        env:
+          # Public app IDs for sign-in; set them under Settings → Secrets and variables →
+          # Actions → Variables. Unset hides that provider's button.
+          VITE_YANDEX_CLIENT_ID: ${{ vars.YANDEX_CLIENT_ID }}
+          VITE_VK_APP_ID: ${{ vars.VK_APP_ID }}
       - uses: actions/configure-pages@v5
         with:
           enablement: true

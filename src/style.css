@@ -326,3 +326,99 @@ dialog .primary {
   font-weight: 400;
   opacity: 0.8;
 }
+
+.account {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(320px, 100%);
+}
+
+.account[hidden],
+.account [hidden] {
+  display: none;
+}
+
+.sign-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.sign-in-label {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.sign-in-buttons {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.sign-in-buttons button {
+  flex: 1;
+  font-weight: 700;
+}
+
+/* Provider brand colours (Yandex black with red, VK blue), above the Android/iOS button styles. */
+:root button.provider.yandex {
+  background: #000;
+  border-color: #fc3f1d;
+  color: #fff;
+}
+
+:root button.provider.vk {
+  background: #0077ff;
+  border-color: #0077ff;
+  color: #fff;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  background: var(--panel);
+  text-align: left;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.profile-text b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-text small {
+  color: var(--muted);
+}
+
+.profile button {
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.auth-error {
+  color: var(--muted);
+  font-size: 14px;
+}
