@@ -44,13 +44,6 @@ export class Dictionary {
     return this.set.has(normalizeWord(word));
   }
 
-  /** Whether some longer word starts with `prefix`. A JOKER in it stands for any one letter. */
-  hasLongerWord(prefix: string): boolean {
-    const p = normalizeWord(prefix);
-    for (const word of this.startingWith(p)) if (word.length > p.length) return true;
-    return false;
-  }
-
   /** The words `pattern` can spell, alphabetically; a JOKER in it stands for any one letter. */
   *matches(pattern: string): Generator<string> {
     const p = normalizeWord(pattern);
