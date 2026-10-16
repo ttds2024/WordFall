@@ -67,7 +67,6 @@ export function startApp(defaultLanguage: Language): void {
     multiplier: element('#multiplier'),
     status: element('#status'),
     toast: element('#toast'),
-    settingsButton: element<HTMLButtonElement>('#settings-button'),
     dialog: element<HTMLDialogElement>('#settings'),
     ruNote: element('#ru-note'),
   };
@@ -201,7 +200,6 @@ export function startApp(defaultLanguage: Language): void {
     document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => {
       el.textContent = t(lang, el.dataset.i18n as StringKey);
     });
-    ui.settingsButton.setAttribute('aria-label', t(lang, 'settings'));
     ui.menuButton.setAttribute('aria-label', t(lang, 'menu'));
     ui.timer.setAttribute('aria-label', t(lang, 'time'));
     ui.ruNote.textContent = __DICTIONARIES__.includes('ru') ? '' : t(lang, 'noDictionary');
@@ -225,8 +223,8 @@ export function startApp(defaultLanguage: Language): void {
     render();
   }
 
+  /** Settings open from the start menu only, so no round is running meanwhile. */
   function openSettings(): void {
-    game.stop();
     const form = ui.dialog.querySelector('form')!;
     (form.elements.namedItem('lang') as RadioNodeList).value = settings.lang;
     ui.dialog.showModal();
@@ -235,25 +233,15 @@ export function startApp(defaultLanguage: Language): void {
   function applySettings(): void {
     const form = ui.dialog.querySelector('form')!;
     const lang = (form.elements.namedItem('lang') as RadioNodeList).value as Language;
-    const changedLanguage = lang !== settings.lang;
-    if (changedLanguage) {
+    if (lang !== settings.lang) {
       settings.lang = lang;
       game.reset(lang);
       translate();
       void loadWords();
     }
     saveSettings(settings, storage);
-    if (!round) return;
-    if (changedLanguage) {
-      // A new language means new letters and words, so the round starts over.
-      startRound(round.kind);
-    } else {
-      render();
-      game.start();
-    }
   }
 
-  ui.settingsButton.addEventListener('click', openSettings);
   ui.menuSettings.addEventListener('click', openSettings);
   ui.menuButton.addEventListener('click', endRound);
   ui.playTimed.addEventListener('click', () => startRound('timed'));

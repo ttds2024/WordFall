@@ -93,7 +93,7 @@ button:disabled {
 
 .hud {
   display: grid;
-  grid-template-columns: 96px 1fr 104px;
+  grid-template-columns: 96px 1fr 96px;
   align-items: center;
   gap: 8px;
   padding: 10px 16px 12px;
