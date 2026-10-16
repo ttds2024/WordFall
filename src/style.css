@@ -159,6 +159,17 @@ button:disabled {
   min-width: 0;
 }
 
+/* "×2" next to the word while it holds a ×2 tile. */
+.multiplier {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 900;
+}
+
 .word {
   min-width: 0;
   min-height: 38px;

@@ -60,14 +60,15 @@ describe('PhysicsWorld', () => {
 });
 
 describe('tile kinds', () => {
-  it('spawns pumpkins by default and skulls on request', () => {
+  it('spawns pumpkins by default and other kinds on request', () => {
     const world = new PhysicsWorld(400, 600);
     expect(world.spawn('A', 100, 100, 30).kind).toBe('pumpkin');
-    expect(world.spawn('', 200, 100, 30, 'skull').kind).toBe('skull');
+    expect(world.spawn('', 200, 100, 30, 'bomb').kind).toBe('bomb');
+    expect(world.spawn('C', 300, 100, 30, 'double').kind).toBe('double');
   });
 });
 
-describe('skulls', () => {
+describe('bombs', () => {
   /** Steps until something explodes, for up to `seconds`. */
   function runUntilBoom(world: PhysicsWorld, seconds: number): Explosion[] {
     for (let i = 0; i < seconds * 60; i++) {
@@ -79,12 +80,12 @@ describe('skulls', () => {
 
   it('explode on hitting the floor', () => {
     const world = new PhysicsWorld(400, 600);
-    const skull = world.spawn('', 200, -30, 30, 'skull');
+    const bomb = world.spawn('', 200, -30, 30, 'bomb');
     const [boom] = runUntilBoom(world, 4);
     expect(boom).toBeDefined();
     expect(boom!.y).toBeGreaterThan(500);
     expect(boom!.radius).toBe(30 * BLAST_RADII);
-    expect(world.all()).not.toContain(skull);
+    expect(world.all()).not.toContain(bomb);
   });
 
   it('destroy nearby tiles and push farther ones away', () => {
@@ -94,7 +95,7 @@ describe('skulls', () => {
     const far = world.spawn('C', 530, 570, 30);
     const away = world.spawn('D', 50, 570, 30);
     run(world, 1);
-    world.spawn('', 400, 400, 30, 'skull');
+    world.spawn('', 400, 400, 30, 'bomb');
     const [boom] = runUntilBoom(world, 3);
     expect(boom!.destroyed).toEqual(expect.arrayContaining([near, alsoNear]));
     expect(boom!.destroyed).toHaveLength(2);
@@ -107,7 +108,7 @@ describe('skulls', () => {
     const world = new PhysicsWorld(100, 600);
     const below = world.spawn('A', 50, 570, 30);
     run(world, 1);
-    world.spawn('', 50, 300, 30, 'skull');
+    world.spawn('', 50, 300, 30, 'bomb');
     const [boom] = runUntilBoom(world, 3);
     expect(boom!.destroyed).toEqual([below]);
     expect(world.count).toBe(0);

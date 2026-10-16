@@ -1,3 +1,5 @@
+import badUrl from '../images/bad.png';
+import pumpkinSvg from '../images/pumpkin.svg?raw';
 import starUrl from '../images/star.svg';
 import type { Tile } from './physics';
 
@@ -8,9 +10,8 @@ const COLORS = {
   stem: '#3f6b2a',
   letter: '#2a1300',
   glow: 'rgba(255, 210, 63, 0.8)',
-  bone: '#e9e4d4',
-  boneShade: 'rgba(60, 50, 70, 0.25)',
-  socket: '#1a1424',
+  badge: '#ffc800',
+  badgeText: '#2a1300',
   star: '#ffc83d',
   starSelected: '#fff6d0',
   starEdge: '#b7791f',
@@ -32,19 +33,52 @@ export interface Blast {
 
 /** Width over height of src/images/star.svg (its viewBox is 512 × 492.289). */
 const STAR_ASPECT = 512 / 492.289;
+/** Width over height of src/images/bad.png (318 × 304). */
+const BAD_ASPECT = 318 / 304;
 
-let starImage: HTMLImageElement | undefined;
+/**
+ * src/images/pumpkin.svg cropped to the pumpkin itself (its 800 × 600 page has wide margins),
+ * with a size so it draws at full resolution.
+ */
+const DOUBLE_BOX = { x: 125, y: 48, width: 511, height: 437 };
+const doubleUrl =
+  'data:image/svg+xml;charset=utf-8,' +
+  encodeURIComponent(
+    pumpkinSvg.replace(
+      'viewBox="0 0 800 600"',
+      `viewBox="${DOUBLE_BOX.x} ${DOUBLE_BOX.y} ${DOUBLE_BOX.width} ${DOUBLE_BOX.height}" ` +
+        `width="${DOUBLE_BOX.width}" height="${DOUBLE_BOX.height}"`,
+    ),
+  );
 
-/** The joker's picture (src/images/star.svg), once loaded; loading starts on first use. */
-function loadedStar(): HTMLImageElement | undefined {
-  if (!starImage) {
-    starImage = new Image();
-    starImage.src = starUrl;
+const pictures = new Map<string, HTMLImageElement>();
+
+/** A picture once it has loaded; loading starts on first use. Until then tiles draw a stand-in. */
+function picture(url: string): HTMLImageElement | undefined {
+  let image = pictures.get(url);
+  if (!image) {
+    image = new Image();
+    image.src = url;
+    pictures.set(url, image);
   }
-  return starImage.complete && starImage.naturalWidth > 0 ? starImage : undefined;
+  return image.complete && image.naturalWidth > 0 ? image : undefined;
 }
 
-/** Draws the tiles as simple pumpkins, letterless skulls and joker stars. Proper SVG artwork comes in a later PR. */
+/** Draws an image centred on the tile, `width` wide, keeping its aspect ratio. */
+function drawCentred(
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  width: number,
+  aspect: number,
+): void {
+  const height = width / aspect;
+  ctx.drawImage(image, -width / 2, -height / 2, width, height);
+}
+
+/**
+ * Draws the tiles: pumpkins with letters, ×2 pumpkins (src/images/pumpkin.svg) with a letter and
+ * a ×2 badge, letterless bad pumpkins (src/images/bad.png) that explode, and joker stars.
+ */
 export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[]): void {
   for (const tile of tiles) {
     const { x, y } = tile.body.position;
@@ -59,25 +93,36 @@ export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[])
       ctx.shadowBlur = r * 0.6;
     }
     if (tile.kind === 'joker') {
-      const image = loadedStar();
+      const image = picture(starUrl);
       if (image) drawStarImage(ctx, image, r, tile.selected);
       else drawStar(ctx, r, tile.selected);
       ctx.restore();
       continue;
     }
-    if (tile.kind === 'skull') {
-      drawSkull(ctx, r);
+    if (tile.kind === 'bomb') {
+      const image = picture(badUrl);
+      if (image) drawCentred(ctx, image, r * 2.15, BAD_ASPECT);
+      else drawPumpkin(ctx, r, false);
       ctx.restore();
       continue;
     }
-    drawPumpkin(ctx, r, tile.selected);
+
+    const double = tile.kind === 'double' ? picture(doubleUrl) : undefined;
+    if (double) {
+      if (tile.selected) drawHalo(ctx, r);
+      ctx.shadowBlur = 0;
+      drawCentred(ctx, double, r * 2.2, DOUBLE_BOX.width / DOUBLE_BOX.height);
+    } else {
+      drawPumpkin(ctx, r, tile.selected);
+    }
 
     ctx.rotate(-tile.body.angle);
     ctx.fillStyle = COLORS.letter;
     ctx.font = `bold ${Math.round(r * 1.05)}px system-ui, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(tile.letter, 0, r * 0.06);
+    ctx.fillText(tile.letter, 0, r * 0.14);
+    if (tile.kind === 'double') drawDoubleBadge(ctx, r);
     ctx.restore();
   }
 }
@@ -101,6 +146,31 @@ function drawPumpkin(ctx: CanvasRenderingContext2D, r: number, selected: boolean
   ctx.fillRect(-r * 0.1, -r * 1.12, r * 0.2, r * 0.28);
 }
 
+/** A pale glowing disc behind a selected picture tile. */
+function drawHalo(ctx: CanvasRenderingContext2D, r: number): void {
+  ctx.fillStyle = COLORS.starHalo;
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/** The ×2 tile's mark: a small gold disc with "×2" at its top right. */
+function drawDoubleBadge(ctx: CanvasRenderingContext2D, r: number): void {
+  const x = r * 0.72;
+  const y = -r * 0.62;
+  const size = r * 0.42;
+  ctx.fillStyle = COLORS.badge;
+  ctx.strokeStyle = COLORS.badgeText;
+  ctx.lineWidth = Math.max(1, r * 0.05);
+  ctx.beginPath();
+  ctx.arc(x, y, size, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = COLORS.badgeText;
+  ctx.font = `900 ${Math.round(size * 1.05)}px system-ui, sans-serif`;
+  ctx.fillText('×2', x, y + size * 0.05);
+}
+
 /** The joker's picture, filling the tile's circle, on a pale glowing halo when selected. */
 function drawStarImage(
   ctx: CanvasRenderingContext2D,
@@ -108,16 +178,9 @@ function drawStarImage(
   r: number,
   selected: boolean,
 ): void {
-  if (selected) {
-    ctx.fillStyle = COLORS.starHalo;
-    ctx.beginPath();
-    ctx.arc(0, 0, r, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  if (selected) drawHalo(ctx, r);
   ctx.shadowBlur = 0;
-  const width = r * 2;
-  const height = width / STAR_ASPECT;
-  ctx.drawImage(image, -width / 2, -height / 2, width, height);
+  drawCentred(ctx, image, r * 2, STAR_ASPECT);
 }
 
 /** Stand-in while the picture loads: a five-pointed gold star filling the tile's circle. */
@@ -186,41 +249,4 @@ export function drawExplosions(
     ctx.restore();
   }
   return running;
-}
-
-/** A skull filling the tile's circle: round cranium, narrower jaw, big eye sockets, a nose. */
-function drawSkull(ctx: CanvasRenderingContext2D, r: number): void {
-  ctx.fillStyle = COLORS.bone;
-  ctx.beginPath();
-  ctx.arc(0, -r * 0.12, r * 0.88, Math.PI * 0.85, Math.PI * 0.15);
-  ctx.lineTo(r * 0.5, r * 0.55);
-  ctx.quadraticCurveTo(r * 0.5, r * 0.98, 0, r * 0.98);
-  ctx.quadraticCurveTo(-r * 0.5, r * 0.98, -r * 0.5, r * 0.55);
-  ctx.closePath();
-  ctx.fill();
-  ctx.shadowBlur = 0;
-
-  // Cheekbone shading and teeth.
-  ctx.strokeStyle = COLORS.boneShade;
-  ctx.lineWidth = Math.max(1, r * 0.05);
-  for (const dx of [-0.2, 0, 0.2]) {
-    ctx.beginPath();
-    ctx.moveTo(r * dx, r * 0.72);
-    ctx.lineTo(r * dx, r * 0.95);
-    ctx.stroke();
-  }
-
-  // Eye sockets and nose.
-  ctx.fillStyle = COLORS.socket;
-  for (const side of [-1, 1]) {
-    ctx.beginPath();
-    ctx.ellipse(side * r * 0.34, -r * 0.2, r * 0.24, r * 0.21, side * 0.25, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.beginPath();
-  ctx.moveTo(0, r * 0.12);
-  ctx.lineTo(r * 0.1, r * 0.36);
-  ctx.lineTo(-r * 0.1, r * 0.36);
-  ctx.closePath();
-  ctx.fill();
 }

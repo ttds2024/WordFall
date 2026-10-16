@@ -33,10 +33,14 @@ in the game yet.
 - **Engine:** Matter.js.
 - **Floor:** letters land on a floor and pile up. Piled letters can still be tapped. The pile never
   ends the game in v1.
-- **Tiles:** round (pumpkins), so they roll and bounce. About 1 tile in 10 is a **skull**: it has no letter
-  and cannot be tapped. When it first hits anything (the floor or another tile) it explodes with a
-  flash, destroying every tile within about 2.6 tile radii and pushing the next ones away. Letters
-  it destroys leave the word being built and score nothing.
+- **Tiles:** round (pumpkins), so they roll and bounce.
+- **Bad pumpkins:** about 1 tile in 10 is a grinning jack-o'-lantern (`src/images/bad.png`) with no
+  letter; it cannot be tapped. When it first hits anything (the floor or another tile) it explodes
+  with a flash, destroying every tile within about 2.6 tile radii and pushing the next ones away.
+  Letters it destroys leave the word being built and score nothing.
+- **×2 pumpkins:** about 1 tile in 12 is a plain pumpkin (`src/images/pumpkin.svg`) with a letter
+  and a gold ×2 mark. A correct word that uses at least one scores **×2** (two still ×2); the word
+  bar shows ×2 while the word holds one.
 - **Jokers:** about 1 tile in 25 is a gold **star** (`src/images/star.svg`) with no letter. It stands for any one letter: the
   word counts if some dictionary word fits it, and the status line names that word (e.g. C★T is
   "In the word list: CAT"). If several words fit, the first one not found yet is used, so C★T can
@@ -72,7 +76,7 @@ Minimum word length is 3 letters in both languages.
   bold font Nunito (Google Fonts; a system rounded font when offline), flat bright colours (green
   for the main action, blue for the second, yellow score, red for misses) and chunky buttons and
   choice cards with a solid bottom edge that presses down when tapped. Only the style is borrowed:
-  no Duolingo name, owl or logo. The game field keeps its Halloween pumpkins, skulls and stars.
+  no Duolingo name, owl or logo. The game field keeps its Halloween pumpkins and stars.
 - All artwork drawn in code as SVG (pumpkins, bats, moon, gravestones).
 - Sound effects and background music come later, each with its own on/off switch in Settings.
 

@@ -15,8 +15,16 @@ export const LETTER_VALUES: Record<Language, Readonly<Record<string, number>>> =
   },
 };
 
+/** A word that uses at least one ×2 tile scores this many times its letter values. */
+export const DOUBLE_MULTIPLIER = 2;
+
 export function scoreWord(word: string, lang: Language): number {
   let score = 0;
   for (const letter of normalizeWord(word)) score += LETTER_VALUES[lang][letter] ?? 0;
   return score;
+}
+
+/** Multiplier for a word built from these tiles: doubled if any of them is a ×2 tile. */
+export function wordMultiplier(tiles: readonly { readonly kind: string }[]): number {
+  return tiles.some((tile) => tile.kind === 'double') ? DOUBLE_MULTIPLIER : 1;
 }

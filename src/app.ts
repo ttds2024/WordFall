@@ -1,7 +1,7 @@
 import { setupAuth } from './auth/ui';
 import { Dictionary } from './core/dictionary';
 import { formatTime, RoundTimer, type RoundKind } from './core/round';
-import { scoreWord } from './core/scoring';
+import { scoreWord, wordMultiplier } from './core/scoring';
 import { JOKER } from './core/word';
 import { WordTracker, type SubmitResult, type WordStatus } from './core/word-tracker';
 import { Game } from './game/game';
@@ -64,6 +64,7 @@ export function startApp(defaultLanguage: Language): void {
     menuButton: element<HTMLButtonElement>('#menu-button'),
     menuSettings: element<HTMLButtonElement>('#menu-settings'),
     word: element('#word'),
+    multiplier: element('#multiplier'),
     status: element('#status'),
     toast: element('#toast'),
     settingsButton: element<HTMLButtonElement>('#settings-button'),
@@ -81,8 +82,8 @@ export function startApp(defaultLanguage: Language): void {
 
   const game = new Game(element<HTMLCanvasElement>('#field'), settings.lang, {
     onTap(tile) {
-      // Skulls carry no letter; they only explode.
-      if (tile.kind === 'skull') return;
+      // Bombs carry no letter; they only explode.
+      if (tile.kind === 'bomb') return;
       // Tapping a letter already in the word checks the word.
       if (tracker.includes(tile)) {
         submitWord();
@@ -116,10 +117,11 @@ export function startApp(defaultLanguage: Language): void {
     if (result.ok) {
       // Letters are scored as tapped, so a joker counts 0, like a blank in Scrabble.
       const letters = result.items.map((tile) => tile.letter).join('');
-      const points = scoreWord(letters, settings.lang);
+      const multiplier = wordMultiplier(result.items);
+      const points = scoreWord(letters, settings.lang) * multiplier;
       score += points;
       game.removeTiles(result.items);
-      showToast(`+${points}  ${result.word}`, 'good');
+      showToast(`+${points}  ${result.word}${multiplier > 1 ? `  ×${multiplier}` : ''}`, 'good');
     } else {
       showToast(t(settings.lang, STATUS_TEXT[result.reason]), 'bad');
     }
@@ -186,6 +188,9 @@ export function startApp(defaultLanguage: Language): void {
     ui.timer.textContent = remaining === undefined ? '∞' : formatTime(remaining);
     ui.timer.classList.toggle('low', remaining !== undefined && remaining <= LOW_TIME_MS);
     ui.word.textContent = tracker.word;
+    const multiplier = wordMultiplier(tracker.items);
+    ui.multiplier.textContent = `×${multiplier}`;
+    ui.multiplier.hidden = multiplier === 1;
     ui.status.textContent = statusText(status);
     ui.status.dataset.status = dictionaryState === 'ready' ? status : 'empty';
   }
