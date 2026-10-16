@@ -36,6 +36,26 @@
       </div>
       <section id="menu" class="menu">
         <h1 data-i18n="title"></h1>
+        <div id="account" class="account" hidden>
+          <div id="signed-out" class="sign-in">
+            <span class="sign-in-label" data-i18n="signInWith"></span>
+            <div class="sign-in-buttons">
+              <button id="sign-in-yandex" class="provider yandex" type="button" hidden>
+                Yandex ID
+              </button>
+              <button id="sign-in-vk" class="provider vk" type="button" hidden>VK ID</button>
+            </div>
+          </div>
+          <div id="signed-in" class="profile" hidden>
+            <img id="profile-avatar" class="avatar" alt="" referrerpolicy="no-referrer" hidden />
+            <span class="profile-text">
+              <b id="profile-name"></b>
+              <small id="profile-via"></small>
+            </span>
+            <button id="sign-out" type="button" data-i18n="signOut"></button>
+          </div>
+          <div id="auth-error" class="auth-error" aria-live="polite" hidden></div>
+        </div>
         <div id="result" class="result" hidden>
           <div id="result-title" class="result-title"></div>
           <div class="result-score">

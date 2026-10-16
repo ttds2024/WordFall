@@ -1,3 +1,4 @@
+import { setupAuth } from './auth/ui';
 import { Dictionary } from './core/dictionary';
 import { formatTime, RoundTimer, type RoundKind } from './core/round';
 import { scoreWord, wordMultiplier } from './core/scoring';
@@ -72,6 +73,7 @@ export function startApp(defaultLanguage: Language): void {
   };
 
   const tracker = new WordTracker<Tile>(undefined);
+  const auth = setupAuth(() => settings.lang);
   let dictionaryState: DictionaryState = 'loading';
   let loadToken = 0;
   let score = 0;
@@ -197,6 +199,7 @@ export function startApp(defaultLanguage: Language): void {
     ui.menuButton.setAttribute('aria-label', t(lang, 'menu'));
     ui.timer.setAttribute('aria-label', t(lang, 'time'));
     ui.ruNote.textContent = __DICTIONARIES__.includes('ru') ? '' : t(lang, 'noDictionary');
+    auth.render();
   }
 
   async function loadWords(): Promise<void> {

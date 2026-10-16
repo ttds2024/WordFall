@@ -6,3 +6,6 @@ dist
 # Native projects are generated with `npx cap add android|ios`
 android
 ios
+
+# Local build settings (e.g. sign-in app IDs)
+.env.local

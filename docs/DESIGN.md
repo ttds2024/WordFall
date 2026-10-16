@@ -13,6 +13,21 @@ The game opens on a start menu with two modes:
 The **☰** button ends the round and returns to the menu, showing the score. Opening Settings pauses
 the round, including the timer. Changing the language restarts the round in the same mode.
 
+## Accounts
+
+Players can sign in with **Yandex ID** or **VK ID** from the start menu; signed in, the menu shows
+their name, avatar and provider with a Sign out button. Signing in is optional and changes nothing
+in the game yet.
+
+- No server: Yandex ID uses the OAuth implicit flow, VK ID OAuth 2.1 with PKCE and no client
+  secret, both from the browser (`src/auth/`). Access tokens are used once to read the profile and
+  never stored; only the name, avatar and provider are kept in local storage.
+- The `state` sent to the provider must come back unchanged, and is accepted only once, so a
+  forged or replayed answer is refused.
+- App IDs come from the build (`VITE_YANDEX_CLIENT_ID`, `VITE_VK_APP_ID`, filled from GitHub
+  repository variables); a provider without one is hidden.
+- **Sber ID** needs a client secret and a TLS client certificate, so it waits for a backend.
+
 ## Physics
 
 - **Engine:** Matter.js.
