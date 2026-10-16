@@ -3,10 +3,11 @@ import Matter from 'matter-js';
 const { Bodies, Body, Composite, Engine, Events } = Matter;
 
 /**
- * A pumpkin is an ordinary letter; a skull has no letter and explodes when it hits something;
- * a joker (a star, letter JOKER) stands for any one letter.
+ * A pumpkin is an ordinary letter; a double is a letter that doubles the score of a word using
+ * it; a bomb (a bad pumpkin) has no letter and explodes when it hits something; a joker (a star,
+ * letter JOKER) stands for any one letter.
  */
-export type TileKind = 'pumpkin' | 'skull' | 'joker';
+export type TileKind = 'pumpkin' | 'double' | 'bomb' | 'joker';
 
 export interface Tile {
   readonly id: number;
@@ -17,14 +18,14 @@ export interface Tile {
 }
 
 const WALL = 200;
-/** A skull's blast destroys tiles whose centres are within this many tile radii of it. */
+/** A bomb's blast destroys tiles whose centres are within this many tile radii of it. */
 export const BLAST_RADII = 2.6;
 /** Tiles within this many radii (but outside the blast) are pushed away. */
 const PUSH_RADII = 5;
 /** Speed, in px per step, given to a pushed tile right at the edge of the blast. */
 const PUSH_SPEED = 6;
 
-/** A skull that went off: where, how far its blast reached, and the tiles it destroyed. */
+/** A bomb that went off: where, how far its blast reached, and the tiles it destroyed. */
 export interface Explosion {
   x: number;
   y: number;
@@ -39,7 +40,7 @@ export class PhysicsWorld {
   private walls: Matter.Body[] = [];
   private width = 0;
   private height = 0;
-  /** Skulls that hit something since the last step. */
+  /** Bombs that hit something since the last step. */
   private readonly impacts = new Set<Tile>();
 
   constructor(width: number, height: number) {
@@ -48,7 +49,7 @@ export class PhysicsWorld {
       for (const { bodyA, bodyB } of pairs) {
         for (const body of [bodyA, bodyB]) {
           const tile = this.tiles.get(body.id);
-          if (tile?.kind === 'skull') this.impacts.add(tile);
+          if (tile?.kind === 'bomb') this.impacts.add(tile);
         }
       }
     });
@@ -122,23 +123,23 @@ export class PhysicsWorld {
     return best;
   }
 
-  /** Advances the world; skulls that hit something explode. Returns those explosions. */
+  /** Advances the world; bombs that hit something explode. Returns those explosions. */
   step(ms: number): Explosion[] {
     Engine.update(this.engine, ms);
     const explosions: Explosion[] = [];
-    for (const skull of this.impacts) {
-      if (this.tiles.has(skull.id)) explosions.push(this.explode(skull));
+    for (const bomb of this.impacts) {
+      if (this.tiles.has(bomb.id)) explosions.push(this.explode(bomb));
     }
     this.impacts.clear();
     return explosions;
   }
 
-  /** Removes the skull and every tile in its blast, and pushes the tiles just beyond it away. */
-  explode(skull: Tile): Explosion {
-    const { x, y } = skull.body.position;
-    const r = skull.body.circleRadius ?? 0;
+  /** Removes the bomb and every tile in its blast, and pushes the tiles just beyond it away. */
+  explode(bomb: Tile): Explosion {
+    const { x, y } = bomb.body.position;
+    const r = bomb.body.circleRadius ?? 0;
     const blast = r * BLAST_RADII;
-    this.remove(skull);
+    this.remove(bomb);
     const destroyed: Tile[] = [];
     for (const tile of this.tiles.values()) {
       const dx = tile.body.position.x - x;

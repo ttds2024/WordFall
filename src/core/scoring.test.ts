@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LETTER_VALUES, scoreWord } from './scoring';
+import { DOUBLE_MULTIPLIER, LETTER_VALUES, scoreWord, wordMultiplier } from './scoring';
 
 describe('scoreWord', () => {
   it('adds Scrabble values in English', () => {
@@ -21,5 +21,20 @@ describe('scoreWord', () => {
 describe('jokers', () => {
   it('score nothing, like a blank', () => {
     expect(scoreWord('C★T', 'en')).toBe(4);
+  });
+});
+
+describe('wordMultiplier', () => {
+  const pumpkin = { kind: 'pumpkin' };
+  const double = { kind: 'double' };
+
+  it('is 1 for ordinary letters', () => {
+    expect(wordMultiplier([pumpkin, pumpkin, pumpkin])).toBe(1);
+    expect(wordMultiplier([])).toBe(1);
+  });
+
+  it('doubles a word with a ×2 tile, however many it has', () => {
+    expect(wordMultiplier([pumpkin, double, pumpkin])).toBe(DOUBLE_MULTIPLIER);
+    expect(wordMultiplier([double, double, double])).toBe(2);
   });
 });

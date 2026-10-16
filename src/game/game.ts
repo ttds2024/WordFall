@@ -8,8 +8,10 @@ import { maxTilesFor, Spawner, tileRadius } from './spawner';
 const STEP_MS = 1000 / 60;
 const MAX_FRAME_MS = 250;
 const SPAWN_INTERVAL_MS = 900;
-/** Share of falling tiles that are skulls (no letter; they explode when they hit something). */
-export const SKULL_CHANCE = 0.1;
+/** Share of falling tiles that are bombs (no letter; they explode when they hit something). */
+export const BOMB_CHANCE = 0.1;
+/** Share of falling tiles that are ×2 letters. */
+export const DOUBLE_CHANCE = 0.08;
 /** Share of falling tiles that are jokers. */
 export const JOKER_CHANCE = 0.04;
 
@@ -18,7 +20,7 @@ export interface GameHandlers {
   onTap(tile: Tile): void;
   /** The field was tapped away from any tile. */
   onTapEmpty(): void;
-  /** A skull exploded and destroyed these tiles. */
+  /** A bomb exploded and destroyed these tiles. */
   onExplode?(destroyed: Tile[]): void;
   /** Called once per animation frame while running, with the frame time and the play time since the last frame. */
   onFrame?(now: number, elapsed: number): void;
@@ -104,8 +106,10 @@ export class Game {
       const y = -r - i * r * 2.2;
       const roll = Math.random();
       if (roll < JOKER_CHANCE) this.world.spawn(JOKER, x, y, r, 'joker');
-      else if (roll < JOKER_CHANCE + SKULL_CHANCE) this.world.spawn('', x, y, r, 'skull');
-      else this.world.spawn(pickLetter(this.lang), x, y, r);
+      else if (roll < JOKER_CHANCE + BOMB_CHANCE) this.world.spawn('', x, y, r, 'bomb');
+      else if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE) {
+        this.world.spawn(pickLetter(this.lang), x, y, r, 'double');
+      } else this.world.spawn(pickLetter(this.lang), x, y, r);
     }
   }
 
