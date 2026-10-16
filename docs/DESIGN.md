@@ -31,14 +31,8 @@ the round, including the timer. Changing the language restarts the round in the 
 ## Submitting words
 
 Tapping a letter that is already in the word checks the word; tapping the field away from any
-letter clears it. A setting chooses the mode (default: by tap):
-
-- **By tap:** the word is checked only when the player taps one of its letters (or presses Enter).
-- **Auto:** the word is submitted when it is valid and no longer word can follow it, or after about
-  1.5 seconds with no new letter.
-
-In both modes a tap on one of the word's letters checks it straight away. There are no Submit or
-Clear buttons; on a keyboard, Enter checks the word and Esc/Backspace clears it.
+letter clears it. There is no automatic submitting and no Submit or Clear button; on a keyboard,
+Enter checks the word and Esc/Backspace clears it.
 
 Minimum word length is 3 letters in both languages.
 

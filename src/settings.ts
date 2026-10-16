@@ -1,8 +1,6 @@
-import type { SubmitMode } from './core/word-tracker';
 import type { Language } from './i18n';
 
 export interface Settings {
-  mode: SubmitMode;
   lang: Language;
 }
 
@@ -13,7 +11,6 @@ export function loadSettings(defaults: Settings, storage: Storage | undefined): 
   try {
     const saved = JSON.parse(storage?.getItem(KEY) ?? '{}') as Partial<Settings>;
     return {
-      mode: saved.mode === 'button' || saved.mode === 'auto' ? saved.mode : defaults.mode,
       lang: saved.lang === 'en' || saved.lang === 'ru' ? saved.lang : defaults.lang,
     };
   } catch {

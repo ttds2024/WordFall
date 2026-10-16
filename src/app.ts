@@ -49,7 +49,7 @@ export function startApp(defaultLanguage: Language): void {
       return undefined;
     }
   })();
-  const settings: Settings = loadSettings({ mode: 'button', lang: defaultLanguage }, storage);
+  const settings: Settings = loadSettings({ lang: defaultLanguage }, storage);
 
   const ui = {
     score: element('#score'),
@@ -71,7 +71,7 @@ export function startApp(defaultLanguage: Language): void {
     ruNote: element('#ru-note'),
   };
 
-  const tracker = new WordTracker<Tile>(undefined, settings.mode);
+  const tracker = new WordTracker<Tile>(undefined);
   let dictionaryState: DictionaryState = 'loading';
   let loadToken = 0;
   let score = 0;
@@ -90,17 +90,16 @@ export function startApp(defaultLanguage: Language): void {
         return;
       }
       tile.selected = true;
-      handleResult(tracker.add(tile, performance.now()));
+      tracker.add(tile);
       render();
     },
     onTapEmpty: clearWord,
-    onFrame(now, elapsed) {
+    onFrame(_now, elapsed) {
       if (!round) return;
       if (round.advance(elapsed)) {
         endRound();
         return;
       }
-      handleResult(tracker.update(now));
       render();
     },
   });
@@ -220,17 +219,13 @@ export function startApp(defaultLanguage: Language): void {
   function openSettings(): void {
     game.stop();
     const form = ui.dialog.querySelector('form')!;
-    (form.elements.namedItem('mode') as RadioNodeList).value = settings.mode;
     (form.elements.namedItem('lang') as RadioNodeList).value = settings.lang;
     ui.dialog.showModal();
   }
 
   function applySettings(): void {
     const form = ui.dialog.querySelector('form')!;
-    const mode = (form.elements.namedItem('mode') as RadioNodeList).value as Settings['mode'];
     const lang = (form.elements.namedItem('lang') as RadioNodeList).value as Language;
-    settings.mode = mode;
-    tracker.mode = mode;
     const changedLanguage = lang !== settings.lang;
     if (changedLanguage) {
       settings.lang = lang;

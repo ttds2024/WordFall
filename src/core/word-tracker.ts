@@ -1,8 +1,6 @@
 import type { Dictionary } from './dictionary';
 import { JOKER, MIN_WORD_LENGTH, normalizeWord } from './word';
 
-export type SubmitMode = 'button' | 'auto';
-
 /** How the word being built looks right now. */
 export type WordStatus = 'empty' | 'short' | 'valid' | 'unknown' | 'used';
 
@@ -11,25 +9,14 @@ export type SubmitResult<T> =
   | { ok: true; word: string; items: T[] }
   | { ok: false; word: string; reason: Exclude<WordStatus, 'empty' | 'valid'> };
 
-/** In auto mode, a valid word is submitted after this long without a new letter. */
-export const AUTO_SUBMIT_DELAY_MS = 1500;
-
-/**
- * Collects tapped letters into a word and decides when it is submitted.
- * Button mode submits only on request. Auto mode submits a valid word as soon as no longer
- * word could follow it, or after AUTO_SUBMIT_DELAY_MS with no new letter.
- */
+/** Collects tapped letters into a word and checks it when the player submits it. */
 export class WordTracker<T extends { readonly letter: string }> {
   private picked: T[] = [];
   private readonly used = new Set<string>();
-  private lastAddAt = 0;
   /** The last lookup, since a word with jokers can mean scanning much of the dictionary. */
   private cache: { key: string; status: WordStatus; resolved?: string } | undefined;
 
-  constructor(
-    private dictionary: Dictionary | undefined,
-    public mode: SubmitMode,
-  ) {}
+  constructor(private dictionary: Dictionary | undefined) {}
 
   setDictionary(dictionary: Dictionary | undefined): void {
     this.dictionary = dictionary;
@@ -96,31 +83,11 @@ export class WordTracker<T extends { readonly letter: string }> {
     return result;
   }
 
-  /** Adds a letter if canAdd allows it. In auto mode this may submit the word straight away. */
-  add(item: T, now: number): SubmitResult<T> | undefined {
-    if (!this.canAdd(item)) return undefined;
+  /** Adds a letter if canAdd allows it; returns whether it was added. */
+  add(item: T): boolean {
+    if (!this.canAdd(item)) return false;
     this.picked.push(item);
-    this.lastAddAt = now;
-    if (
-      this.mode === 'auto' &&
-      this.status() === 'valid' &&
-      !this.dictionary?.hasLongerWord(this.word)
-    ) {
-      return this.submit();
-    }
-    return undefined;
-  }
-
-  /** Call every frame. In auto mode, submits a valid word once the player pauses. */
-  update(now: number): SubmitResult<T> | undefined {
-    if (
-      this.mode === 'auto' &&
-      this.status() === 'valid' &&
-      now - this.lastAddAt >= AUTO_SUBMIT_DELAY_MS
-    ) {
-      return this.submit();
-    }
-    return undefined;
+    return true;
   }
 
   /** Submits the word. A valid word is recorded and cleared; anything else stays for editing. */
