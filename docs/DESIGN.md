@@ -10,8 +10,8 @@ The game opens on a start menu with two modes:
   when it runs out the menu comes back with the final score.
 - **Infinity:** no timer; the round lasts until the player leaves it.
 
-The **☰** button ends the round and returns to the menu, showing the score. Opening Settings pauses
-the round, including the timer. Changing the language restarts the round in the same mode.
+The **☰** button ends the round and returns to the menu, showing the score. Settings (the language)
+open from the start menu only; there is no Settings button during a round.
 
 ## Accounts
 
