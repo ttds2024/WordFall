@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PhysicsWorld } from './physics';
+import { BLAST_RADII, PhysicsWorld, type Explosion } from './physics';
 
 const STEP = 1000 / 60;
 
@@ -63,6 +63,53 @@ describe('tile kinds', () => {
   it('spawns pumpkins by default and skulls on request', () => {
     const world = new PhysicsWorld(400, 600);
     expect(world.spawn('A', 100, 100, 30).kind).toBe('pumpkin');
-    expect(world.spawn('B', 200, 100, 30, 'skull').kind).toBe('skull');
+    expect(world.spawn('', 200, 100, 30, 'skull').kind).toBe('skull');
+  });
+});
+
+describe('skulls', () => {
+  /** Steps until something explodes, for up to `seconds`. */
+  function runUntilBoom(world: PhysicsWorld, seconds: number): Explosion[] {
+    for (let i = 0; i < seconds * 60; i++) {
+      const explosions = world.step(STEP);
+      if (explosions.length > 0) return explosions;
+    }
+    return [];
+  }
+
+  it('explode on hitting the floor', () => {
+    const world = new PhysicsWorld(400, 600);
+    const skull = world.spawn('', 200, -30, 30, 'skull');
+    const [boom] = runUntilBoom(world, 4);
+    expect(boom).toBeDefined();
+    expect(boom!.y).toBeGreaterThan(500);
+    expect(boom!.radius).toBe(30 * BLAST_RADII);
+    expect(world.all()).not.toContain(skull);
+  });
+
+  it('destroy nearby tiles and push farther ones away', () => {
+    const world = new PhysicsWorld(800, 600);
+    const near = world.spawn('A', 340, 570, 30);
+    const alsoNear = world.spawn('B', 460, 570, 30);
+    const far = world.spawn('C', 530, 570, 30);
+    const away = world.spawn('D', 50, 570, 30);
+    run(world, 1);
+    world.spawn('', 400, 400, 30, 'skull');
+    const [boom] = runUntilBoom(world, 3);
+    expect(boom!.destroyed).toEqual(expect.arrayContaining([near, alsoNear]));
+    expect(boom!.destroyed).toHaveLength(2);
+    expect(world.all()).toEqual(expect.arrayContaining([far, away]));
+    expect(far.body.velocity.x).toBeGreaterThan(0);
+    expect(world.count).toBe(2);
+  });
+
+  it('explode when landing on a tile', () => {
+    const world = new PhysicsWorld(100, 600);
+    const below = world.spawn('A', 50, 570, 30);
+    run(world, 1);
+    world.spawn('', 50, 300, 30, 'skull');
+    const [boom] = runUntilBoom(world, 3);
+    expect(boom!.destroyed).toEqual([below]);
+    expect(world.count).toBe(0);
   });
 });

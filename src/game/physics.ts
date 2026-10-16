@@ -1,10 +1,10 @@
 import Matter from 'matter-js';
 
-const { Bodies, Composite, Engine } = Matter;
+const { Bodies, Body, Composite, Engine, Events } = Matter;
 
 /**
- * A pumpkin is an ordinary letter; a skull doubles the score of a word that uses it; a joker
- * (a star, letter JOKER) stands for any one letter.
+ * A pumpkin is an ordinary letter; a skull has no letter and explodes when it hits something;
+ * a joker (a star, letter JOKER) stands for any one letter.
  */
 export type TileKind = 'pumpkin' | 'skull' | 'joker';
 
@@ -17,6 +17,20 @@ export interface Tile {
 }
 
 const WALL = 200;
+/** A skull's blast destroys tiles whose centres are within this many tile radii of it. */
+export const BLAST_RADII = 2.6;
+/** Tiles within this many radii (but outside the blast) are pushed away. */
+const PUSH_RADII = 5;
+/** Speed, in px per step, given to a pushed tile right at the edge of the blast. */
+const PUSH_SPEED = 6;
+
+/** A skull that went off: where, how far its blast reached, and the tiles it destroyed. */
+export interface Explosion {
+  x: number;
+  y: number;
+  radius: number;
+  destroyed: Tile[];
+}
 
 /** Matter.js world: a floor and two side walls, open at the top, holding round letter tiles. */
 export class PhysicsWorld {
@@ -25,9 +39,19 @@ export class PhysicsWorld {
   private walls: Matter.Body[] = [];
   private width = 0;
   private height = 0;
+  /** Skulls that hit something since the last step. */
+  private readonly impacts = new Set<Tile>();
 
   constructor(width: number, height: number) {
     this.resize(width, height);
+    Events.on(this.engine, 'collisionStart', ({ pairs }) => {
+      for (const { bodyA, bodyB } of pairs) {
+        for (const body of [bodyA, bodyB]) {
+          const tile = this.tiles.get(body.id);
+          if (tile?.kind === 'skull') this.impacts.add(tile);
+        }
+      }
+    });
   }
 
   /** Rebuilds the walls for a new size and keeps tiles inside it. */
@@ -98,7 +122,39 @@ export class PhysicsWorld {
     return best;
   }
 
-  step(ms: number): void {
+  /** Advances the world; skulls that hit something explode. Returns those explosions. */
+  step(ms: number): Explosion[] {
     Engine.update(this.engine, ms);
+    const explosions: Explosion[] = [];
+    for (const skull of this.impacts) {
+      if (this.tiles.has(skull.id)) explosions.push(this.explode(skull));
+    }
+    this.impacts.clear();
+    return explosions;
+  }
+
+  /** Removes the skull and every tile in its blast, and pushes the tiles just beyond it away. */
+  explode(skull: Tile): Explosion {
+    const { x, y } = skull.body.position;
+    const r = skull.body.circleRadius ?? 0;
+    const blast = r * BLAST_RADII;
+    this.remove(skull);
+    const destroyed: Tile[] = [];
+    for (const tile of this.tiles.values()) {
+      const dx = tile.body.position.x - x;
+      const dy = tile.body.position.y - y;
+      const distance = Math.hypot(dx, dy);
+      if (distance <= blast) {
+        destroyed.push(tile);
+      } else if (distance <= r * PUSH_RADII) {
+        const speed = (PUSH_SPEED * blast) / distance;
+        Body.setVelocity(tile.body, {
+          x: tile.body.velocity.x + (dx / distance) * speed,
+          y: tile.body.velocity.y + (dy / distance) * speed,
+        });
+      }
+    }
+    for (const tile of destroyed) this.remove(tile);
+    return { x, y, radius: blast, destroyed };
   }
 }

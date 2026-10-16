@@ -22,6 +22,14 @@ describe('WordTracker', () => {
     expect(tracker.status()).toBe('unknown');
   });
 
+  it('drops destroyed letters from the word', () => {
+    const tracker = new WordTracker(dict);
+    const [c, a, t] = tiles('CAT');
+    for (const tile of [c!, a!, t!]) tracker.add(tile);
+    tracker.remove([a!]);
+    expect(tracker.word).toBe('CT');
+  });
+
   it('ignores the same tile twice', () => {
     const tracker = new WordTracker(dict);
     const tile = { letter: 'C' };
