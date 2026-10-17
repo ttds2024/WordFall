@@ -19,6 +19,8 @@
   --good: #79d634;
   --bad: var(--red);
   --edge: 4px;
+  /* Darkens the background picture so letters and buttons stay readable on it. */
+  --shade: linear-gradient(rgba(19, 31, 36, 0.55), rgba(19, 31, 36, 0.75));
   color-scheme: dark;
 }
 
@@ -26,11 +28,29 @@
   box-sizing: border-box;
 }
 
+html {
+  background: var(--bg);
+}
+
+/* Background picture: wide for computers, tall for phones and tablets (only one is downloaded). */
+body {
+  background:
+    var(--shade),
+    url('./images/big.jpg') center / cover no-repeat,
+    var(--bg);
+}
+
+:root[data-device='mobile'] body {
+  background:
+    var(--shade),
+    url('./images/small.jpeg') center / cover no-repeat,
+    var(--bg);
+}
+
 html,
 body {
   margin: 0;
   height: 100%;
-  background: var(--bg);
   color: var(--fg);
   font-family: Nunito, ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
   font-weight: 700;
@@ -98,6 +118,7 @@ button:disabled {
   gap: 8px;
   padding: 10px 16px 12px;
   border-bottom: 2px solid var(--panel-border);
+  background: rgba(19, 31, 36, 0.8);
 }
 
 .score {
@@ -345,7 +366,10 @@ dialog .primary {
   gap: 20px;
   padding: 24px 16px;
   overflow-y: auto;
-  background: var(--bg);
+  /* The background picture shows through, dimmed and softly blurred. */
+  background: rgba(19, 31, 36, 0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   text-align: center;
 }
 

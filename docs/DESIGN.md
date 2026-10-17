@@ -77,6 +77,10 @@ Minimum word length is 3 letters in both languages.
   for the main action, blue for the second, yellow score, red for misses) and chunky buttons and
   choice cards with a solid bottom edge that presses down when tapped. Only the style is borrowed:
   no Duolingo name, owl or logo. The game field keeps its Halloween pumpkins and stars.
+- **Background picture:** `src/images/small.jpeg` (tall) on phones and tablets, in the Android/iOS
+  apps and in phone browsers alike, and `src/images/big.jpg` (wide) on computers; only the one in
+  use is downloaded. A dark shade over it keeps letters and buttons readable, and the start menu
+  blurs it.
 - All artwork drawn in code as SVG (pumpkins, bats, moon, gravestones).
 - Sound effects and background music come later, each with its own on/off switch in Settings.
 
