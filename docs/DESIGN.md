@@ -61,8 +61,9 @@ Minimum word length is 3 letters in both languages.
 - English and Russian. A setting switches the letters, the dictionary and the interface text
   together. The first language follows the device language.
 - Ё and Е count as the same letter.
-- English words come from `data/words_en.txt` (any lower-case entry of 3+ letters counts).
-  Russian words will be supplied later.
+- Words come from `data/words_en.txt` and `data/words_ru.txt` (any lower-case entry of 3+ letters
+  counts; multi-word entries such as «а-ля фуршет» are dropped). The Russian list has about 124,000
+  playable words.
 
 ## Temporary rules
 
