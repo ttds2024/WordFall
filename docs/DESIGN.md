@@ -56,6 +56,10 @@ Enter checks the word and Esc/Backspace clears it.
 
 Minimum word length is 3 letters in both languages.
 
+A correct word pops up where its tiles were, as a badge with its points (and ×2 when doubled) over
+the word, then rises about 130 px and fades out over 1.2 s; the score at the top bounces. With
+reduced motion turned on, the badge only fades. Misses still show a red message at the top.
+
 ## Languages
 
 - English and Russian. A setting switches the letters, the dictionary and the interface text
