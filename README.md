@@ -19,8 +19,8 @@ npm run build    # production build in dist/
 
 `data/words_<lang>.txt` holds one word per line. At build time the list is cleaned (lower-case
 letters only, at least 3 letters, Ё folded into Е, no names or abbreviations) and published as
-`dict/<lang>.txt`, which the game downloads on start. Only English (`data/words_en.txt`) exists so
-far; drop in `data/words_ru.txt` to enable Russian.
+`dict/<lang>.txt`, which the game downloads when that language is chosen. There are lists for
+English (`data/words_en.txt`) and Russian (`data/words_ru.txt`); Windows line endings are fine.
 
 ## Platforms
 

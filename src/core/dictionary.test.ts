@@ -7,6 +7,10 @@ describe('cleanWordList', () => {
     expect(cleanWordList(text, 'en')).toEqual(['cat', 'people', 'time']);
   });
 
+  it('reads Windows line endings and drops multi-word entries', () => {
+    expect(cleanWordList('абажур\r\nа-ля фуршет\r\nкот\r\n', 'ru')).toEqual(['абажур', 'кот']);
+  });
+
   it('folds Ё into Е for Russian and drops other alphabets', () => {
     expect(cleanWordList('ёлка\nкот\ncat\nМосква\n', 'ru')).toEqual(['елка', 'кот']);
   });
