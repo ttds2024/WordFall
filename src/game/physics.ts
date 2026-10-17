@@ -15,6 +15,8 @@ export interface Tile {
   readonly kind: TileKind;
   readonly body: Matter.Body;
   selected: boolean;
+  /** Picked by the bot, which is about to try a word with it. */
+  bot: boolean;
 }
 
 const WALL = 200;
@@ -87,7 +89,7 @@ export class PhysicsWorld {
       frictionAir: 0.02,
       density: 0.002,
     });
-    const tile: Tile = { id: body.id, letter, kind, body, selected: false };
+    const tile: Tile = { id: body.id, letter, kind, body, selected: false, bot: false };
     this.tiles.set(tile.id, tile);
     Composite.add(this.engine.world, body);
     return tile;

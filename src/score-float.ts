@@ -1,7 +1,7 @@
 /** How long the floating word and points stay on screen; matches the CSS animation. */
 export const FLOAT_MS = 1200;
 /** Keeps the label this far from the field's sides so it is never cut off. */
-const EDGE = 70;
+const EDGE = 100;
 
 /**
  * Where a found word's label starts: the middle of its tiles, kept inside the field and below
@@ -21,26 +21,31 @@ export function floatPosition(
   };
 }
 
+/** "+12", or "+12 ×2" for a doubled word. */
+export function pointsText(points: number, multiplier: number): string {
+  return `+${points}${multiplier > 1 ? ` ×${multiplier}` : ''}`;
+}
+
 /**
- * Shows a found word with its points where its tiles were; it rises and fades out, then removes
- * itself.
+ * Shows a headline (usually the points) over a word where its tiles were; it rises and fades out,
+ * then removes itself. The bot's words use the 'bot' look.
  */
 export function showScoreFloat(
   container: HTMLElement,
   at: { x: number; y: number },
+  headline: string,
   word: string,
-  points: number,
-  multiplier: number,
+  look: 'player' | 'bot' = 'player',
 ): void {
   const label = document.createElement('div');
-  label.className = 'score-float';
+  label.className = look === 'bot' ? 'score-float bot' : 'score-float';
   label.style.left = `${at.x}px`;
   label.style.top = `${at.y}px`;
   label.setAttribute('aria-hidden', 'true');
 
   const value = document.createElement('b');
   value.className = 'score-float-points';
-  value.textContent = `+${points}${multiplier > 1 ? ` ×${multiplier}` : ''}`;
+  value.textContent = headline;
   const text = document.createElement('span');
   text.className = 'score-float-word';
   text.textContent = word;

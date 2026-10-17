@@ -153,6 +153,23 @@ button:disabled {
   }
 }
 
+/* The bot's score, under the player's, when playing against it. */
+.bot-score {
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.bot-score.bump {
+  animation: score-bump 0.45s ease-out;
+}
+
+.result-bot {
+  color: var(--blue);
+  font-size: 18px;
+  font-weight: 900;
+}
+
 /* A found word and its points: pop in where its tiles were, rise and fade (1.2 s, FLOAT_MS). */
 .score-float {
   position: absolute;
@@ -640,4 +657,19 @@ button.provider.vk {
 .auth-error {
   color: var(--muted);
   font-size: 14px;
+}
+
+/* The bot's words and misses: the same rising badge, in blue. */
+.score-float.bot {
+  border-color: var(--blue);
+  box-shadow: 0 var(--edge) 0 var(--blue-edge);
+}
+
+.score-float.bot .score-float-points {
+  color: var(--blue);
+  font-size: 26px;
+}
+
+.score-float.bot .score-float-word {
+  color: var(--fg);
 }

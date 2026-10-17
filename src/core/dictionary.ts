@@ -36,6 +36,11 @@ export class Dictionary {
     return new Dictionary(text.split('\n').filter(Boolean));
   }
 
+  /** Every word, normalised and sorted. */
+  get all(): readonly string[] {
+    return this.words;
+  }
+
   get size(): number {
     return this.set.size;
   }
