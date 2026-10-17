@@ -5,6 +5,7 @@ import { scoreWord, wordMultiplier } from './core/scoring';
 import { JOKER } from './core/word';
 import { WordTracker, type SubmitResult, type WordStatus } from './core/word-tracker';
 import { Game } from './game/game';
+import { bumpScore, floatPosition, showScoreFloat } from './score-float';
 import type { Tile } from './game/physics';
 import { t, type Language, type StringKey } from './i18n';
 import { loadSettings, saveSettings, type Settings } from './settings';
@@ -54,6 +55,7 @@ export function startApp(defaultLanguage: Language): void {
 
   const ui = {
     score: element('#score'),
+    fieldWrap: element('.field-wrap'),
     timer: element('#timer'),
     menu: element('#menu'),
     result: element('#result'),
@@ -119,8 +121,15 @@ export function startApp(defaultLanguage: Language): void {
       const multiplier = wordMultiplier(result.items);
       const points = scoreWord(letters, settings.lang) * multiplier;
       score += points;
+      // The word and its points rise from where its tiles were.
+      const at = floatPosition(
+        result.items.map((tile) => tile.body.position),
+        ui.fieldWrap.clientWidth,
+        ui.fieldWrap.clientHeight,
+      );
       game.removeTiles(result.items);
-      showToast(`+${points}  ${result.word}${multiplier > 1 ? `  ×${multiplier}` : ''}`, 'good');
+      showScoreFloat(ui.fieldWrap, at, result.word, points, multiplier);
+      bumpScore(ui.score);
     } else {
       showToast(t(settings.lang, STATUS_TEXT[result.reason]), 'bad');
     }
