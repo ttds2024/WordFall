@@ -22,6 +22,7 @@
         <div class="score">
           <span class="score-label" data-i18n="score"></span>
           <span id="score">0</span>
+          <span id="bot-score" class="bot-score" hidden></span>
           <span id="timer" class="timer"></span>
         </div>
         <div class="word-box">
@@ -67,6 +68,7 @@
             <span data-i18n="finalScore"></span>
             <b id="result-score"></b>
           </div>
+          <div id="result-bot" class="result-bot" hidden></div>
         </div>
         <div class="menu-options">
           <button id="play-timed" class="primary" type="button">
@@ -92,6 +94,21 @@
             <label>
               <input type="radio" name="lang" value="ru" />
               <span><b>Русский</b><small id="ru-note"></small></span>
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend data-i18n="opponent"></legend>
+            <label>
+              <input type="radio" name="opponent" value="none" />
+              <span
+                ><b data-i18n="opponentNone"></b><small data-i18n="opponentNoneHint"></small
+              ></span>
+            </label>
+            <label>
+              <input type="radio" name="opponent" value="bot" />
+              <span
+                ><b data-i18n="opponentBot"></b><small data-i18n="opponentBotHint"></small
+              ></span>
             </label>
           </fieldset>
           <button class="primary" value="done" data-i18n="done"></button>

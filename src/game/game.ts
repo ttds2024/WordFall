@@ -76,6 +76,11 @@ export class Game {
     this.draw();
   }
 
+  /** The tiles on the field. */
+  tiles(): Tile[] {
+    return this.world.all();
+  }
+
   removeTiles(tiles: readonly Tile[]): void {
     for (const tile of tiles) this.world.remove(tile);
   }

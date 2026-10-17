@@ -16,7 +16,7 @@ describe('floatPosition', () => {
   });
 
   it('stays inside the field with room to rise', () => {
-    expect(floatPosition([{ x: 5, y: 10 }], 400, 700)).toEqual({ x: 70, y: 90 });
-    expect(floatPosition([{ x: 399, y: 699 }], 400, 700)).toEqual({ x: 330, y: 670 });
+    expect(floatPosition([{ x: 5, y: 10 }], 400, 700)).toEqual({ x: 100, y: 90 });
+    expect(floatPosition([{ x: 399, y: 699 }], 400, 700)).toEqual({ x: 300, y: 670 });
   });
 });

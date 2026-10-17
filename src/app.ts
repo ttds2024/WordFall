@@ -1,11 +1,12 @@
 import { setupAuth } from './auth/ui';
+import { BOT_ACCURACY, BOT_THINK_MS, BotClock, findWord, pickMiss } from './core/bot';
 import { Dictionary } from './core/dictionary';
 import { formatTime, RoundTimer, type RoundKind } from './core/round';
 import { scoreWord, wordMultiplier } from './core/scoring';
 import { JOKER } from './core/word';
 import { WordTracker, type SubmitResult, type WordStatus } from './core/word-tracker';
 import { Game } from './game/game';
-import { bumpScore, floatPosition, showScoreFloat } from './score-float';
+import { bumpScore, floatPosition, pointsText, showScoreFloat } from './score-float';
 import type { Tile } from './game/physics';
 import { t, type Language, type StringKey } from './i18n';
 import { loadSettings, saveSettings, type Settings } from './settings';
@@ -51,10 +52,12 @@ export function startApp(defaultLanguage: Language): void {
       return undefined;
     }
   })();
-  const settings: Settings = loadSettings({ lang: defaultLanguage }, storage);
+  const settings: Settings = loadSettings({ lang: defaultLanguage, opponent: 'none' }, storage);
 
   const ui = {
     score: element('#score'),
+    botScore: element('#bot-score'),
+    resultBot: element('#result-bot'),
     fieldWrap: element('.field-wrap'),
     timer: element('#timer'),
     menu: element('#menu'),
@@ -80,11 +83,16 @@ export function startApp(defaultLanguage: Language): void {
   let score = 0;
   let toastTimer = 0;
   let round: RoundTimer | undefined;
+  let dictionary: Dictionary | undefined;
+  // The bot, when playing against one: its score, when it next tries, and the try in progress.
+  let botScore = 0;
+  let botClock: BotClock | undefined;
+  let botTry: { tiles: Tile[]; correct: boolean; word: string; wait: number } | undefined;
 
   const game = new Game(element<HTMLCanvasElement>('#field'), settings.lang, {
     onTap(tile) {
-      // Bombs carry no letter; they only explode.
-      if (tile.kind === 'bomb') return;
+      // Bombs carry no letter; they only explode. Letters the bot has picked are its own.
+      if (tile.kind === 'bomb' || tile.bot) return;
       // Tapping a letter already in the word checks the word.
       if (tracker.includes(tile)) {
         submitWord();
@@ -109,6 +117,7 @@ export function startApp(defaultLanguage: Language): void {
         endRound();
         return;
       }
+      updateBot(elapsed);
       render();
     },
   });
@@ -128,7 +137,7 @@ export function startApp(defaultLanguage: Language): void {
         ui.fieldWrap.clientHeight,
       );
       game.removeTiles(result.items);
-      showScoreFloat(ui.fieldWrap, at, result.word, points, multiplier);
+      showScoreFloat(ui.fieldWrap, at, pointsText(points, multiplier), result.word);
       bumpScore(ui.score);
     } else {
       showToast(t(settings.lang, STATUS_TEXT[result.reason]), 'bad');
@@ -136,9 +145,76 @@ export function startApp(defaultLanguage: Language): void {
     return true;
   }
 
+  /** Advances the bot: starts a try when it is due, and checks the word once it has "thought". */
+  function updateBot(ms: number): void {
+    if (!botClock || !dictionary) return;
+    if (botTry) {
+      botTry.wait -= ms;
+      if (botTry.wait <= 0) finishBotTry();
+    } else if (botClock.advance(ms)) {
+      startBotTry(dictionary);
+    }
+  }
+
+  /**
+   * The bot picks letters from the field (never the player's, a star or a bad pumpkin): a real
+   * word not found yet with probability BOT_ACCURACY, otherwise letters that spell nothing.
+   */
+  function startBotTry(words: Dictionary): void {
+    const free = game
+      .tiles()
+      .filter((tile) => (tile.kind === 'pumpkin' || tile.kind === 'double') && !tile.selected);
+    const letters = free.map((tile) => tile.letter);
+    let picks =
+      Math.random() < BOT_ACCURACY
+        ? findWord(letters, words.all, (word) => tracker.isUsed(word))
+        : undefined;
+    const correct = picks !== undefined;
+    picks ??= pickMiss(letters, (word) => words.has(word));
+    if (!picks) return;
+    const tiles = picks.map((i) => free[i]!);
+    for (const tile of tiles) tile.bot = true;
+    botTry = { tiles, correct, word: tiles.map((t) => t.letter).join(''), wait: BOT_THINK_MS };
+  }
+
+  function finishBotTry(): void {
+    if (!botTry) return;
+    const { tiles, correct, word } = botTry;
+    botTry = undefined;
+    for (const tile of tiles) tile.bot = false;
+    // A bomb may have taken some of its letters meanwhile.
+    const onField = game.tiles();
+    if (!tiles.every((tile) => onField.includes(tile))) return;
+    const at = floatPosition(
+      tiles.map((tile) => tile.body.position),
+      ui.fieldWrap.clientWidth,
+      ui.fieldWrap.clientHeight,
+    );
+    // The player may have found the same word while the bot was thinking.
+    if (correct && !tracker.isUsed(word)) {
+      const multiplier = wordMultiplier(tiles);
+      const points = scoreWord(word, settings.lang) * multiplier;
+      botScore += points;
+      tracker.markUsed(word);
+      game.removeTiles(tiles);
+      showScoreFloat(ui.fieldWrap, at, `🤖 ${pointsText(points, multiplier)}`, word, 'bot');
+      bumpScore(ui.botScore);
+    } else {
+      showScoreFloat(ui.fieldWrap, at, t(settings.lang, 'botMissed'), word, 'bot');
+    }
+  }
+
+  function stopBot(): void {
+    for (const tile of botTry?.tiles ?? []) tile.bot = false;
+    botTry = undefined;
+  }
+
   function startRound(kind: RoundKind): void {
     round = new RoundTimer(kind);
     score = 0;
+    stopBot();
+    botScore = 0;
+    botClock = settings.opponent === 'bot' ? new BotClock() : undefined;
     tracker.reset();
     game.reset();
     ui.menu.hidden = true;
@@ -152,10 +228,19 @@ export function startApp(defaultLanguage: Language): void {
     const timeUp = round.over;
     round = undefined;
     game.stop();
+    stopBot();
     clearWord();
-    ui.resultTitle.textContent = timeUp ? t(settings.lang, 'timeUp') : '';
-    ui.resultTitle.hidden = !timeUp;
+    // Against the bot, the title says who won; otherwise whether time ran out.
+    const title = botClock
+      ? t(settings.lang, score > botScore ? 'youWin' : score < botScore ? 'botWins' : 'draw')
+      : timeUp
+        ? t(settings.lang, 'timeUp')
+        : '';
+    ui.resultTitle.textContent = title;
+    ui.resultTitle.hidden = !title;
     ui.resultScore.textContent = String(score);
+    ui.resultBot.textContent = `🤖 ${t(settings.lang, 'bot')}: ${botScore}`;
+    ui.resultBot.hidden = !botClock;
     ui.result.hidden = false;
     ui.menu.hidden = false;
   }
@@ -192,6 +277,8 @@ export function startApp(defaultLanguage: Language): void {
   function render(): void {
     const status = tracker.status();
     ui.score.textContent = String(score);
+    ui.botScore.textContent = `🤖 ${botScore}`;
+    ui.botScore.hidden = !botClock;
     const remaining = round?.remaining;
     ui.timer.textContent = remaining === undefined ? '∞' : formatTime(remaining);
     ui.timer.classList.toggle('low', remaining !== undefined && remaining <= LOW_TIME_MS);
@@ -218,13 +305,15 @@ export function startApp(defaultLanguage: Language): void {
   async function loadWords(): Promise<void> {
     const token = ++loadToken;
     dictionaryState = 'loading';
+    dictionary = undefined;
     tracker.setDictionary(undefined);
     render();
     try {
-      const dictionary = await fetchDictionary(settings.lang);
+      const loaded = await fetchDictionary(settings.lang);
       if (token !== loadToken) return;
-      tracker.setDictionary(dictionary);
-      dictionaryState = dictionary ? 'ready' : 'missing';
+      dictionary = loaded;
+      tracker.setDictionary(loaded);
+      dictionaryState = loaded ? 'ready' : 'missing';
     } catch {
       if (token !== loadToken) return;
       dictionaryState = 'failed';
@@ -236,12 +325,15 @@ export function startApp(defaultLanguage: Language): void {
   function openSettings(): void {
     const form = ui.dialog.querySelector('form')!;
     (form.elements.namedItem('lang') as RadioNodeList).value = settings.lang;
+    (form.elements.namedItem('opponent') as RadioNodeList).value = settings.opponent;
     ui.dialog.showModal();
   }
 
   function applySettings(): void {
     const form = ui.dialog.querySelector('form')!;
     const lang = (form.elements.namedItem('lang') as RadioNodeList).value as Language;
+    settings.opponent = (form.elements.namedItem('opponent') as RadioNodeList)
+      .value as Settings['opponent'];
     if (lang !== settings.lang) {
       settings.lang = lang;
       game.reset(lang);

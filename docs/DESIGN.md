@@ -13,6 +13,19 @@ The game opens on a start menu with two modes:
 The **☰** button ends the round and returns to the menu, showing the score. Settings (the language)
 open from the start menu only; there is no Settings button during a round.
 
+## Playing against a bot
+
+Settings → **Opponent** chooses **None** (default) or **AI bot**. Against the bot:
+
+- Every 6–10 seconds of play the bot picks letters from the field (never the player's current
+  letters, stars or bad pumpkins) and rings them in blue for about a second while it "thinks".
+- With probability 0.5 it goes for a real word: a random dictionary word of 3–6 letters that can be
+  spelled from the field and has not been found yet. Its letters disappear and it scores like the
+  player (×2 pumpkins included). Otherwise it picks 3–4 letters that spell nothing, shows "Bot
+  missed", and the letters stay in play. If the field holds no word it can spell, it misses too.
+- Found words are shared: a word the bot finds cannot be scored by the player, and vice versa.
+- The bot's score shows under the player's, in blue; at the end the menu says who won.
+
 ## Accounts
 
 Players can sign in with **Yandex ID** or **VK ID** from the start menu; signed in, the menu shows

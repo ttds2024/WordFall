@@ -24,6 +24,17 @@ export class WordTracker<T extends { readonly letter: string }> {
     this.reset();
   }
 
+  /** Whether a word (normalised) has been found this round, by the player or the bot. */
+  isUsed(word: string): boolean {
+    return this.used.has(normalizeWord(word));
+  }
+
+  /** Records a word found by someone else (the bot), so it cannot be scored again. */
+  markUsed(word: string): void {
+    this.used.add(normalizeWord(word));
+    this.cache = undefined;
+  }
+
   /** Starts over: forgets found words and the word being built. */
   reset(): void {
     this.used.clear();

@@ -10,6 +10,7 @@ const COLORS = {
   stem: '#3f6b2a',
   letter: '#2a1300',
   glow: 'rgba(255, 210, 63, 0.8)',
+  botGlow: 'rgba(28, 176, 246, 0.95)',
   badge: '#ffc800',
   badgeText: '#2a1300',
   star: '#ffc83d',
@@ -92,6 +93,7 @@ export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[])
       ctx.shadowColor = COLORS.glow;
       ctx.shadowBlur = r * 0.6;
     }
+    if (tile.bot) drawBotRing(ctx, r);
     if (tile.kind === 'joker') {
       const image = picture(starUrl);
       if (image) drawStarImage(ctx, image, r, tile.selected);
@@ -144,6 +146,19 @@ function drawPumpkin(ctx: CanvasRenderingContext2D, r: number, selected: boolean
 
   ctx.fillStyle = COLORS.stem;
   ctx.fillRect(-r * 0.1, -r * 1.12, r * 0.2, r * 0.28);
+}
+
+/** A glowing blue ring round a tile the bot has picked. */
+function drawBotRing(ctx: CanvasRenderingContext2D, r: number): void {
+  ctx.save();
+  ctx.strokeStyle = COLORS.botGlow;
+  ctx.shadowColor = COLORS.botGlow;
+  ctx.shadowBlur = r * 0.7;
+  ctx.lineWidth = Math.max(3, r * 0.16);
+  ctx.beginPath();
+  ctx.arc(0, 0, r * 1.06, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
 }
 
 /** A pale glowing disc behind a selected picture tile. */
