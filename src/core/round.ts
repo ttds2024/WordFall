@@ -1,17 +1,18 @@
-export type RoundKind = 'timed' | 'endless';
+/** A round on your own, or against the bot; both last ROUND_MS. */
+export type RoundKind = 'solo' | 'bot';
 
-/** Length of a timed round. */
-export const TIMED_ROUND_MS = 5 * 60 * 1000;
+/** Length of a round. */
+export const ROUND_MS = 5 * 60 * 1000;
 
-/** Counts down a timed round; an endless round never ends. */
+/** Counts a round down. */
 export class RoundTimer {
   private elapsed = 0;
 
   constructor(readonly kind: RoundKind) {}
 
-  /** Milliseconds left, or undefined for an endless round. */
-  get remaining(): number | undefined {
-    return this.kind === 'timed' ? Math.max(0, TIMED_ROUND_MS - this.elapsed) : undefined;
+  /** Milliseconds left. */
+  get remaining(): number {
+    return Math.max(0, ROUND_MS - this.elapsed);
   }
 
   get over(): boolean {

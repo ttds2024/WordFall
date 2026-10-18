@@ -53,10 +53,7 @@ export function startApp(defaultLanguage: Language): void {
       return undefined;
     }
   })();
-  const settings: Settings = loadSettings(
-    { lang: defaultLanguage, opponent: 'none', sound: true },
-    storage,
-  );
+  const settings: Settings = loadSettings({ lang: defaultLanguage, sound: true }, storage);
 
   const ui = {
     score: element('#score'),
@@ -69,7 +66,7 @@ export function startApp(defaultLanguage: Language): void {
     resultTitle: element('#result-title'),
     resultScore: element('#result-score'),
     playTimed: element<HTMLButtonElement>('#play-timed'),
-    playEndless: element<HTMLButtonElement>('#play-endless'),
+    playBot: element<HTMLButtonElement>('#play-bot'),
     menuButton: element<HTMLButtonElement>('#menu-button'),
     menuSettings: element<HTMLButtonElement>('#menu-settings'),
     word: element('#word'),
@@ -222,7 +219,7 @@ export function startApp(defaultLanguage: Language): void {
     score = 0;
     stopBot();
     botScore = 0;
-    botClock = settings.opponent === 'bot' ? new BotClock() : undefined;
+    botClock = kind === 'bot' ? new BotClock() : undefined;
     tracker.reset();
     game.reset();
     ui.menu.hidden = true;
@@ -288,7 +285,7 @@ export function startApp(defaultLanguage: Language): void {
     ui.botScore.textContent = `🤖 ${botScore}`;
     ui.botScore.hidden = !botClock;
     const remaining = round?.remaining;
-    ui.timer.textContent = remaining === undefined ? '∞' : formatTime(remaining);
+    ui.timer.textContent = remaining === undefined ? '' : formatTime(remaining);
     ui.timer.classList.toggle('low', remaining !== undefined && remaining <= LOW_TIME_MS);
     ui.word.textContent = tracker.word;
     const multiplier = wordMultiplier(tracker.items);
@@ -333,7 +330,6 @@ export function startApp(defaultLanguage: Language): void {
   function openSettings(): void {
     const form = ui.dialog.querySelector('form')!;
     (form.elements.namedItem('lang') as RadioNodeList).value = settings.lang;
-    (form.elements.namedItem('opponent') as RadioNodeList).value = settings.opponent;
     (form.elements.namedItem('sound') as RadioNodeList).value = settings.sound ? 'on' : 'off';
     ui.dialog.showModal();
   }
@@ -341,8 +337,6 @@ export function startApp(defaultLanguage: Language): void {
   function applySettings(): void {
     const form = ui.dialog.querySelector('form')!;
     const lang = (form.elements.namedItem('lang') as RadioNodeList).value as Language;
-    settings.opponent = (form.elements.namedItem('opponent') as RadioNodeList)
-      .value as Settings['opponent'];
     settings.sound = (form.elements.namedItem('sound') as RadioNodeList).value === 'on';
     sounds.enabled = settings.sound;
     if (lang !== settings.lang) {
@@ -356,8 +350,8 @@ export function startApp(defaultLanguage: Language): void {
 
   ui.menuSettings.addEventListener('click', openSettings);
   ui.menuButton.addEventListener('click', endRound);
-  ui.playTimed.addEventListener('click', () => startRound('timed'));
-  ui.playEndless.addEventListener('click', () => startRound('endless'));
+  ui.playTimed.addEventListener('click', () => startRound('solo'));
+  ui.playBot.addEventListener('click', () => startRound('bot'));
   ui.dialog.addEventListener('close', applySettings);
   window.addEventListener('keydown', (e) => {
     if (ui.dialog.open || !round) return;

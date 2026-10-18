@@ -538,14 +538,14 @@ dialog .primary {
 }
 
 /* The second choice in blue, so the two modes read as a pair. */
-#play-endless {
+#play-bot {
   background: var(--blue);
   border-color: var(--blue);
   box-shadow: 0 var(--edge) 0 var(--blue-edge);
   color: var(--bg);
 }
 
-#play-endless b {
+#play-bot b {
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
