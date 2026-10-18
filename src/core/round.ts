@@ -1,8 +1,8 @@
 /** A round on your own, or against the bot; both last ROUND_MS. */
 export type RoundKind = 'solo' | 'bot';
 
-/** Length of a round. */
-export const ROUND_MS = 5 * 60 * 1000;
+/** Length of a round: 2 minutes. */
+export const ROUND_MS = 2 * 60 * 1000;
 
 /** Counts a round down. */
 export class RoundTimer {
@@ -27,8 +27,8 @@ export class RoundTimer {
   }
 }
 
-/** Formats milliseconds as m:ss, rounding up so 0:00 shows only when time is up. */
+/** Formats milliseconds as seconds.milliseconds, e.g. 119.873 (whole milliseconds, never below 0). */
 export function formatTime(ms: number): string {
-  const total = Math.ceil(ms / 1000);
-  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+  const total = Math.max(0, Math.floor(ms));
+  return `${Math.floor(total / 1000)}.${String(total % 1000).padStart(3, '0')}`;
 }

@@ -253,6 +253,8 @@ button:disabled {
   color: var(--blue);
   font-size: 13px;
   font-weight: 800;
+  /* Equal-width digits, so the milliseconds do not make the pill jitter. */
+  font-variant-numeric: tabular-nums;
 }
 
 .timer:empty {
