@@ -10,6 +10,7 @@ import { bumpScore, floatPosition, pointsText, showScoreFloat } from './score-fl
 import type { Tile } from './game/physics';
 import { t, type Language, type StringKey } from './i18n';
 import { loadSettings, saveSettings, type Settings } from './settings';
+import { Sounds } from './sound';
 
 type DictionaryState = 'loading' | 'ready' | 'missing' | 'failed';
 
@@ -52,7 +53,10 @@ export function startApp(defaultLanguage: Language): void {
       return undefined;
     }
   })();
-  const settings: Settings = loadSettings({ lang: defaultLanguage, opponent: 'none' }, storage);
+  const settings: Settings = loadSettings(
+    { lang: defaultLanguage, opponent: 'none', sound: true },
+    storage,
+  );
 
   const ui = {
     score: element('#score'),
@@ -77,6 +81,8 @@ export function startApp(defaultLanguage: Language): void {
   };
 
   const tracker = new WordTracker<Tile>(undefined);
+  const sounds = new Sounds();
+  sounds.enabled = settings.sound;
   const auth = setupAuth(() => settings.lang);
   let dictionaryState: DictionaryState = 'loading';
   let loadToken = 0;
@@ -104,6 +110,7 @@ export function startApp(defaultLanguage: Language): void {
       }
       tile.selected = true;
       tracker.add(tile);
+      sounds.play('clicked');
       render();
     },
     onTapEmpty: clearWord,
@@ -138,6 +145,7 @@ export function startApp(defaultLanguage: Language): void {
       );
       game.removeTiles(result.items);
       showScoreFloat(ui.fieldWrap, at, pointsText(points, multiplier), result.word);
+      sounds.play('success');
       bumpScore(ui.score);
     } else {
       showToast(t(settings.lang, STATUS_TEXT[result.reason]), 'bad');
@@ -326,6 +334,7 @@ export function startApp(defaultLanguage: Language): void {
     const form = ui.dialog.querySelector('form')!;
     (form.elements.namedItem('lang') as RadioNodeList).value = settings.lang;
     (form.elements.namedItem('opponent') as RadioNodeList).value = settings.opponent;
+    (form.elements.namedItem('sound') as RadioNodeList).value = settings.sound ? 'on' : 'off';
     ui.dialog.showModal();
   }
 
@@ -334,6 +343,8 @@ export function startApp(defaultLanguage: Language): void {
     const lang = (form.elements.namedItem('lang') as RadioNodeList).value as Language;
     settings.opponent = (form.elements.namedItem('opponent') as RadioNodeList)
       .value as Settings['opponent'];
+    settings.sound = (form.elements.namedItem('sound') as RadioNodeList).value === 'on';
+    sounds.enabled = settings.sound;
     if (lang !== settings.lang) {
       settings.lang = lang;
       game.reset(lang);
