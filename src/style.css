@@ -155,7 +155,7 @@ button:disabled {
 
 /*
  * Player vs AI top bar: your card, the round timer as a ring, the bot's card and ☰ on one row,
- * the word being built on the row below. Compact for phones, larger on wide screens.
+ * the word being built on the row below. The same compact design on phones and desktops.
  */
 #app[data-mode='bot'] .hud {
   grid-template-columns: minmax(0, 1fr) auto;
@@ -188,6 +188,10 @@ button:disabled {
   align-items: center;
   gap: 8px;
   min-width: 0;
+  /* The same compact design everywhere; on wide screens it keeps its phone width, centred. */
+  width: 100%;
+  max-width: 480px;
+  justify-self: center;
 }
 
 .versus[hidden] {
@@ -323,68 +327,6 @@ button:disabled {
 .vs-seconds small {
   color: var(--muted);
   font-size: 10px;
-}
-
-@media (min-width: 720px) {
-  #app[data-mode='bot'] .hud {
-    padding: 16px 24px 12px;
-    column-gap: 24px;
-  }
-
-  .versus {
-    gap: 32px;
-  }
-
-  /* Compact cards at the sides, like a scoreboard, instead of stretching across. */
-  .vs-you {
-    justify-self: start;
-    min-width: 220px;
-  }
-
-  .vs-bot {
-    justify-self: end;
-    min-width: 220px;
-  }
-
-  .vs-card {
-    gap: 14px;
-    padding: 10px 18px 10px 10px;
-    border-radius: 18px;
-    box-shadow: 0 4px 0 var(--green-edge);
-  }
-
-  .vs-bot {
-    padding: 10px 10px 10px 18px;
-    box-shadow: 0 4px 0 var(--blue-edge);
-  }
-
-  .vs-avatar {
-    width: 52px;
-    height: 52px;
-    border-width: 3px;
-    font-size: 22px;
-  }
-
-  .vs-label {
-    font-size: 12px;
-  }
-
-  .vs-text b {
-    font-size: 36px;
-  }
-
-  .vs-ring {
-    width: 104px;
-    height: 104px;
-  }
-
-  .vs-seconds b {
-    font-size: 36px;
-  }
-
-  .vs-seconds small {
-    font-size: 12px;
-  }
 }
 
 .result-bot {
