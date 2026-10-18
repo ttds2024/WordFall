@@ -11,19 +11,19 @@ class MemoryStorage {
   }
 }
 
-const defaults: Settings = { lang: 'en', opponent: 'none', sound: true };
+const defaults: Settings = { lang: 'en', sound: true };
 
 describe('settings', () => {
   it('round-trips through storage', () => {
     const storage = new MemoryStorage() as unknown as Storage;
-    saveSettings({ lang: 'ru', opponent: 'bot', sound: false }, storage);
-    expect(loadSettings(defaults, storage)).toEqual({ lang: 'ru', opponent: 'bot', sound: false });
+    saveSettings({ lang: 'ru', sound: false }, storage);
+    expect(loadSettings(defaults, storage)).toEqual({ lang: 'ru', sound: false });
   });
 
-  it('ignores the old submit-mode setting', () => {
+  it('ignores settings that no longer exist', () => {
     const storage = new MemoryStorage() as unknown as Storage;
-    storage.setItem('wordfall.settings', '{"mode":"auto","lang":"ru"}');
-    expect(loadSettings(defaults, storage)).toEqual({ lang: 'ru', opponent: 'none', sound: true });
+    storage.setItem('wordfall.settings', '{"mode":"auto","opponent":"bot","lang":"ru"}');
+    expect(loadSettings(defaults, storage)).toEqual({ lang: 'ru', sound: true });
   });
 
   it('falls back to defaults for missing, invalid or unreadable data', () => {
