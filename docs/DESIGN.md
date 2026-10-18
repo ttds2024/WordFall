@@ -100,7 +100,10 @@ reduced motion turned on, the badge only fades. Misses still show a red message 
   use is downloaded. A dark shade over it keeps letters and buttons readable, and the start menu
   blurs it.
 - All artwork drawn in code as SVG (pumpkins, bats, moon, gravestones).
-- Sound effects and background music come later, each with its own on/off switch in Settings.
+- **Sound:** `src/audio/clicked.mp3` plays when the player taps a letter into the word, and
+  `src/audio/success.mp3` when the player's word is correct (the bot's words are silent). Played
+  through Web Audio, started by the first tap. Settings → **Sound** turns them on (default) or off.
+  Background music comes later.
 
 ## Tech
 

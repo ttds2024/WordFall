@@ -6,6 +6,8 @@ export type Opponent = 'none' | 'bot';
 export interface Settings {
   lang: Language;
   opponent: Opponent;
+  /** Sound effects on or off. */
+  sound: boolean;
 }
 
 const KEY = 'wordfall.settings';
@@ -18,6 +20,7 @@ export function loadSettings(defaults: Settings, storage: Storage | undefined): 
       lang: saved.lang === 'en' || saved.lang === 'ru' ? saved.lang : defaults.lang,
       opponent:
         saved.opponent === 'none' || saved.opponent === 'bot' ? saved.opponent : defaults.opponent,
+      sound: typeof saved.sound === 'boolean' ? saved.sound : defaults.sound,
     };
   } catch {
     return { ...defaults };
