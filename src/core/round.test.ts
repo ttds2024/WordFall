@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { formatTime, ROUND_MS, RoundTimer } from './round';
 
 describe('RoundTimer', () => {
-  it('ends a round after 5 minutes, once', () => {
+  it('ends a round after 2 minutes, once', () => {
     for (const kind of ['solo', 'bot'] as const) {
       const timer = new RoundTimer(kind);
       expect(timer.remaining).toBe(ROUND_MS);
@@ -16,10 +16,12 @@ describe('RoundTimer', () => {
 });
 
 describe('formatTime', () => {
-  it('shows minutes and seconds, rounding up', () => {
-    expect(formatTime(ROUND_MS)).toBe('5:00');
-    expect(formatTime(61_000)).toBe('1:01');
-    expect(formatTime(500)).toBe('0:01');
-    expect(formatTime(0)).toBe('0:00');
+  it('shows seconds and milliseconds', () => {
+    expect(ROUND_MS).toBe(120_000);
+    expect(formatTime(ROUND_MS)).toBe('120.000');
+    expect(formatTime(61_234.9)).toBe('61.234');
+    expect(formatTime(5)).toBe('0.005');
+    expect(formatTime(0)).toBe('0.000');
+    expect(formatTime(-3)).toBe('0.000');
   });
 });
