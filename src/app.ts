@@ -1,7 +1,7 @@
 import { setupAuth } from './auth/ui';
 import { BOT_ACCURACY, BOT_THINK_MS, BotClock, findWord, pickMiss } from './core/bot';
 import { Dictionary } from './core/dictionary';
-import { formatTime, RoundTimer, type RoundKind } from './core/round';
+import { formatTime, ROUND_MS, RoundTimer, type RoundKind } from './core/round';
 import { scoreWord, wordMultiplier } from './core/scoring';
 import { JOKER } from './core/word';
 import { WordTracker, type SubmitResult, type WordStatus } from './core/word-tracker';
@@ -57,7 +57,13 @@ export function startApp(defaultLanguage: Language): void {
 
   const ui = {
     score: element('#score'),
-    botScore: element('#bot-score'),
+    versus: element('.versus'),
+    vsAvatar: element('#vs-avatar'),
+    vsYouScore: element('#vs-you-score'),
+    vsBotScore: element('#vs-bot-score'),
+    vsRing: element('#vs-ring'),
+    vsRingFill: element('#vs-ring-fill'),
+    vsSeconds: element('#vs-seconds'),
     resultBot: element('#result-bot'),
     fieldWrap: element('.field-wrap'),
     timer: element('#timer'),
@@ -143,7 +149,7 @@ export function startApp(defaultLanguage: Language): void {
       game.removeTiles(result.items);
       showScoreFloat(ui.fieldWrap, at, pointsText(points, multiplier), result.word);
       sounds.play('success');
-      bumpScore(ui.score);
+      bumpScore(botClock ? ui.vsYouScore : ui.score);
     } else {
       showToast(t(settings.lang, STATUS_TEXT[result.reason]), 'bad');
     }
@@ -203,7 +209,7 @@ export function startApp(defaultLanguage: Language): void {
       tracker.markUsed(word);
       game.removeTiles(tiles);
       showScoreFloat(ui.fieldWrap, at, `🤖 ${pointsText(points, multiplier)}`, word, 'bot');
-      bumpScore(ui.botScore);
+      bumpScore(ui.vsBotScore);
     } else {
       showScoreFloat(ui.fieldWrap, at, t(settings.lang, 'botMissed'), word, 'bot');
     }
@@ -220,6 +226,11 @@ export function startApp(defaultLanguage: Language): void {
     stopBot();
     botScore = 0;
     botClock = kind === 'bot' ? new BotClock() : undefined;
+    // Against the bot the top bar shows both scores and a timer ring instead.
+    if (kind === 'bot') document.getElementById('app')!.dataset.mode = 'bot';
+    else delete document.getElementById('app')!.dataset.mode;
+    ui.versus.hidden = kind !== 'bot';
+    ui.vsAvatar.textContent = (auth.name() ?? t(settings.lang, 'you')).charAt(0).toUpperCase();
     tracker.reset();
     game.reset();
     ui.menu.hidden = true;
@@ -282,9 +293,8 @@ export function startApp(defaultLanguage: Language): void {
   function render(): void {
     const status = tracker.status();
     ui.score.textContent = String(score);
-    ui.botScore.textContent = `🤖 ${botScore}`;
-    ui.botScore.hidden = !botClock;
     const remaining = round?.remaining;
+    if (botClock && remaining !== undefined) renderVersus(remaining);
     ui.timer.textContent = remaining === undefined ? '' : formatTime(remaining);
     ui.timer.classList.toggle('low', remaining !== undefined && remaining <= LOW_TIME_MS);
     ui.word.textContent = tracker.word;
@@ -293,6 +303,17 @@ export function startApp(defaultLanguage: Language): void {
     ui.multiplier.hidden = multiplier === 1;
     ui.status.textContent = statusText(status);
     ui.status.dataset.status = dictionaryState === 'ready' ? status : 'empty';
+  }
+
+  /** The Player vs AI bar: both scores, and the ring emptying with the seconds left. */
+  function renderVersus(remaining: number): void {
+    ui.vsYouScore.textContent = String(score);
+    ui.vsBotScore.textContent = String(botScore);
+    const seconds = Math.ceil(remaining / 1000);
+    ui.vsSeconds.textContent = String(seconds);
+    ui.vsRingFill.style.strokeDasharray = `${(remaining / ROUND_MS) * 100} 100`;
+    ui.vsRing.classList.toggle('low', remaining <= LOW_TIME_MS);
+    ui.vsRing.setAttribute('aria-label', `${seconds} ${t(settings.lang, 'sec')}`);
   }
 
   function translate(): void {

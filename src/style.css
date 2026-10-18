@@ -153,15 +153,238 @@ button:disabled {
   }
 }
 
-/* The bot's score, under the player's, when playing against it. */
-.bot-score {
-  color: var(--blue);
+/*
+ * Player vs AI top bar: your card, the round timer as a ring, the bot's card and ☰ on one row,
+ * the word being built on the row below. Compact for phones, larger on wide screens.
+ */
+#app[data-mode='bot'] .hud {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'versus buttons'
+    'word word';
+  row-gap: 10px;
+  padding: 12px 12px 10px;
+}
+
+#app[data-mode='bot'] .score {
+  display: none;
+}
+
+#app[data-mode='bot'] .versus {
+  grid-area: versus;
+}
+
+#app[data-mode='bot'] .word-box {
+  grid-area: word;
+}
+
+#app[data-mode='bot'] .hud-buttons {
+  grid-area: buttons;
+}
+
+.versus {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.versus[hidden] {
+  display: none;
+}
+
+.vs-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 10px 6px 6px;
+  border: 2px solid var(--green);
+  border-radius: 14px;
+  box-shadow: 0 3px 0 var(--green-edge);
+}
+
+.vs-bot {
+  justify-content: flex-end;
+  padding: 6px 6px 6px 10px;
+  border-color: var(--blue);
+  box-shadow: 0 3px 0 var(--blue-edge);
+}
+
+.vs-avatar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--green);
+  border-radius: 50%;
+  color: var(--green);
   font-size: 14px;
   font-weight: 900;
 }
 
-.bot-score.bump {
+.vs-bot .vs-avatar {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.vs-avatar svg {
+  width: 60%;
+  height: 60%;
+}
+
+.vs-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1;
+}
+
+.vs-bot .vs-text {
+  align-items: flex-end;
+}
+
+.vs-label {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vs-text b {
+  font-size: 22px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--yellow);
+}
+
+.vs-bot .vs-text b {
+  color: var(--blue);
+}
+
+.vs-text b.bump {
+  display: inline-block;
   animation: score-bump 0.45s ease-out;
+}
+
+/* The round timer: a ring that empties over the round, the seconds left inside. */
+.vs-ring {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  --ring: var(--blue);
+}
+
+.vs-ring.low {
+  --ring: var(--red);
+}
+
+.vs-ring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.vs-ring-track {
+  fill: var(--bg);
+  stroke: var(--panel-border);
+  stroke-width: 7;
+}
+
+.vs-ring-fill {
+  fill: none;
+  stroke: var(--ring);
+  stroke-width: 7;
+  stroke-linecap: round;
+  transition: stroke 0.3s;
+}
+
+.vs-seconds {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.vs-seconds b {
+  color: var(--ring);
+  font-size: 22px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.vs-seconds small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+@media (min-width: 720px) {
+  #app[data-mode='bot'] .hud {
+    padding: 16px 24px 12px;
+    column-gap: 24px;
+  }
+
+  .versus {
+    gap: 32px;
+  }
+
+  /* Compact cards at the sides, like a scoreboard, instead of stretching across. */
+  .vs-you {
+    justify-self: start;
+    min-width: 220px;
+  }
+
+  .vs-bot {
+    justify-self: end;
+    min-width: 220px;
+  }
+
+  .vs-card {
+    gap: 14px;
+    padding: 10px 18px 10px 10px;
+    border-radius: 18px;
+    box-shadow: 0 4px 0 var(--green-edge);
+  }
+
+  .vs-bot {
+    padding: 10px 10px 10px 18px;
+    box-shadow: 0 4px 0 var(--blue-edge);
+  }
+
+  .vs-avatar {
+    width: 52px;
+    height: 52px;
+    border-width: 3px;
+    font-size: 22px;
+  }
+
+  .vs-label {
+    font-size: 12px;
+  }
+
+  .vs-text b {
+    font-size: 36px;
+  }
+
+  .vs-ring {
+    width: 104px;
+    height: 104px;
+  }
+
+  .vs-seconds b {
+    font-size: 36px;
+  }
+
+  .vs-seconds small {
+    font-size: 12px;
+  }
 }
 
 .result-bot {

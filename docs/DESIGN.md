@@ -26,7 +26,12 @@ open from the start menu only; there is no Settings button during a round.
   player (×2 pumpkins included). Otherwise it picks 3–4 letters that spell nothing, shows "Bot
   missed", and the letters stay in play. If the field holds no word it can spell, it misses too.
 - Found words are shared: a word the bot finds cannot be scored by the player, and vice versa.
-- The bot's score shows under the player's, in blue; at the end the menu says who won.
+- The top bar becomes a face-off: the player's card (green edge, avatar letter from the signed-in
+  name or "You", yellow score) on the left, the bot's card (blue edge, robot icon, blue score) on
+  the right, and between them the round timer as a ring that empties over the 2 minutes, with the
+  whole seconds left inside; it turns red in the last 30 seconds. ☰ sits beside the bot's card and
+  the word being built goes on the row below. Compact on phones, larger on wide screens. There is
+  no "who's ahead" indicator beyond the two scores. At the end the menu says who won.
 
 ## Accounts
 
