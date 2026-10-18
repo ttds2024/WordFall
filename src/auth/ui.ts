@@ -38,7 +38,11 @@ function element<T extends HTMLElement>(selector: string): T {
  * The sign-in block on the start menu. Finishes a sign-in when the page is the provider's
  * return address. Returns render(), to call when the language changes.
  */
-export function setupAuth(language: () => Language): { render(): void } {
+export function setupAuth(language: () => Language): {
+  render(): void;
+  /** The signed-in player's name, if any. */
+  name(): string | undefined;
+} {
   const providers = enabledProviders(CONFIG);
   const storage: AuthStorage = {
     local: storageOf(() => window.localStorage),
@@ -134,5 +138,5 @@ export function setupAuth(language: () => Language): { render(): void } {
 
   render();
   void finishRedirect();
-  return { render };
+  return { render, name: () => profile?.name };
 }
