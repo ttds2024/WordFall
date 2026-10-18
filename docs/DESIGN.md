@@ -30,7 +30,8 @@ open from the start menu only; there is no Settings button during a round.
   name or "You", yellow score) on the left, the bot's card (blue edge, robot icon, blue score) on
   the right, and between them the round timer as a ring that empties over the 2 minutes, with the
   whole seconds left inside; it turns red in the last 30 seconds. ☰ sits beside the bot's card and
-  the word being built goes on the row below. Compact on phones, larger on wide screens. There is
+  the word being built goes on the row below. The same compact design on phones and desktops; on
+  wide screens the score group keeps its phone width (at most 480 px), centred. There is
   no "who's ahead" indicator beyond the two scores. At the end the menu says who won.
 
 ## Accounts
