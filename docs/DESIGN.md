@@ -63,8 +63,9 @@ in the game yet.
   with a flash, destroying every tile within about 2.6 tile radii and pushing the next ones away.
   Letters it destroys leave the word being built and score nothing.
 - **×2 pumpkins:** about 1 tile in 12 is a plain pumpkin (`src/images/pumpkin.svg`) with a letter
-  and a gold ×2 mark. A correct word that uses at least one scores **×2** (two still ×2); the word
-  bar shows ×2 while the word holds one.
+  and a gold ×2 mark. A correct word scores its letters times **2 × N**, N being the number of ×2
+  pumpkins in it (one: ×2, two: ×4, three: ×6); the word bar shows the multiplier while the word
+  holds one.
 - **Jokers:** about 1 tile in 25 is a gold **star** (`src/images/star.svg`) with no letter. It stands for any one letter: the
   word counts if some dictionary word fits it, and the status line names that word (e.g. C★T is
   "In the word list: CAT"). If several words fit, the first one not found yet is used, so C★T can

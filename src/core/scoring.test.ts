@@ -33,8 +33,9 @@ describe('wordMultiplier', () => {
     expect(wordMultiplier([])).toBe(1);
   });
 
-  it('doubles a word with a ×2 tile, however many it has', () => {
+  it('multiplies by 2 for each ×2 tile: N of them make ×(N × 2)', () => {
     expect(wordMultiplier([pumpkin, double, pumpkin])).toBe(DOUBLE_MULTIPLIER);
-    expect(wordMultiplier([double, double, double])).toBe(2);
+    expect(wordMultiplier([double, pumpkin, double])).toBe(4);
+    expect(wordMultiplier([double, double, double])).toBe(6);
   });
 });
