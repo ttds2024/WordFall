@@ -169,24 +169,43 @@ export function startApp(defaultLanguage: Language): void {
   }
 
   /**
-   * The bot picks letters from the field (never the player's, a star or a bad pumpkin): a real
-   * word not found yet with probability BOT_ACCURACY, otherwise letters that spell nothing.
+   * The bot picks letters from the field (never a star or a bad pumpkin): a real word not found
+   * yet with probability BOT_ACCURACY, otherwise letters that spell nothing. It goes for letters
+   * the player has not picked first; only if those give it nothing does it take the player's.
    */
   function startBotTry(words: Dictionary): void {
-    const free = game
+    const letterTiles = game
       .tiles()
-      .filter((tile) => (tile.kind === 'pumpkin' || tile.kind === 'double') && !tile.selected);
-    const letters = free.map((tile) => tile.letter);
-    let picks =
-      Math.random() < BOT_ACCURACY
-        ? findWord(letters, words.all, (word) => tracker.isUsed(word))
-        : undefined;
-    const correct = picks !== undefined;
-    picks ??= pickMiss(letters, (word) => words.has(word));
-    if (!picks) return;
-    const tiles = picks.map((i) => free[i]!);
-    for (const tile of tiles) tile.bot = true;
-    botTry = { tiles, correct, word: tiles.map((t) => t.letter).join(''), wait: BOT_THINK_MS };
+      .filter((tile) => tile.kind === 'pumpkin' || tile.kind === 'double');
+    const correct = Math.random() < BOT_ACCURACY;
+    const free = letterTiles.filter((tile) => !tile.selected);
+    const pick =
+      pickTiles(free, words, correct) ??
+      (free.length < letterTiles.length ? pickTiles(letterTiles, words, correct) : undefined);
+    if (!pick) return;
+    // Letters it takes from the player's word leave that word.
+    const taken = pick.tiles.filter((tile) => tile.selected);
+    for (const tile of taken) tile.selected = false;
+    tracker.remove(taken);
+    for (const tile of pick.tiles) tile.bot = true;
+    botTry = {
+      tiles: pick.tiles,
+      correct: pick.correct,
+      word: pick.tiles.map((t) => t.letter).join(''),
+      wait: BOT_THINK_MS,
+    };
+  }
+
+  /** The bot's letters from these tiles: a word if it should be right and can be, else a miss. */
+  function pickTiles(
+    tiles: Tile[],
+    words: Dictionary,
+    tryWord: boolean,
+  ): { tiles: Tile[]; correct: boolean } | undefined {
+    const letters = tiles.map((tile) => tile.letter);
+    const word = tryWord ? findWord(letters, words.all, (w) => tracker.isUsed(w)) : undefined;
+    const picks = word ?? pickMiss(letters, (w) => words.has(w));
+    return picks && { tiles: picks.map((i) => tiles[i]!), correct: word !== undefined };
   }
 
   function finishBotTry(): void {
