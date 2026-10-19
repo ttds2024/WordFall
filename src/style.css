@@ -130,10 +130,20 @@ button:disabled {
     'word word';
   align-items: center;
   gap: 10px 8px;
-  /* On wide screens the bar keeps its phone layout: content at most 480px wide, centred. */
-  padding: 12px max(12px, calc((100% - 480px) / 2)) 10px;
+  padding: 12px 12px 10px;
   border-bottom: 2px solid var(--panel-border);
   background: rgba(19, 31, 36, 0.8);
+}
+
+/* On wide screens the scores, ring and word keep their phone width, centred; ☰ sits at the edge. */
+@media (min-width: 600px) {
+  .hud {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 424px) minmax(0, 1fr);
+    grid-template-areas:
+      '. versus buttons'
+      '. word .';
+    padding-inline: 16px;
+  }
 }
 
 .versus {
