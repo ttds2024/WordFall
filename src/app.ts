@@ -75,6 +75,7 @@ export function startApp(defaultLanguage: Language): void {
     playBot: element<HTMLButtonElement>('#play-bot'),
     menuButton: element<HTMLButtonElement>('#menu-button'),
     menuSettings: element<HTMLButtonElement>('#menu-settings'),
+    menuClose: element<HTMLButtonElement>('#menu-close'),
     word: element('#word'),
     multiplier: element('#multiplier'),
     status: element('#status'),
@@ -233,9 +234,35 @@ export function startApp(defaultLanguage: Language): void {
     ui.vsAvatar.textContent = (auth.name() ?? t(settings.lang, 'you')).charAt(0).toUpperCase();
     tracker.reset();
     game.reset();
+    ui.menuClose.hidden = true;
     ui.menu.hidden = true;
     render();
     game.start();
+  }
+
+  /** ☰ during a round: pauses it (timer and bot included) and opens the menu, with ✕ to resume. */
+  function pauseRound(): void {
+    if (!round) return;
+    game.stop();
+    ui.result.hidden = true;
+    ui.menuClose.hidden = false;
+    ui.menu.hidden = false;
+  }
+
+  /** ✕ (or Esc) on the menu of a paused round: back to the game where it was left. */
+  function resumeRound(): void {
+    if (!round || ui.menuClose.hidden) return;
+    ui.menuClose.hidden = true;
+    ui.menu.hidden = true;
+    game.start();
+  }
+
+  /** Drops a paused round without a result, e.g. when the language changes under it. */
+  function dropRound(): void {
+    round = undefined;
+    stopBot();
+    clearWord();
+    ui.menuClose.hidden = true;
   }
 
   /** Stops play and shows the menu with the score; timeUp says the clock ran out. */
@@ -243,6 +270,7 @@ export function startApp(defaultLanguage: Language): void {
     if (!round) return;
     const timeUp = round.over;
     round = undefined;
+    ui.menuClose.hidden = true;
     game.stop();
     stopBot();
     clearWord();
@@ -323,6 +351,7 @@ export function startApp(defaultLanguage: Language): void {
       el.textContent = t(lang, el.dataset.i18n as StringKey);
     });
     ui.menuButton.setAttribute('aria-label', t(lang, 'menu'));
+    ui.menuClose.setAttribute('aria-label', t(lang, 'resume'));
     ui.timer.setAttribute('aria-label', t(lang, 'time'));
     ui.ruNote.textContent = __DICTIONARIES__.includes('ru') ? '' : t(lang, 'noDictionary');
     auth.render();
@@ -362,6 +391,8 @@ export function startApp(defaultLanguage: Language): void {
     sounds.enabled = settings.sound;
     if (lang !== settings.lang) {
       settings.lang = lang;
+      // New letters and words: a paused round cannot go on.
+      dropRound();
       game.reset(lang);
       translate();
       void loadWords();
@@ -370,12 +401,17 @@ export function startApp(defaultLanguage: Language): void {
   }
 
   ui.menuSettings.addEventListener('click', openSettings);
-  ui.menuButton.addEventListener('click', endRound);
+  ui.menuButton.addEventListener('click', pauseRound);
+  ui.menuClose.addEventListener('click', resumeRound);
   ui.playTimed.addEventListener('click', () => startRound('solo'));
   ui.playBot.addEventListener('click', () => startRound('bot'));
   ui.dialog.addEventListener('close', applySettings);
   window.addEventListener('keydown', (e) => {
     if (ui.dialog.open || !round) return;
+    if (!ui.menu.hidden) {
+      if (e.key === 'Escape') resumeRound();
+      return;
+    }
     if (e.key === 'Enter') submitWord();
     else if (e.key === 'Escape' || e.key === 'Backspace') clearWord();
   });

@@ -12,7 +12,10 @@ The game opens on a start menu with two modes:
 
 There is no untimed mode: a round against the bot needs an end to decide who won.
 
-The **☰** button ends the round and returns to the menu, showing the score. Settings (the language)
+The **☰** button pauses the round (timer and bot included) and opens the menu, with an **✕** in
+the top-right corner (or Esc) that closes it and resumes the game where it was left; starting a new
+game from that menu replaces the paused round, and changing the language drops it. When the time
+runs out the menu shows the score. Settings (the language)
 open from the start menu only; there is no Settings button during a round.
 
 ## Playing against a bot
