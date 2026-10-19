@@ -189,7 +189,7 @@ button:disabled {
   gap: 8px;
   min-width: 0;
   padding: 6px 10px 6px 6px;
-  /* Your card has no frame; the border stays, clear, so both cards keep the same size. */
+  /* The cards have no frame; the clear border keeps their size as before. */
   border: 2px solid transparent;
   border-radius: 14px;
 }
@@ -197,8 +197,6 @@ button:disabled {
 .vs-bot {
   justify-content: flex-end;
   padding: 6px 6px 6px 10px;
-  border-color: var(--blue);
-  box-shadow: 0 3px 0 var(--blue-edge);
 }
 
 .vs-avatar {
@@ -225,15 +223,13 @@ button:disabled {
   height: 60%;
 }
 
-.vs-text {
+.vs-who {
+  flex: none;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  align-items: center;
+  gap: 3px;
   line-height: 1;
-}
-
-.vs-bot .vs-text {
-  align-items: flex-end;
 }
 
 .vs-label {
@@ -243,18 +239,20 @@ button:disabled {
   text-transform: uppercase;
 }
 
-.vs-text b {
-  font-size: 22px;
+.vs-score {
+  min-width: 0;
+  font-size: 24px;
   font-weight: 900;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
   color: var(--yellow);
 }
 
-.vs-bot .vs-text b {
+.vs-bot .vs-score {
   color: var(--blue);
 }
 
-.vs-text b.bump {
+.vs-score.bump {
   display: inline-block;
   animation: score-bump 0.45s ease-out;
 }
@@ -379,7 +377,7 @@ button:disabled {
     animation-name: score-fade;
   }
 
-  .vs-text b.bump {
+  .vs-score.bump {
     animation: none;
   }
 
@@ -885,11 +883,6 @@ button.provider.vk {
   border-width: 4px;
 }
 
-:root[data-theme='8bit'] .vs-bot {
-  background: var(--bg);
-  box-shadow: 4px 4px 0 var(--blue-edge);
-}
-
 :root[data-theme='8bit'] .vs-avatar {
   border: 0;
   background: var(--green);
@@ -907,12 +900,12 @@ button.provider.vk {
   letter-spacing: 0;
 }
 
-:root[data-theme='8bit'] .vs-text {
-  gap: 6px;
+:root[data-theme='8bit'] .vs-who {
+  gap: 5px;
 }
 
-:root[data-theme='8bit'] .vs-text b {
-  font-size: 14px;
+:root[data-theme='8bit'] .vs-score {
+  font-size: 16px;
 }
 
 :root[data-theme='8bit'] .vs-ring-track {

@@ -21,12 +21,13 @@
       <header class="hud">
         <!-- Your score, the round timer as a ring and, against the bot, its score. -->
         <div class="versus">
+          <!-- Each side: the avatar with the name under it, and the score. -->
           <div class="vs-card vs-you">
-            <span id="vs-avatar" class="vs-avatar"></span>
-            <span class="vs-text">
+            <span class="vs-who">
+              <span id="vs-avatar" class="vs-avatar"></span>
               <span class="vs-label" data-i18n="you"></span>
-              <b id="vs-you-score">0</b>
             </span>
+            <b id="vs-you-score" class="vs-score">0</b>
           </div>
           <div id="vs-ring" class="vs-ring" role="img">
             <svg viewBox="0 0 64 64" aria-hidden="true">
@@ -46,26 +47,26 @@
             </span>
           </div>
           <div class="vs-card vs-bot">
-            <span class="vs-text">
+            <b id="vs-bot-score" class="vs-score">0</b>
+            <span class="vs-who">
+              <span class="vs-avatar"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="4" y="8" width="16" height="11" rx="3" />
+                  <path d="M12 8V4" />
+                  <circle cx="12" cy="3" r="1" />
+                  <circle cx="9" cy="13" r="1.3" />
+                  <circle cx="15" cy="13" r="1.3" /></svg
+              ></span>
               <span class="vs-label" data-i18n="bot"></span>
-              <b id="vs-bot-score">0</b>
             </span>
-            <span class="vs-avatar"
-              ><svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <rect x="4" y="8" width="16" height="11" rx="3" />
-                <path d="M12 8V4" />
-                <circle cx="12" cy="3" r="1" />
-                <circle cx="9" cy="13" r="1.3" />
-                <circle cx="15" cy="13" r="1.3" /></svg
-            ></span>
           </div>
         </div>
         <div class="word-box">
