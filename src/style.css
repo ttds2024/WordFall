@@ -223,15 +223,13 @@ button:disabled {
   height: 60%;
 }
 
-.vs-text {
+.vs-who {
+  flex: none;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  align-items: center;
+  gap: 3px;
   line-height: 1;
-}
-
-.vs-bot .vs-text {
-  align-items: flex-end;
 }
 
 .vs-label {
@@ -241,18 +239,20 @@ button:disabled {
   text-transform: uppercase;
 }
 
-.vs-text b {
-  font-size: 22px;
+.vs-score {
+  min-width: 0;
+  font-size: 24px;
   font-weight: 900;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
   color: var(--yellow);
 }
 
-.vs-bot .vs-text b {
+.vs-bot .vs-score {
   color: var(--blue);
 }
 
-.vs-text b.bump {
+.vs-score.bump {
   display: inline-block;
   animation: score-bump 0.45s ease-out;
 }
@@ -377,7 +377,7 @@ button:disabled {
     animation-name: score-fade;
   }
 
-  .vs-text b.bump {
+  .vs-score.bump {
     animation: none;
   }
 
@@ -900,12 +900,12 @@ button.provider.vk {
   letter-spacing: 0;
 }
 
-:root[data-theme='8bit'] .vs-text {
-  gap: 6px;
+:root[data-theme='8bit'] .vs-who {
+  gap: 5px;
 }
 
-:root[data-theme='8bit'] .vs-text b {
-  font-size: 14px;
+:root[data-theme='8bit'] .vs-score {
+  font-size: 16px;
 }
 
 :root[data-theme='8bit'] .vs-ring-track {
