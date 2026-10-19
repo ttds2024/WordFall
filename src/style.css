@@ -116,7 +116,8 @@ button:disabled {
   grid-template-columns: 96px 1fr 96px;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px 12px;
+  /* On wide screens the bar keeps its phone layout: content at most 480px wide, centred. */
+  padding: 10px max(16px, calc((100% - 480px) / 2)) 12px;
   border-bottom: 2px solid var(--panel-border);
   background: rgba(19, 31, 36, 0.8);
 }
@@ -163,7 +164,7 @@ button:disabled {
     'versus buttons'
     'word word';
   row-gap: 10px;
-  padding: 12px 12px 10px;
+  padding: 12px max(12px, calc((100% - 480px) / 2)) 10px;
 }
 
 #app[data-mode='bot'] .score {
@@ -188,10 +189,6 @@ button:disabled {
   align-items: center;
   gap: 8px;
   min-width: 0;
-  /* The same compact design everywhere; on wide screens it keeps its phone width, centred. */
-  width: 100%;
-  max-width: 480px;
-  justify-self: center;
 }
 
 .versus[hidden] {
