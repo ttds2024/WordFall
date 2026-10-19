@@ -6,6 +6,11 @@ Russian.
 
 See [docs/DESIGN.md](docs/DESIGN.md) for the design decisions.
 
+The repository also holds **Small Realm** (`smallworld/`), a map game inspired by the board game
+Small World, with one race, the Humans, against an AI rival. With `npm run dev` it is at
+<http://localhost:5173/smallworld/>; the build publishes it at `smallworld/` next to the game. See
+[docs/SMALL_REALM.md](docs/SMALL_REALM.md).
+
 ## Development
 
 ```sh

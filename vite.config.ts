@@ -45,6 +45,12 @@ export default defineConfig({
     __DICTIONARIES__: JSON.stringify(available),
   },
   plugins: [dictionaries()],
+  build: {
+    rollupOptions: {
+      // WordFall, and Small Realm (a Small World–style map game) at smallworld/.
+      input: { main: 'index.html', smallworld: 'smallworld/index.html' },
+    },
+  },
   test: {
     include: ['src/**/*.test.ts'],
   },
