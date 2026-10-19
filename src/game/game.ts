@@ -1,4 +1,5 @@
 import type { Language } from '../i18n';
+import type { Theme } from '../settings';
 import { pickLetter } from '../core/letters';
 import { JOKER } from '../core/word';
 import { PhysicsWorld, type Tile } from './physics';
@@ -38,6 +39,8 @@ export class Game {
   private running = false;
   /** Explosions still being drawn. */
   private blasts: Blast[] = [];
+  /** How the tiles look. */
+  private theme: Theme = 'classic';
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -73,6 +76,11 @@ export class Game {
     this.lang = lang;
     for (const tile of this.world.all()) this.world.remove(tile);
     this.blasts = [];
+    this.draw();
+  }
+
+  setTheme(theme: Theme): void {
+    this.theme = theme;
     this.draw();
   }
 
@@ -123,8 +131,8 @@ export class Game {
     const dpr = window.devicePixelRatio || 1;
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this.ctx.clearRect(0, 0, width, height);
-    drawTiles(this.ctx, this.world.all());
-    this.blasts = drawExplosions(this.ctx, this.blasts, performance.now());
+    drawTiles(this.ctx, this.world.all(), this.theme);
+    this.blasts = drawExplosions(this.ctx, this.blasts, performance.now(), this.theme);
   }
 
   private readonly handlePointer = (e: PointerEvent): void => {

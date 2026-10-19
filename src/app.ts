@@ -9,7 +9,7 @@ import { Game } from './game/game';
 import { bumpScore, floatPosition, pointsText, showScoreFloat } from './score-float';
 import type { Tile } from './game/physics';
 import { t, type Language, type StringKey } from './i18n';
-import { loadSettings, saveSettings, type Settings } from './settings';
+import { loadSettings, saveSettings, type Settings, type Theme } from './settings';
 import { Sounds } from './sound';
 
 type DictionaryState = 'loading' | 'ready' | 'missing' | 'failed';
@@ -53,7 +53,10 @@ export function startApp(defaultLanguage: Language): void {
       return undefined;
     }
   })();
-  const settings: Settings = loadSettings({ lang: defaultLanguage, sound: true }, storage);
+  const settings: Settings = loadSettings(
+    { lang: defaultLanguage, sound: true, theme: 'classic' },
+    storage,
+  );
 
   const ui = {
     vsAvatar: element('#vs-avatar'),
@@ -350,7 +353,7 @@ export function startApp(defaultLanguage: Language): void {
     ui.vsBotScore.textContent = String(botScore);
     const seconds = Math.ceil(remaining / 1000);
     ui.vsSeconds.textContent = String(seconds);
-    ui.vsRingFill.style.strokeDasharray = `${(remaining / ROUND_MS) * 100} 100`;
+    ui.vsRingFill.style.strokeDasharray = ringDashes(remaining / ROUND_MS, settings.theme);
     ui.vsRing.classList.toggle('low', remaining <= LOW_TIME_MS);
     ui.vsRing.setAttribute('aria-label', `${seconds} ${t(settings.lang, 'sec')}`);
   }
@@ -391,6 +394,7 @@ export function startApp(defaultLanguage: Language): void {
     const form = ui.dialog.querySelector('form')!;
     (form.elements.namedItem('lang') as RadioNodeList).value = settings.lang;
     (form.elements.namedItem('sound') as RadioNodeList).value = settings.sound ? 'on' : 'off';
+    (form.elements.namedItem('theme') as RadioNodeList).value = settings.theme;
     ui.dialog.showModal();
   }
 
@@ -399,6 +403,8 @@ export function startApp(defaultLanguage: Language): void {
     const lang = (form.elements.namedItem('lang') as RadioNodeList).value as Language;
     settings.sound = (form.elements.namedItem('sound') as RadioNodeList).value === 'on';
     sounds.enabled = settings.sound;
+    settings.theme = (form.elements.namedItem('theme') as RadioNodeList).value as Theme;
+    applyTheme();
     if (lang !== settings.lang) {
       settings.lang = lang;
       // New letters and words: a paused round cannot go on.
@@ -426,7 +432,28 @@ export function startApp(defaultLanguage: Language): void {
     else if (e.key === 'Escape' || e.key === 'Backspace') clearWord();
   });
 
+  /** Classic or 8-bit: the page's look (style.css) and the tiles' (the renderer). */
+  function applyTheme(): void {
+    document.documentElement.dataset.theme = settings.theme;
+    game.setTheme(settings.theme);
+  }
+
+  applyTheme();
   translate();
   render();
   void loadWords();
+}
+
+/** How many blocks make up the 8-bit timer ring. */
+const PIXEL_SEGMENTS = 16;
+
+/**
+ * The timer ring's stroke-dasharray (the ring's length is 100) for the share of time left: one
+ * arc, or in the 8-bit style that many separate blocks.
+ */
+function ringDashes(left: number, theme: Theme): string {
+  if (theme !== '8bit') return `${left * 100} 100`;
+  const lit = Math.ceil(left * PIXEL_SEGMENTS);
+  const step = 100 / PIXEL_SEGMENTS;
+  return [...Array<string>(lit).fill(`${step - 2} 2`), '0 100'].join(' ');
 }
