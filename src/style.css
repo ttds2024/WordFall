@@ -820,3 +820,220 @@ button.provider.vk {
 .score-float.bot .score-float-word {
   color: var(--fg);
 }
+
+/*
+ * 8-bit style (Settings › Style): the PICO-8 palette, a pixel font, square corners, hard shadows
+ * and a plain navy background. The tiles are drawn by the renderer, the timer ring in blocks by
+ * app.ts.
+ */
+:root[data-theme='8bit'] {
+  --bg: #1d2b53;
+  --panel: #000000;
+  --panel-border: #5f574f;
+  --fg: #fff1e8;
+  --muted: #c2c3c7;
+  --green: #00e436;
+  --green-edge: #008751;
+  --blue: #29adff;
+  --blue-edge: #065ab5;
+  --red: #ff004d;
+  --yellow: #ffec27;
+  --good: #00e436;
+  --bad: #ff004d;
+  --pixel-font: 'Press Start 2P', ui-monospace, monospace;
+}
+
+:root[data-theme='8bit'] body {
+  background: var(--bg);
+  font-family: var(--pixel-font);
+  line-height: 1.4;
+}
+
+:root[data-theme='8bit'] *,
+:root[data-theme='8bit'] *::before,
+:root[data-theme='8bit'] *::after {
+  /* The pixel font has a single weight; square corners everywhere. */
+  font-weight: 400 !important;
+  border-radius: 0 !important;
+}
+
+:root[data-theme='8bit'] button {
+  border-width: 4px;
+  border-color: #000000;
+  font-size: 12px;
+  letter-spacing: 0;
+  transition: none;
+}
+
+:root[data-theme='8bit'] .hud {
+  background: #000000;
+  border-bottom: 4px solid var(--panel-border);
+}
+
+:root[data-theme='8bit'] .field-wrap {
+  background: #0b1430;
+}
+
+:root[data-theme='8bit'] .menu {
+  background: rgba(29, 43, 83, 0.92);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* The top bar. */
+:root[data-theme='8bit'] .vs-card {
+  border-width: 4px;
+  background: var(--bg);
+  box-shadow: 4px 4px 0 var(--green-edge);
+}
+
+:root[data-theme='8bit'] .vs-bot {
+  box-shadow: 4px 4px 0 var(--blue-edge);
+}
+
+:root[data-theme='8bit'] .vs-avatar {
+  border: 0;
+  background: var(--green);
+  color: #000000;
+  font-size: 11px;
+}
+
+:root[data-theme='8bit'] .vs-bot .vs-avatar {
+  background: var(--blue);
+  color: #000000;
+}
+
+:root[data-theme='8bit'] .vs-label {
+  font-size: 8px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='8bit'] .vs-text {
+  gap: 6px;
+}
+
+:root[data-theme='8bit'] .vs-text b {
+  font-size: 14px;
+}
+
+:root[data-theme='8bit'] .vs-ring-track {
+  fill: #000000;
+  stroke-dasharray: 4.25 2;
+}
+
+:root[data-theme='8bit'] .vs-ring-fill {
+  stroke-linecap: butt;
+  transition: none;
+}
+
+:root[data-theme='8bit'] .vs-seconds {
+  gap: 4px;
+}
+
+:root[data-theme='8bit'] .vs-seconds b {
+  font-size: 14px;
+}
+
+:root[data-theme='8bit'] .vs-seconds small {
+  font-size: 7px;
+}
+
+:root[data-theme='8bit'] .icon-button {
+  border-color: var(--fg);
+  background: var(--bg);
+  box-shadow: 4px 4px 0 var(--panel-border);
+  font-family: system-ui, sans-serif;
+}
+
+:root[data-theme='8bit'] .word {
+  min-height: 28px;
+  font-size: 20px;
+  letter-spacing: 0.15em;
+}
+
+:root[data-theme='8bit'] .multiplier {
+  padding: 3px 5px;
+  font-size: 10px;
+}
+
+:root[data-theme='8bit'] .status {
+  font-size: 9px;
+}
+
+/* Pop-ups over the field. */
+:root[data-theme='8bit'] .score-float {
+  border-width: 4px;
+  background: #000000;
+  box-shadow: 4px 4px 0 var(--green-edge);
+  line-height: 1.6;
+}
+
+:root[data-theme='8bit'] .score-float-points {
+  font-size: 18px;
+}
+
+:root[data-theme='8bit'] .score-float-word {
+  font-size: 12px;
+}
+
+:root[data-theme='8bit'] .toast {
+  border: 4px solid #000000;
+  font-size: 10px;
+}
+
+/* Menu and settings. */
+:root[data-theme='8bit'] .menu h1 {
+  font-size: 26px;
+  text-shadow: 4px 4px 0 var(--green-edge);
+}
+
+:root[data-theme='8bit'] .result-title {
+  font-size: 16px;
+}
+
+:root[data-theme='8bit'] .result-score {
+  font-size: 10px;
+}
+
+:root[data-theme='8bit'] .result-score b {
+  font-size: 28px;
+}
+
+:root[data-theme='8bit'] .result-bot {
+  font-size: 12px;
+}
+
+:root[data-theme='8bit'] .menu-options b {
+  font-size: 14px;
+}
+
+:root[data-theme='8bit'] .menu-options small {
+  font-size: 8px;
+  line-height: 1.6;
+}
+
+:root[data-theme='8bit'] dialog {
+  border: 4px solid var(--fg);
+  box-shadow: 6px 6px 0 #000000;
+}
+
+:root[data-theme='8bit'] dialog h2 {
+  font-size: 16px;
+}
+
+:root[data-theme='8bit'] legend,
+:root[data-theme='8bit'] fieldset small {
+  font-size: 9px;
+}
+
+:root[data-theme='8bit'] fieldset b {
+  font-size: 11px;
+}
+
+:root[data-theme='8bit'] fieldset label {
+  border-width: 4px;
+}
+
+:root[data-theme='8bit'] #play-bot {
+  border-color: #000000;
+}

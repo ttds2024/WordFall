@@ -1,6 +1,7 @@
 import badUrl from '../images/bad.png';
 import pumpkinSvg from '../images/pumpkin.svg?raw';
 import starUrl from '../images/star.svg';
+import type { Theme } from '../settings';
 import type { Tile } from './physics';
 
 const COLORS = {
@@ -78,9 +79,18 @@ function drawCentred(
 
 /**
  * Draws the tiles: pumpkins with letters, ×2 pumpkins (src/images/pumpkin.svg) with a letter and
- * a ×2 badge, letterless bad pumpkins (src/images/bad.png) that explode, and joker stars.
+ * a ×2 badge, letterless bad pumpkins (src/images/bad.png) that explode, and joker stars. In the
+ * 8-bit style they are square pixel blocks instead.
  */
-export function drawTiles(ctx: CanvasRenderingContext2D, tiles: readonly Tile[]): void {
+export function drawTiles(
+  ctx: CanvasRenderingContext2D,
+  tiles: readonly Tile[],
+  theme: Theme = 'classic',
+): void {
+  if (theme === '8bit') {
+    for (const tile of tiles) drawPixelTile(ctx, tile);
+    return;
+  }
   for (const tile of tiles) {
     const { x, y } = tile.body.position;
     const r = tile.body.circleRadius ?? 0;
@@ -219,14 +229,20 @@ function drawStar(ctx: CanvasRenderingContext2D, r: number, selected: boolean): 
 
 /**
  * Draws explosions: a flash filling the blast, a ring racing outwards and sparks, all fading
- * over BLAST_MS. Returns the explosions still running.
+ * over BLAST_MS (in the 8-bit style, square sparks flying out). Returns the explosions still
+ * running.
  */
 export function drawExplosions(
   ctx: CanvasRenderingContext2D,
   blasts: readonly Blast[],
   now: number,
+  theme: Theme = 'classic',
 ): Blast[] {
   const running = blasts.filter((blast) => now - blast.start < BLAST_MS);
+  if (theme === '8bit') {
+    for (const blast of running) drawPixelBlast(ctx, blast, now);
+    return running;
+  }
   for (const blast of running) {
     const t = Math.max(0, now - blast.start) / BLAST_MS;
     const fade = 1 - t;
@@ -264,4 +280,106 @@ export function drawExplosions(
     ctx.restore();
   }
   return running;
+}
+
+/** The 8-bit style's colours (the PICO-8 palette). */
+const PIXEL = {
+  edge: '#000000',
+  you: '#ffec27',
+  bot: '#29adff',
+  ink: '#000000',
+  white: '#fff1e8',
+  letter: { fill: '#ffa300', shade: '#ab5236', light: '#ffcc80' },
+  joker: { fill: '#83769c', shade: '#5f574f', light: '#c2c3c7' },
+  bomb: { fill: '#ff004d', shade: '#7e2553', light: '#ff77a8' },
+  sparks: ['#ffec27', '#ffa300', '#ff004d', '#fff1e8'],
+};
+
+/** Fills a square with its corners notched, the way pixel art rounds them. */
+function notchedSquare(ctx: CanvasRenderingContext2D, half: number, notch: number): void {
+  ctx.fillRect(-half + notch, -half, half * 2 - notch * 2, half * 2);
+  ctx.fillRect(-half, -half + notch, half * 2, half * 2 - notch * 2);
+}
+
+/**
+ * An 8-bit tile: a square block, upright whatever the body's spin, with a bevel and a frame
+ * (yellow when you picked it, blue when the bot did). Letters orange, ×2 with a chip, the
+ * joker purple with ★, the bomb red with a pixel bomb.
+ */
+function drawPixelTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
+  const { x, y } = tile.body.position;
+  const r = tile.body.circleRadius ?? 0;
+  const half = Math.round(r * 0.9);
+  const px = Math.max(2, Math.round(r / 8));
+  const look =
+    tile.kind === 'joker' ? PIXEL.joker : tile.kind === 'bomb' ? PIXEL.bomb : PIXEL.letter;
+
+  ctx.save();
+  ctx.translate(Math.round(x), Math.round(y));
+  ctx.fillStyle = tile.selected ? PIXEL.you : tile.bot ? PIXEL.bot : PIXEL.edge;
+  notchedSquare(ctx, half, px * 2);
+  const inner = half - px * (tile.selected || tile.bot ? 2 : 1);
+  ctx.fillStyle = look.shade;
+  ctx.fillRect(-inner, -inner, inner * 2, inner * 2);
+  ctx.fillStyle = look.light;
+  ctx.fillRect(-inner, -inner, inner * 2 - px, inner * 2 - px);
+  ctx.fillStyle = look.fill;
+  ctx.fillRect(-inner + px, -inner + px, inner * 2 - px * 2, inner * 2 - px * 2);
+
+  if (tile.kind === 'bomb') {
+    drawPixelBomb(ctx, px);
+  } else {
+    ctx.fillStyle = tile.kind === 'joker' ? PIXEL.white : PIXEL.ink;
+    ctx.font = `${Math.round(r * 0.8)}px 'Press Start 2P', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(tile.letter, 0, px / 2);
+  }
+  if (tile.kind === 'double') {
+    const size = Math.round(r * 0.36);
+    ctx.fillStyle = PIXEL.you;
+    ctx.fillRect(inner - size * 2, -inner, size * 2, size * 1.4);
+    ctx.fillStyle = PIXEL.ink;
+    ctx.font = `${size}px 'Press Start 2P', monospace`;
+    ctx.fillText('×2', inner - size, -inner + size * 0.75);
+  }
+  ctx.restore();
+}
+
+/** A round black bomb with a lit fuse, drawn in squares `px` wide. */
+function drawPixelBomb(ctx: CanvasRenderingContext2D, px: number): void {
+  const p = px * 1.5;
+  const cells: [number, number, number, number, string][] = [
+    [1, -4, 1, 1, PIXEL.you],
+    [0, -3, 1, 1, PIXEL.letter.fill],
+    [-2, -2, 3, 1, PIXEL.ink],
+    [-3, -1, 5, 4, PIXEL.ink],
+    [-2, 3, 3, 1, PIXEL.ink],
+    [-2, -1, 1, 1, PIXEL.white],
+  ];
+  for (const [cx, cy, w, h, color] of cells) {
+    ctx.fillStyle = color;
+    ctx.fillRect(cx * p, cy * p, w * p, h * p);
+  }
+}
+
+/** An 8-bit explosion: square sparks flying out and shrinking. */
+function drawPixelBlast(ctx: CanvasRenderingContext2D, blast: Blast, now: number): void {
+  const t = Math.max(0, now - blast.start) / BLAST_MS;
+  const reach = blast.radius * (0.3 + 0.7 * t);
+  const size = Math.max(2, Math.round((blast.radius / 8) * (1 - t)));
+  ctx.save();
+  ctx.translate(Math.round(blast.x), Math.round(blast.y));
+  for (let i = 0; i < 16; i++) {
+    const angle = (i / 16) * Math.PI * 2;
+    const distance = reach * (i % 2 === 0 ? 1 : 0.65);
+    ctx.fillStyle = PIXEL.sparks[i % PIXEL.sparks.length]!;
+    ctx.fillRect(
+      Math.round(Math.cos(angle) * distance) - size,
+      Math.round(Math.sin(angle) * distance) - size,
+      size * 2,
+      size * 2,
+    );
+  }
+  ctx.restore();
 }
