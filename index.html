@@ -19,13 +19,8 @@
   <body>
     <main id="app">
       <header class="hud">
-        <div class="score">
-          <span class="score-label" data-i18n="score"></span>
-          <span id="score">0</span>
-          <span id="timer" class="timer"></span>
-        </div>
-        <!-- Player vs AI: the two scores with the round timer, a ring, between them. -->
-        <div class="versus" hidden>
+        <!-- Your score, the round timer as a ring and, against the bot, its score. -->
+        <div class="versus">
           <div class="vs-card vs-you">
             <span id="vs-avatar" class="vs-avatar"></span>
             <span class="vs-text">

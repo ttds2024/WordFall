@@ -26,9 +26,3 @@ export class RoundTimer {
     return this.over;
   }
 }
-
-/** Formats milliseconds as seconds.milliseconds, e.g. 119.873 (whole milliseconds, never below 0). */
-export function formatTime(ms: number): string {
-  const total = Math.max(0, Math.floor(ms));
-  return `${Math.floor(total / 1000)}.${String(total % 1000).padStart(3, '0')}`;
-}

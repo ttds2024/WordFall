@@ -6,7 +6,6 @@ export const LANGUAGE_NAMES: Record<Language, string> = { en: 'English', ru: 'Р
 const strings = {
   en: {
     title: 'WordFall',
-    score: 'Score',
     settings: 'Settings',
     done: 'Done',
     language: 'Language',
@@ -23,7 +22,6 @@ const strings = {
     signOut: 'Sign out',
     signingIn: 'Signing in…',
     signInFailed: 'Could not sign in. Please try again.',
-    time: 'Time',
     menu: 'Menu',
     resume: 'Back to the game',
     playTimed: 'Play 2 min',
@@ -45,7 +43,6 @@ const strings = {
   },
   ru: {
     title: 'WordFall',
-    score: 'Очки',
     settings: 'Настройки',
     done: 'Готово',
     language: 'Язык',
@@ -62,7 +59,6 @@ const strings = {
     signOut: 'Выйти',
     signingIn: 'Вход…',
     signInFailed: 'Не удалось войти. Попробуйте ещё раз.',
-    time: 'Время',
     menu: 'Меню',
     resume: 'Вернуться в игру',
     playTimed: 'Играть 2 мин',

@@ -111,42 +111,6 @@ button:disabled {
   cursor: default;
 }
 
-.hud {
-  display: grid;
-  grid-template-columns: 96px 1fr 96px;
-  align-items: center;
-  gap: 8px;
-  /* On wide screens the bar keeps its phone layout: content at most 480px wide, centred. */
-  padding: 10px max(16px, calc((100% - 480px) / 2)) 12px;
-  border-bottom: 2px solid var(--panel-border);
-  background: rgba(19, 31, 36, 0.8);
-}
-
-.score {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  font-variant-numeric: tabular-nums;
-}
-
-.score-label {
-  font-size: 12px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-#score {
-  font-size: 24px;
-  font-weight: 900;
-  color: var(--yellow);
-}
-
-#score.bump {
-  animation: score-bump 0.45s ease-out;
-}
-
 @keyframes score-bump {
   30% {
     transform: scale(1.35);
@@ -155,23 +119,41 @@ button:disabled {
 }
 
 /*
- * Player vs AI top bar: your card, the round timer as a ring, the bot's card and ☰ on one row,
- * the word being built on the row below. The same compact design on phones and desktops.
+ * The top bar: your card, the round timer as a ring, the bot's card (against the bot) and ☰ on
+ * one row, the word being built on the row below. The same compact design on phones and desktops.
  */
-#app[data-mode='bot'] .hud {
+.hud {
+  display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
     'versus buttons'
     'word word';
-  row-gap: 10px;
+  align-items: center;
+  gap: 10px 8px;
+  /* On wide screens the bar keeps its phone layout: content at most 480px wide, centred. */
   padding: 12px max(12px, calc((100% - 480px) / 2)) 10px;
+  border-bottom: 2px solid var(--panel-border);
+  background: rgba(19, 31, 36, 0.8);
 }
 
-#app[data-mode='bot'] .score {
-  display: none;
+.versus {
+  grid-area: versus;
 }
 
-#app[data-mode='bot'] .versus {
+.word-box {
+  grid-area: word;
+}
+
+.hud-buttons {
+  grid-area: buttons;
+}
+
+/* Playing alone there is no bot card; its place stays empty so the ring stays centred. */
+#app:not([data-mode='bot']) .vs-bot {
+  visibility: hidden;
+}
+
+.versus {
   grid-area: versus;
 }
 
@@ -189,10 +171,6 @@ button:disabled {
   align-items: center;
   gap: 8px;
   min-width: 0;
-}
-
-.versus[hidden] {
-  display: none;
 }
 
 .vs-card {
@@ -391,7 +369,7 @@ button:disabled {
     animation-name: score-fade;
   }
 
-  #score.bump {
+  .vs-text b.bump {
     animation: none;
   }
 
@@ -405,27 +383,6 @@ button:disabled {
       transform: translate(-50%, -50%);
     }
   }
-}
-
-/* The timer as a small pill. */
-.timer {
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: var(--panel);
-  color: var(--blue);
-  font-size: 13px;
-  font-weight: 800;
-  /* Equal-width digits, so the milliseconds do not make the pill jitter. */
-  font-variant-numeric: tabular-nums;
-}
-
-.timer:empty {
-  display: none;
-}
-
-.timer.low {
-  background: var(--red);
-  color: var(--bg);
 }
 
 .hud-buttons {

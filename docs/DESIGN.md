@@ -6,8 +6,8 @@ Letters fall from the top of the screen. The player taps letters to build words.
 
 The game opens on a start menu with two modes:
 
-- **Play 2 min:** a 2-minute round on your own. The timer under the score counts down in seconds
-  and milliseconds (120.000 … 0.000) and turns red in the last 30 seconds; when it runs out the menu comes back with the final score.
+- **Play 2 min:** a 2-minute round on your own. The top bar shows your score next to the timer, a
+  ring that empties over the round with the seconds left inside, red in the last 30 seconds; when it runs out the menu comes back with the final score.
 - **Play vs AI:** a 2-minute round against a bot (see below).
 
 There is no untimed mode: a round against the bot needs an end to decide who won.
