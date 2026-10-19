@@ -262,7 +262,7 @@ button:disabled {
   position: relative;
   width: 64px;
   height: 64px;
-  --ring: var(--blue);
+  --ring: var(--green);
 }
 
 .vs-ring.low {
@@ -273,7 +273,8 @@ button:disabled {
   display: block;
   width: 100%;
   height: 100%;
-  transform: rotate(-90deg);
+  /* Starts at the top and empties anticlockwise. */
+  transform: scaleX(-1) rotate(-90deg);
 }
 
 .vs-ring-track {
