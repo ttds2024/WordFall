@@ -643,6 +643,22 @@ dialog .primary {
   text-align: center;
 }
 
+/* ✕ in the menu's top-right corner while a round is paused. */
+.menu-close {
+  position: absolute;
+  top: calc(12px + env(safe-area-inset-top));
+  right: calc(12px + env(safe-area-inset-right));
+}
+
+.menu-close[hidden] {
+  display: none;
+}
+
+.menu-close svg {
+  width: 22px;
+  height: 22px;
+}
+
 .menu[hidden] {
   display: none;
 }

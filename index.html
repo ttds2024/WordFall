@@ -89,6 +89,19 @@
         <div id="toast" class="toast" aria-live="polite"></div>
       </div>
       <section id="menu" class="menu">
+        <!-- Shown while a round is paused: closes the menu and resumes the game. -->
+        <button id="menu-close" class="icon-button menu-close" type="button" hidden>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
         <h1 data-i18n="title"></h1>
         <div id="account" class="account" hidden>
           <div id="signed-out" class="sign-in">
