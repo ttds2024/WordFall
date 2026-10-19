@@ -15,7 +15,7 @@ export const LETTER_VALUES: Record<Language, Readonly<Record<string, number>>> =
   },
 };
 
-/** A word that uses at least one ×2 tile scores this many times its letter values. */
+/** Each ×2 tile in a word adds this much to its multiplier: N of them make it ×(N × 2). */
 export const DOUBLE_MULTIPLIER = 2;
 
 export function scoreWord(word: string, lang: Language): number {
@@ -24,7 +24,8 @@ export function scoreWord(word: string, lang: Language): number {
   return score;
 }
 
-/** Multiplier for a word built from these tiles: doubled if any of them is a ×2 tile. */
+/** Multiplier for a word built from these tiles: 1 with no ×2 tile, else 2 × the number of them. */
 export function wordMultiplier(tiles: readonly { readonly kind: string }[]): number {
-  return tiles.some((tile) => tile.kind === 'double') ? DOUBLE_MULTIPLIER : 1;
+  const doubles = tiles.filter((tile) => tile.kind === 'double').length;
+  return doubles === 0 ? 1 : doubles * DOUBLE_MULTIPLIER;
 }
