@@ -7,7 +7,7 @@ Letters fall from the top of the screen. The player taps letters to build words.
 The game opens on a start menu with two modes:
 
 - **Play 2 min:** a 2-minute round on your own. The top bar shows your score next to the timer, a
-  green ring that empties anticlockwise over the round with the seconds left inside, red in the last 30 seconds; when it runs out the menu comes back with the final score.
+  green ring that empties anticlockwise over the round with the seconds left inside, red in the last 30 seconds; when it runs out the result window shows the final score.
 - **Play vs AI:** a 2-minute round against a bot (see below).
 
 There is no untimed mode: a round against the bot needs an end to decide who won.
@@ -15,7 +15,8 @@ There is no untimed mode: a round against the bot needs an end to decide who won
 The **☰** button pauses the round (timer and bot included) and opens the menu, with an **✕** in
 the top-right corner (or Esc) that closes it and resumes the game where it was left; starting a new
 game from that menu replaces the paused round, and changing the language drops it. When the time
-runs out the menu shows the score. Settings (the language)
+runs out a result window opens over the start menu: the title (time's up, or who won against the
+bot), your score and the bot's, **Play again** (the same mode) and **Menu**. Settings (the language)
 open from the start menu only; there is no Settings button during a round.
 
 ## Playing against a bot
@@ -35,7 +36,7 @@ open from the start menu only; there is no Settings button during a round.
   whole seconds left inside; it turns red in the last 30 seconds. ☰ sits beside the bot's card and
   the word being built goes on the row below. The same compact design on phones and desktops; on
   wide screens the score group keeps its phone width (at most 480 px), centred. There is
-  no "who's ahead" indicator beyond the two scores. At the end the menu says who won.
+  no "who's ahead" indicator beyond the two scores. At the end the result window says who won.
 
 ## Accounts
 

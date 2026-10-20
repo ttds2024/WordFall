@@ -66,9 +66,10 @@ export function startApp(defaultLanguage: Language): void {
     vsRingFill: element('#vs-ring-fill'),
     vsSeconds: element('#vs-seconds'),
     resultBot: element('#result-bot'),
+    resultBotBox: element('#result-bot-box'),
     fieldWrap: element('.field-wrap'),
     menu: element('#menu'),
-    result: element('#result'),
+    result: element<HTMLDialogElement>('#result'),
     resultTitle: element('#result-title'),
     resultScore: element('#result-score'),
     playTimed: element<HTMLButtonElement>('#play-timed'),
@@ -93,6 +94,8 @@ export function startApp(defaultLanguage: Language): void {
   let score = 0;
   let toastTimer = 0;
   let round: RoundTimer | undefined;
+  /** The kind of the last round started, for "Play again". */
+  let lastKind: RoundKind = 'solo';
   let dictionary: Dictionary | undefined;
   // The bot, when playing against one: its score, when it next tries, and the try in progress.
   let botScore = 0;
@@ -241,6 +244,7 @@ export function startApp(defaultLanguage: Language): void {
   }
 
   function startRound(kind: RoundKind): void {
+    lastKind = kind;
     round = new RoundTimer(kind);
     score = 0;
     stopBot();
@@ -261,7 +265,6 @@ export function startApp(defaultLanguage: Language): void {
   function pauseRound(): void {
     if (!round) return;
     game.stop();
-    ui.result.hidden = true;
     ui.menuClose.hidden = false;
     ui.menu.hidden = false;
   }
@@ -282,7 +285,7 @@ export function startApp(defaultLanguage: Language): void {
     ui.menuClose.hidden = true;
   }
 
-  /** Stops play and shows the menu with the score; timeUp says the clock ran out. */
+  /** Stops play and shows the result in its own window, over the start menu. */
   function endRound(): void {
     if (!round) return;
     const timeUp = round.over;
@@ -300,10 +303,16 @@ export function startApp(defaultLanguage: Language): void {
     ui.resultTitle.textContent = title;
     ui.resultTitle.hidden = !title;
     ui.resultScore.textContent = String(score);
-    ui.resultBot.textContent = `🤖 ${t(settings.lang, 'bot')}: ${botScore}`;
-    ui.resultBot.hidden = !botClock;
-    ui.result.hidden = false;
+    ui.resultBot.textContent = String(botScore);
+    ui.resultBotBox.hidden = !botClock;
     ui.menu.hidden = false;
+    ui.result.showModal();
+  }
+
+  /** Closing the result: "Play again" starts the same kind of round; otherwise the menu stays. */
+  function closeResult(): void {
+    if (ui.result.returnValue === 'again') startRound(lastKind);
+    ui.result.returnValue = '';
   }
 
   function clearWord(): void {
@@ -422,6 +431,7 @@ export function startApp(defaultLanguage: Language): void {
   ui.playTimed.addEventListener('click', () => startRound('solo'));
   ui.playBot.addEventListener('click', () => startRound('bot'));
   ui.dialog.addEventListener('close', applySettings);
+  ui.result.addEventListener('close', closeResult);
   window.addEventListener('keydown', (e) => {
     if (ui.dialog.open || !round) return;
     if (!ui.menu.hidden) {

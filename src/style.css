@@ -313,10 +313,8 @@ button:disabled {
   font-size: 10px;
 }
 
-.result-bot {
+.result-score.result-bot b {
   color: var(--blue);
-  font-size: 18px;
-  font-weight: 900;
 }
 
 /* A found word and its points: pop in where its tiles were, rise and fade (1.2 s, FLOAT_MS). */
@@ -634,10 +632,37 @@ dialog .primary {
   color: var(--green);
 }
 
+/* The result window: the title, the score (and the bot's), then Play again and Menu. */
+.result {
+  text-align: center;
+}
+
 .result-title {
+  margin: 0 0 16px;
   font-size: 24px;
   font-weight: 900;
   color: var(--yellow);
+}
+
+.result-title:empty {
+  display: none;
+}
+
+.result-scores {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.result-scores [hidden] {
+  display: none;
+}
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .result-score {
@@ -990,10 +1015,6 @@ button.provider.vk {
 
 :root[data-theme='8bit'] .result-score b {
   font-size: 28px;
-}
-
-:root[data-theme='8bit'] .result-bot {
-  font-size: 12px;
 }
 
 :root[data-theme='8bit'] .menu-options b {

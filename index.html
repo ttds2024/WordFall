@@ -119,14 +119,6 @@
           </div>
           <div id="auth-error" class="auth-error" aria-live="polite" hidden></div>
         </div>
-        <div id="result" class="result" hidden>
-          <div id="result-title" class="result-title"></div>
-          <div class="result-score">
-            <span data-i18n="finalScore"></span>
-            <b id="result-score"></b>
-          </div>
-          <div id="result-bot" class="result-bot" hidden></div>
-        </div>
         <div class="menu-options">
           <button id="play-timed" class="primary" type="button">
             <b data-i18n="playTimed"></b>
@@ -176,6 +168,26 @@
             </label>
           </fieldset>
           <button class="primary" value="done" data-i18n="done"></button>
+        </form>
+      </dialog>
+      <!-- The result of a finished round, over the start menu. -->
+      <dialog id="result" class="result">
+        <form method="dialog">
+          <h2 id="result-title" class="result-title"></h2>
+          <div class="result-scores">
+            <div class="result-score">
+              <span data-i18n="finalScore"></span>
+              <b id="result-score"></b>
+            </div>
+            <div id="result-bot-box" class="result-score result-bot" hidden>
+              <span data-i18n="bot"></span>
+              <b id="result-bot"></b>
+            </div>
+          </div>
+          <div class="result-actions">
+            <button class="primary" value="again" data-i18n="playAgain"></button>
+            <button value="menu" data-i18n="menu"></button>
+          </div>
         </form>
       </dialog>
     </main>
