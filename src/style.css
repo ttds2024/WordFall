@@ -584,6 +584,45 @@ fieldset small {
   font-weight: 700;
 }
 
+/* The language: a dropdown under its label, chunky like the choice cards. */
+.field {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 20px;
+}
+
+.field-label {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.field select {
+  width: 100%;
+  padding: 12px 44px 12px 14px;
+  border: 2px solid var(--panel-border);
+  border-radius: 16px;
+  box-shadow: 0 var(--edge) 0 var(--panel-border);
+  /* A chevron on the right in place of the browser's own arrow. */
+  background: var(--bg)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238fa3ad' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 14px center / 18px;
+  color: var(--fg);
+  font: inherit;
+  font-weight: 800;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.field select:focus-visible {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 var(--edge) 0 var(--blue-edge);
+}
+
 dialog .primary {
   width: 100%;
 }
@@ -1037,6 +1076,7 @@ button.provider.vk {
   font-size: 16px;
 }
 
+:root[data-theme='8bit'] .field-label,
 :root[data-theme='8bit'] legend,
 :root[data-theme='8bit'] fieldset small {
   font-size: 9px;
@@ -1046,8 +1086,13 @@ button.provider.vk {
   font-size: 11px;
 }
 
-:root[data-theme='8bit'] fieldset label {
+:root[data-theme='8bit'] fieldset label,
+:root[data-theme='8bit'] .field select {
   border-width: 4px;
+}
+
+:root[data-theme='8bit'] .field select {
+  font-size: 11px;
 }
 
 :root[data-theme='8bit'] #play-bot {

@@ -82,7 +82,7 @@ export function startApp(defaultLanguage: Language): void {
     status: element('#status'),
     toast: element('#toast'),
     dialog: element<HTMLDialogElement>('#settings'),
-    ruNote: element('#ru-note'),
+    langRu: element<HTMLOptionElement>('#lang-ru'),
   };
 
   const tracker = new WordTracker<Tile>(undefined);
@@ -375,7 +375,9 @@ export function startApp(defaultLanguage: Language): void {
     });
     ui.menuButton.setAttribute('aria-label', t(lang, 'menu'));
     ui.menuClose.setAttribute('aria-label', t(lang, 'resume'));
-    ui.ruNote.textContent = __DICTIONARIES__.includes('ru') ? '' : t(lang, 'noDictionary');
+    ui.langRu.textContent = __DICTIONARIES__.includes('ru')
+      ? 'Русский'
+      : `Русский (${t(lang, 'noDictionary')})`;
     auth.render();
   }
 
@@ -401,7 +403,7 @@ export function startApp(defaultLanguage: Language): void {
   /** Settings open from the start menu only, so no round is running meanwhile. */
   function openSettings(): void {
     const form = ui.dialog.querySelector('form')!;
-    (form.elements.namedItem('lang') as RadioNodeList).value = settings.lang;
+    (form.elements.namedItem('lang') as HTMLSelectElement).value = settings.lang;
     (form.elements.namedItem('sound') as RadioNodeList).value = settings.sound ? 'on' : 'off';
     (form.elements.namedItem('theme') as RadioNodeList).value = settings.theme;
     ui.dialog.showModal();
@@ -409,7 +411,7 @@ export function startApp(defaultLanguage: Language): void {
 
   function applySettings(): void {
     const form = ui.dialog.querySelector('form')!;
-    const lang = (form.elements.namedItem('lang') as RadioNodeList).value as Language;
+    const lang = (form.elements.namedItem('lang') as HTMLSelectElement).value as Language;
     settings.sound = (form.elements.namedItem('sound') as RadioNodeList).value === 'on';
     sounds.enabled = settings.sound;
     settings.theme = (form.elements.namedItem('theme') as RadioNodeList).value as Theme;
