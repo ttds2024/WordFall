@@ -40,7 +40,7 @@ export class Game {
   /** Explosions still being drawn. */
   private blasts: Blast[] = [];
   /** How the tiles look. */
-  private theme: Theme = 'classic';
+  private theme: Theme = 'halloween';
 
   constructor(
     private readonly canvas: HTMLCanvasElement,

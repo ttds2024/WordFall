@@ -108,10 +108,16 @@ reduced motion turned on, the badge only fades. Misses still show a red message 
   for the main action, blue for the second, yellow score, red for misses) and chunky buttons and
   choice cards with a solid bottom edge that presses down when tapped. Only the style is borrowed:
   no Duolingo name, owl or logo. The game field keeps its Halloween pumpkins and stars.
-- **8-bit style:** Settings → **Style** switches between Classic (above, the default) and 8-bit:
-  the PICO-8 palette, the pixel font Press Start 2P, square corners and hard shadows, a plain navy
+- **Styles:** Settings → **Style** picks Halloween (above, the default; called Classic before, and
+  a saved Classic choice reads as Halloween), 8-bit or Christmas.
+- **8-bit style:** the PICO-8 palette, the pixel font Press Start 2P, square corners and hard shadows, a plain navy
   background instead of the picture, square pixel tiles (orange letters, ×2 chip, purple ★ joker,
   red bomb tile with square sparks when it blows) and the timer ring in 16 blocks.
+- **Christmas style:** a snowy night background, a string of coloured lights under the top bar,
+  the display font Mountains of Christmas for words and titles, baubles for letters (red, green or
+  blue with a gold cap; gold with a ×2 tag for ×2 letters), a gold star joker, a lump of coal for
+  the bomb (it bursts into snow), gold and ice-blue glows for your and the bot's picks, a red
+  bauble avatar for you and holly on the timer ring.
 - **Background picture:** `src/images/small.jpeg` (tall) on phones and tablets, in the Android/iOS
   apps and in phone browsers alike, and `src/images/big.jpg` (wide) on computers; only the one in
   use is downloaded. A dark shade over it keeps letters and buttons readable, and the start menu

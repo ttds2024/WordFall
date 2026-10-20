@@ -1,7 +1,15 @@
 import type { Language } from './i18n';
 
-/** The game's look: the rounded classic one, or pixel art. */
-export type Theme = 'classic' | '8bit';
+/** The game's look: Halloween pumpkins (the original), pixel art, or Christmas baubles. */
+export type Theme = 'halloween' | '8bit' | 'christmas';
+
+const THEMES: readonly Theme[] = ['halloween', '8bit', 'christmas'];
+
+/** A saved look, if it is one; 'classic' is what Halloween was called before. */
+function readTheme(value: unknown): Theme | undefined {
+  if (value === 'classic') return 'halloween';
+  return THEMES.find((theme) => theme === value);
+}
 
 export interface Settings {
   lang: Language;
@@ -19,7 +27,7 @@ export function loadSettings(defaults: Settings, storage: Storage | undefined): 
     return {
       lang: saved.lang === 'en' || saved.lang === 'ru' ? saved.lang : defaults.lang,
       sound: typeof saved.sound === 'boolean' ? saved.sound : defaults.sound,
-      theme: saved.theme === 'classic' || saved.theme === '8bit' ? saved.theme : defaults.theme,
+      theme: readTheme(saved.theme) ?? defaults.theme,
     };
   } catch {
     return { ...defaults };

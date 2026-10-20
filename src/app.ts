@@ -54,7 +54,7 @@ export function startApp(defaultLanguage: Language): void {
     }
   })();
   const settings: Settings = loadSettings(
-    { lang: defaultLanguage, sound: true, theme: 'classic' },
+    { lang: defaultLanguage, sound: true, theme: 'halloween' },
     storage,
   );
 
