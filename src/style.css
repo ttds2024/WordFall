@@ -185,7 +185,8 @@ button:disabled {
 
 .vs-card {
   display: flex;
-  align-items: center;
+  /* The score lines up with the avatar, not with the avatar and its name together. */
+  align-items: flex-start;
   gap: 8px;
   min-width: 0;
   padding: 6px 10px 6px 6px;
@@ -243,7 +244,8 @@ button:disabled {
   min-width: 0;
   font-size: 32px;
   font-weight: 900;
-  line-height: 1;
+  /* As tall as the avatar, so the number sits level with its middle. */
+  line-height: 30px;
   font-variant-numeric: tabular-nums;
   color: var(--yellow);
 }
