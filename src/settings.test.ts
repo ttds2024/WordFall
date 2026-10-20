@@ -11,7 +11,7 @@ class MemoryStorage {
   }
 }
 
-const defaults: Settings = { lang: 'en', sound: true, theme: 'classic' };
+const defaults: Settings = { lang: 'en', sound: true, theme: 'halloween' };
 
 describe('settings', () => {
   it('round-trips through storage', () => {
@@ -23,7 +23,19 @@ describe('settings', () => {
   it('ignores settings that no longer exist', () => {
     const storage = new MemoryStorage() as unknown as Storage;
     storage.setItem('wordfall.settings', '{"mode":"auto","opponent":"bot","lang":"ru"}');
-    expect(loadSettings(defaults, storage)).toEqual({ lang: 'ru', sound: true, theme: 'classic' });
+    expect(loadSettings(defaults, storage)).toEqual({
+      lang: 'ru',
+      sound: true,
+      theme: 'halloween',
+    });
+  });
+
+  it('reads the old name of the Halloween style', () => {
+    const storage = new MemoryStorage() as unknown as Storage;
+    storage.setItem('wordfall.settings', '{"theme":"classic"}');
+    expect(loadSettings(defaults, storage).theme).toBe('halloween');
+    storage.setItem('wordfall.settings', '{"theme":"christmas"}');
+    expect(loadSettings(defaults, storage).theme).toBe('christmas');
   });
 
   it('falls back to defaults for missing, invalid or unreadable data', () => {
