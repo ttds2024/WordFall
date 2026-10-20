@@ -134,17 +134,13 @@
       <dialog id="settings">
         <form method="dialog">
           <h2 data-i18n="settings"></h2>
-          <fieldset>
-            <legend data-i18n="language"></legend>
-            <label>
-              <input type="radio" name="lang" value="en" />
-              <span><b>English</b></span>
-            </label>
-            <label>
-              <input type="radio" name="lang" value="ru" />
-              <span><b>Русский</b><small id="ru-note"></small></span>
-            </label>
-          </fieldset>
+          <div class="field">
+            <label class="field-label" for="lang-select" data-i18n="language"></label>
+            <select id="lang-select" name="lang">
+              <option value="en">English</option>
+              <option id="lang-ru" value="ru">Русский</option>
+            </select>
+          </div>
           <fieldset>
             <legend data-i18n="sound"></legend>
             <label>
