@@ -28,6 +28,17 @@ const DICTIONARY_TEXT: Record<Exclude<DictionaryState, 'ready'>, StringKey> = {
 };
 
 const TOAST_MS = 1400;
+/** A joker from the player's stock in the word being built; it is not a tile on the field. */
+const HAND_JOKER = { letter: JOKER, kind: 'joker' } as const;
+type WordItem = Tile | typeof HAND_JOKER;
+/** Stars in the player's stock at the start of a round, and the most it can hold. */
+const START_JOKERS = 1;
+const MAX_JOKERS = 3;
+
+function isTile(item: WordItem): item is Tile {
+  return item !== HAND_JOKER;
+}
+
 /** The timer turns red in the last this-many milliseconds. */
 const LOW_TIME_MS = 30_000;
 
@@ -62,6 +73,8 @@ export function startApp(defaultLanguage: Language): void {
     vsAvatar: element('#vs-avatar'),
     vsYouScore: element('#vs-you-score'),
     vsBotScore: element('#vs-bot-score'),
+    jokerButton: element<HTMLButtonElement>('#joker-button'),
+    jokerCount: element('#joker-count'),
     vsRing: element('#vs-ring'),
     vsRingFill: element('#vs-ring-fill'),
     vsSeconds: element('#vs-seconds'),
@@ -85,13 +98,15 @@ export function startApp(defaultLanguage: Language): void {
     langRu: element<HTMLOptionElement>('#lang-ru'),
   };
 
-  const tracker = new WordTracker<Tile>(undefined);
+  const tracker = new WordTracker<WordItem>(undefined);
   const sounds = new Sounds();
   sounds.enabled = settings.sound;
   const auth = setupAuth(() => settings.lang);
   let dictionaryState: DictionaryState = 'loading';
   let loadToken = 0;
   let score = 0;
+  /** Stars collected this round and not spent yet (one may be in the word being built). */
+  let jokers = 0;
   let toastTimer = 0;
   let round: RoundTimer | undefined;
   /** The kind of the last round started, for "Play again". */
@@ -111,13 +126,14 @@ export function startApp(defaultLanguage: Language): void {
         game.explode(tile);
         return;
       }
+      // A star goes into the player's stock, to be used from the top bar whenever they like.
+      if (tile.kind === 'joker') {
+        collectJoker(tile);
+        return;
+      }
       // Tapping a letter already in the word checks the word.
       if (tracker.includes(tile)) {
         submitWord();
-        return;
-      }
-      if (!tracker.canAdd(tile)) {
-        showToast(t(settings.lang, 'oneJoker'), 'bad');
         return;
       }
       tile.selected = true;
@@ -141,19 +157,22 @@ export function startApp(defaultLanguage: Language): void {
     },
   });
 
-  function handleResult(result: SubmitResult<Tile> | undefined): boolean {
+  function handleResult(result: SubmitResult<WordItem> | undefined): boolean {
     if (!result) return false;
     if (result.ok) {
       const multiplier = wordMultiplier(result.items);
       const points = scoreWord(result.word) * multiplier;
       score += points;
+      // A joker from the stock is spent once its word scores.
+      if (result.items.includes(HAND_JOKER)) jokers--;
+      const tiles = result.items.filter(isTile);
       // The word and its points rise from where its tiles were.
       const at = floatPosition(
-        result.items.map((tile) => tile.body.position),
+        tiles.map((tile) => tile.body.position),
         ui.fieldWrap.clientWidth,
         ui.fieldWrap.clientHeight,
       );
-      game.removeTiles(result.items);
+      game.removeTiles(tiles);
       showScoreFloat(ui.fieldWrap, at, pointsText(points), result.word);
       sounds.play('success');
       bumpScore(ui.vsYouScore);
@@ -250,6 +269,7 @@ export function startApp(defaultLanguage: Language): void {
     lastKind = kind;
     round = new RoundTimer(kind);
     score = 0;
+    jokers = START_JOKERS;
     stopBot();
     botScore = 0;
     botClock = kind === 'bot' ? new BotClock() : undefined;
@@ -318,8 +338,37 @@ export function startApp(defaultLanguage: Language): void {
     ui.result.returnValue = '';
   }
 
+  /** A tapped star leaves the field and joins the player's stock; with a full stock it stays. */
+  function collectJoker(tile: Tile): void {
+    if (jokers >= MAX_JOKERS) {
+      showToast(t(settings.lang, 'jokersFull'), 'bad');
+      return;
+    }
+    game.removeTiles([tile]);
+    jokers++;
+    sounds.play('clicked');
+    bumpScore(ui.jokerButton);
+    render();
+  }
+
+  /** The joker button (or *): puts a star from the stock into the word, at most one per word. */
+  function useJoker(): void {
+    if (!round || !ui.menu.hidden) return;
+    if (tracker.includes(HAND_JOKER)) {
+      showToast(t(settings.lang, 'oneJoker'), 'bad');
+      return;
+    }
+    if (jokers === 0) {
+      showToast(t(settings.lang, 'noJokers'), 'bad');
+      return;
+    }
+    tracker.add(HAND_JOKER);
+    sounds.play('clicked');
+    render();
+  }
+
   function clearWord(): void {
-    for (const tile of tracker.items) tile.selected = false;
+    for (const item of tracker.items) if (isTile(item)) item.selected = false;
     tracker.clear();
     render();
   }
@@ -357,6 +406,17 @@ export function startApp(defaultLanguage: Language): void {
     ui.multiplier.hidden = multiplier === 1;
     ui.status.textContent = statusText(status);
     ui.status.dataset.status = dictionaryState === 'ready' ? status : 'empty';
+    renderJokers();
+  }
+
+  /** The joker button: how many stars are left to use, and whether one is in the word. */
+  function renderJokers(): void {
+    const inWord = tracker.includes(HAND_JOKER);
+    const left = jokers - (inWord ? 1 : 0);
+    ui.jokerCount.textContent = String(left);
+    ui.jokerButton.classList.toggle('empty', left === 0);
+    ui.jokerButton.setAttribute('aria-pressed', String(inWord));
+    ui.jokerButton.setAttribute('aria-label', `${t(settings.lang, 'useJoker')}: ${left}`);
   }
 
   /** The top bar: the scores, and the ring emptying with the seconds left. */
@@ -432,6 +492,7 @@ export function startApp(defaultLanguage: Language): void {
 
   ui.menuSettings.addEventListener('click', openSettings);
   ui.menuButton.addEventListener('click', pauseRound);
+  ui.jokerButton.addEventListener('click', useJoker);
   ui.menuClose.addEventListener('click', resumeRound);
   ui.playTimed.addEventListener('click', () => startRound('solo'));
   ui.playBot.addEventListener('click', () => startRound('bot'));
@@ -445,6 +506,7 @@ export function startApp(defaultLanguage: Language): void {
     }
     if (e.key === 'Enter') submitWord();
     else if (e.key === 'Escape' || e.key === 'Backspace') clearWord();
+    else if (e.key === '*') useJoker();
   });
 
   /** Classic or 8-bit: the page's look (style.css) and the tiles' (the renderer). */

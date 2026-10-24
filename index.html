@@ -70,6 +70,11 @@
           </div>
         </div>
         <div class="word-box">
+          <!-- Stars collected this round, under your avatar: tap to put one into the word. -->
+          <button id="joker-button" class="joker-button" type="button">
+            <span class="joker-star" aria-hidden="true"></span>
+            <b id="joker-count" class="joker-count">0</b>
+          </button>
           <div class="word-line">
             <div id="word" class="word" aria-live="polite"></div>
             <span id="multiplier" class="multiplier" hidden></span>
