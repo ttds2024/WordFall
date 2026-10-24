@@ -1,26 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { DOUBLE_MULTIPLIER, LETTER_VALUES, scoreWord, wordMultiplier } from './scoring';
+import { DOUBLE_MULTIPLIER, scoreWord, wordMultiplier } from './scoring';
 
 describe('scoreWord', () => {
-  it('adds Scrabble values in English', () => {
-    expect(scoreWord('QUIZ', 'en')).toBe(22);
-    expect(scoreWord('cat', 'en')).toBe(5);
+  it('scores 100 per letter, whatever the letters', () => {
+    expect(scoreWord('QUIZ')).toBe(400);
+    expect(scoreWord('cat')).toBe(300);
+    expect(scoreWord('кот')).toBe(300);
+    expect(scoreWord('ёжик')).toBe(400);
   });
 
-  it('adds Эрудит values in Russian, Ё as Е', () => {
-    expect(scoreWord('кот', 'ru')).toBe(5);
-    expect(scoreWord('ёж', 'ru')).toBe(6);
-  });
-
-  it('covers both alphabets', () => {
-    expect(Object.keys(LETTER_VALUES.en)).toHaveLength(26);
-    expect(Object.keys(LETTER_VALUES.ru)).toHaveLength(32);
-  });
-});
-
-describe('jokers', () => {
-  it('score nothing, like a blank', () => {
-    expect(scoreWord('C★T', 'en')).toBe(4);
+  it('counts a joker as a letter', () => {
+    expect(scoreWord('C★T')).toBe(300);
   });
 });
 

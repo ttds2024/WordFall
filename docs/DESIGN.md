@@ -70,7 +70,7 @@ in the game yet.
 - **Jokers:** about 1 tile in 25 is a gold **star** (`src/images/star.svg`) with no letter. It stands for any one letter: the
   word counts if some dictionary word fits it, and the status line names that word (e.g. C★T is
   "In the word list: CAT"). If several words fit, the first one not found yet is used, so C★T can
-  score CAT, then COT, then CUT. A joker scores 0 points, like a blank in Scrabble. A word can hold
+  score CAT, then COT, then CUT. A joker scores like any other letter. A word can hold
   at most **one** joker: tapping a second star does nothing except show "Only one star per word".
 - **Speed:** constant; no difficulty curve yet.
 
@@ -97,7 +97,7 @@ reduced motion turned on, the badge only fades. Misses still show a red message 
 
 ## Temporary rules
 
-- **Score:** Scrabble letter values (English) and Эрудит letter values (Russian).
+- **Score:** 100 points per letter of the word (×2 tiles still multiply it).
 - **Letter frequency:** weighted like real text in each language.
 - **High score:** later.
 
