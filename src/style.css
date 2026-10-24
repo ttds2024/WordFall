@@ -259,6 +259,73 @@ button:disabled {
   animation: score-bump 0.45s ease-out;
 }
 
+/*
+ * Your stars: a gold star with the number left, at the start of the word row under your avatar;
+ * tapping it puts one into the word.
+ */
+.joker-button {
+  position: absolute;
+  left: 6px;
+  top: calc(50% - 17px);
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  border-color: var(--yellow);
+  box-shadow: 0 3px 0 #b8862b;
+}
+
+.joker-button.empty {
+  border-color: var(--panel-border);
+  box-shadow: 0 3px 0 var(--panel-border);
+}
+
+.joker-button.empty .joker-star {
+  opacity: 0.35;
+}
+
+/* The star is in the word: the button lights up. */
+.joker-button[aria-pressed='true'] {
+  background: #4a3a10;
+}
+
+.joker-star {
+  position: absolute;
+  inset: 5px;
+  background: url('./images/star.svg') center / contain no-repeat;
+}
+
+.joker-count {
+  position: absolute;
+  right: -7px;
+  bottom: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--yellow);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.joker-button.empty .joker-count {
+  background: var(--panel-border);
+  color: var(--muted);
+}
+
+.joker-button.bump {
+  animation: joker-bump 0.45s ease-out;
+}
+
+@keyframes joker-bump {
+  30% {
+    transform: scale(1.3);
+  }
+}
+
 /* The round timer: a ring that empties over the round, the seconds left inside. */
 .vs-ring {
   position: relative;
@@ -378,7 +445,8 @@ button:disabled {
     animation-name: score-fade;
   }
 
-  .vs-score.bump {
+  .vs-score.bump,
+  .joker-button.bump {
     animation: none;
   }
 
@@ -401,6 +469,9 @@ button:disabled {
 }
 
 .word-box {
+  position: relative;
+  /* Room for the joker button on the left, and as much on the right so the word stays centred. */
+  padding-inline: 48px;
   text-align: center;
   min-width: 0;
 }
@@ -973,6 +1044,43 @@ button.provider.vk {
 
 :root[data-theme='8bit'] .vs-score {
   font-size: 16px;
+}
+
+:root[data-theme='8bit'] .joker-button {
+  border-radius: 0;
+  border-color: #000000;
+  background: #83769c;
+  box-shadow: 3px 3px 0 #5f574f;
+}
+
+:root[data-theme='8bit'] .joker-button.empty {
+  background: var(--bg);
+  border-color: var(--panel-border);
+  box-shadow: 3px 3px 0 var(--panel-border);
+}
+
+:root[data-theme='8bit'] .joker-button[aria-pressed='true'] {
+  background: #c2c3c7;
+}
+
+/* A white pixel ★ on the purple joker block, as on the field. */
+:root[data-theme='8bit'] .joker-star {
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-family: system-ui, sans-serif;
+  font-size: 18px;
+}
+
+:root[data-theme='8bit'] .joker-star::before {
+  content: '★';
+}
+
+:root[data-theme='8bit'] .joker-count {
+  border-radius: 0;
+  font-size: 8px;
 }
 
 :root[data-theme='8bit'] .vs-ring-track {

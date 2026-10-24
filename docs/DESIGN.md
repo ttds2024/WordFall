@@ -72,11 +72,18 @@ in the game yet.
   and a gold ×2 mark. A correct word scores its letters times **2 × N**, N being the number of ×2
   pumpkins in it (one: ×2, two: ×4, three: ×6); the word bar shows the multiplier while the word
   holds one.
-- **Jokers:** about 1 tile in 25 is a gold **star** (`src/images/star.svg`) with no letter. It stands for any one letter: the
-  word counts if some dictionary word fits it, and the status line names that word (e.g. C★T is
-  "In the word list: CAT"). If several words fit, the first one not found yet is used, so C★T can
-  score CAT, then COT, then CUT. A joker scores like any other letter. A word can hold
-  at most **one** joker: tapping a second star does nothing except show "Only one star per word".
+- **Jokers:** about 1 tile in 25 is a gold **star** (`src/images/star.svg`) with no letter.
+  Tapping a falling star does not put it in the word: it leaves the field and goes into your
+  **stock**, shown as a star button with a count at the start of the word row, under your avatar
+  (greyed out at 0). Tapping that button (or pressing `*`) puts a star into the word, after the
+  letters already picked, whenever you choose. It stands for any one letter: the word counts if
+  some dictionary word fits it, and the status line names that word (e.g. C★T is "In the word
+  list: CAT"). If several words fit, the first one not found yet is used, so C★T can score CAT,
+  then COT, then CUT. A joker scores like any other letter. A star is spent only when its word
+  scores; clearing the word gives it back. A word can hold at most **one** joker: tapping the
+  button again shows "Only one star per word", and with an empty stock it says how to get one.
+  The stock starts at 0 each round, stars on the field can still be blown up, and the bot never
+  takes them.
 - **Speed:** constant; no difficulty curve yet.
 
 ## Submitting words
