@@ -82,8 +82,9 @@ in the game yet.
   then COT, then CUT. A joker scores like any other letter. A star is spent only when its word
   scores; clearing the word gives it back. A word can hold at most **one** joker: tapping the
   button again shows "Only one star per word", and with an empty stock it says how to get one.
-  The stock starts at 0 each round, stars on the field can still be blown up, and the bot never
-  takes them.
+  Each round starts with **one** star in the stock, and it holds at most **3**: with a full stock
+  a tapped star stays on the field and the game says "You can hold at most 3 stars". Stars on
+  the field can still be blown up, and the bot never takes them.
 - **Speed:** constant; no difficulty curve yet.
 
 ## Submitting words

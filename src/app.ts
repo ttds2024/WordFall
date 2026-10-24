@@ -31,6 +31,9 @@ const TOAST_MS = 1400;
 /** A joker from the player's stock in the word being built; it is not a tile on the field. */
 const HAND_JOKER = { letter: JOKER, kind: 'joker' } as const;
 type WordItem = Tile | typeof HAND_JOKER;
+/** Stars in the player's stock at the start of a round, and the most it can hold. */
+const START_JOKERS = 1;
+const MAX_JOKERS = 3;
 
 function isTile(item: WordItem): item is Tile {
   return item !== HAND_JOKER;
@@ -266,7 +269,7 @@ export function startApp(defaultLanguage: Language): void {
     lastKind = kind;
     round = new RoundTimer(kind);
     score = 0;
-    jokers = 0;
+    jokers = START_JOKERS;
     stopBot();
     botScore = 0;
     botClock = kind === 'bot' ? new BotClock() : undefined;
@@ -335,8 +338,12 @@ export function startApp(defaultLanguage: Language): void {
     ui.result.returnValue = '';
   }
 
-  /** A tapped star leaves the field and joins the player's stock. */
+  /** A tapped star leaves the field and joins the player's stock; with a full stock it stays. */
   function collectJoker(tile: Tile): void {
+    if (jokers >= MAX_JOKERS) {
+      showToast(t(settings.lang, 'jokersFull'), 'bad');
+      return;
+    }
     game.removeTiles([tile]);
     jokers++;
     sounds.play('clicked');
