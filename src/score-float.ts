@@ -21,9 +21,9 @@ export function floatPosition(
   };
 }
 
-/** "+12", or "+12 ×2" for a doubled word. */
-export function pointsText(points: number, multiplier: number): string {
-  return `+${points}${multiplier > 1 ? ` ×${multiplier}` : ''}`;
+/** "+12": the word's total, ×2 letters already counted in. */
+export function pointsText(points: number): string {
+  return `+${points}`;
 }
 
 /**
