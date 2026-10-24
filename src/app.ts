@@ -139,10 +139,8 @@ export function startApp(defaultLanguage: Language): void {
   function handleResult(result: SubmitResult<Tile> | undefined): boolean {
     if (!result) return false;
     if (result.ok) {
-      // Letters are scored as tapped, so a joker counts 0, like a blank in Scrabble.
-      const letters = result.items.map((tile) => tile.letter).join('');
       const multiplier = wordMultiplier(result.items);
-      const points = scoreWord(letters, settings.lang) * multiplier;
+      const points = scoreWord(result.word) * multiplier;
       score += points;
       // The word and its points rise from where its tiles were.
       const at = floatPosition(
@@ -227,7 +225,7 @@ export function startApp(defaultLanguage: Language): void {
     // The player may have found the same word while the bot was thinking.
     if (correct && !tracker.isUsed(word)) {
       const multiplier = wordMultiplier(tiles);
-      const points = scoreWord(word, settings.lang) * multiplier;
+      const points = scoreWord(word) * multiplier;
       botScore += points;
       tracker.markUsed(word);
       game.removeTiles(tiles);
