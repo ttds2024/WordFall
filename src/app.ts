@@ -106,6 +106,11 @@ export function startApp(defaultLanguage: Language): void {
     onTap(tile) {
       // Bombs carry no letter; they only explode. Letters the bot has picked are its own.
       if (tile.kind === 'bomb' || tile.bot) return;
+      // A green pumpkin blows up, with the tiles around it.
+      if (tile.kind === 'green') {
+        game.explode(tile);
+        return;
+      }
       // Tapping a letter already in the word checks the word.
       if (tracker.includes(tile)) {
         submitWord();
@@ -170,7 +175,7 @@ export function startApp(defaultLanguage: Language): void {
   }
 
   /**
-   * The bot picks letters from the field (never a star or a bad pumpkin): a real word not found
+   * The bot picks letters from the field (never a star, a bad pumpkin or a green one): a real word not found
    * yet with probability BOT_ACCURACY, otherwise letters that spell nothing. It goes for letters
    * the player has not picked first; only if those give it nothing does it take the player's.
    */

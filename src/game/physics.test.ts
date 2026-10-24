@@ -114,3 +114,18 @@ describe('bombs', () => {
     expect(world.count).toBe(0);
   });
 });
+
+describe('green pumpkins', () => {
+  it('only explode when told to, taking the tiles around them', () => {
+    const world = new PhysicsWorld(400, 600);
+    const green = world.spawn('A', 200, 570, 30, 'green');
+    const near = world.spawn('B', 260, 570, 30);
+    const far = world.spawn('C', 40, 570, 30);
+    run(world, 2);
+    expect(world.all()).toContain(green);
+
+    const explosion = world.explode(green);
+    expect(explosion.destroyed).toEqual([near]);
+    expect(world.all()).toEqual([far]);
+  });
+});

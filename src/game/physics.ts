@@ -4,10 +4,10 @@ const { Bodies, Body, Composite, Engine, Events } = Matter;
 
 /**
  * A pumpkin is an ordinary letter; a double is a letter that doubles the score of a word using
- * it; a bomb (a bad pumpkin) has no letter and explodes when it hits something; a joker (a star,
- * letter JOKER) stands for any one letter.
+ * it; a bomb (a bad pumpkin) has no letter and explodes when it hits something; a green pumpkin
+ * shows a letter but explodes when tapped; a joker (a star, letter JOKER) stands for any one letter.
  */
-export type TileKind = 'pumpkin' | 'double' | 'bomb' | 'joker';
+export type TileKind = 'pumpkin' | 'double' | 'bomb' | 'green' | 'joker';
 
 export interface Tile {
   readonly id: number;
@@ -20,14 +20,14 @@ export interface Tile {
 }
 
 const WALL = 200;
-/** A bomb's blast destroys tiles whose centres are within this many tile radii of it. */
+/** A blast (a bomb's or a green pumpkin's) destroys tiles whose centres are within this many tile radii of it. */
 export const BLAST_RADII = 2.6;
 /** Tiles within this many radii (but outside the blast) are pushed away. */
 const PUSH_RADII = 5;
 /** Speed, in px per step, given to a pushed tile right at the edge of the blast. */
 const PUSH_SPEED = 6;
 
-/** A bomb that went off: where, how far its blast reached, and the tiles it destroyed. */
+/** A bomb or green pumpkin that went off: where, how far its blast reached, and the tiles it destroyed. */
 export interface Explosion {
   x: number;
   y: number;
@@ -136,7 +136,10 @@ export class PhysicsWorld {
     return explosions;
   }
 
-  /** Removes the bomb and every tile in its blast, and pushes the tiles just beyond it away. */
+  /**
+   * Removes the bomb (or green pumpkin) and every tile in its blast, and pushes the tiles just
+   * beyond it away.
+   */
   explode(bomb: Tile): Explosion {
     const { x, y } = bomb.body.position;
     const r = bomb.body.circleRadius ?? 0;

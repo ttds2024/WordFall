@@ -63,6 +63,11 @@ in the game yet.
   letter; it cannot be tapped. When it first hits anything (the floor or another tile) it explodes
   with a flash, destroying every tile within about 2.6 tile radii and pushing the next ones away.
   Letters it destroys leave the word being built and score nothing.
+- **Green pumpkins:** about 1 tile in 20 is a green pumpkin (`src/images/green.png`) with a
+  letter. It cannot join a word: tapping it blows it up with the same blast as a bad pumpkin,
+  destroying the tiles around it (letters it destroys leave the word and score nothing). It does
+  not go off by itself, and the bot never picks it. In the 8-bit style it is a green block; at
+  Christmas a lime bauble with a lit fuse.
 - **×2 pumpkins:** about 1 tile in 12 is a plain pumpkin (`src/images/pumpkin.svg`) with a letter
   and a gold ×2 mark. A correct word scores its letters times **2 × N**, N being the number of ×2
   pumpkins in it (one: ×2, two: ×4, three: ×6); the word bar shows the multiplier while the word
