@@ -2,7 +2,7 @@ import type { Language } from '../i18n';
 import type { Theme } from '../settings';
 import { pickLetter } from '../core/letters';
 import { JOKER } from '../core/word';
-import { PhysicsWorld, type Tile } from './physics';
+import { PhysicsWorld, type Explosion, type Tile } from './physics';
 import { drawExplosions, drawTiles, type Blast } from './renderer';
 import { maxTilesFor, Spawner, tileRadius } from './spawner';
 
@@ -13,6 +13,8 @@ const SPAWN_INTERVAL_MS = 900;
 export const BOMB_CHANCE = 0.1;
 /** Share of falling tiles that are ×2 letters. */
 export const DOUBLE_CHANCE = 0.08;
+/** Share of falling tiles that are green pumpkins (a letter; they explode when tapped). */
+export const GREEN_CHANCE = 0.05;
 /** Share of falling tiles that are jokers. */
 export const JOKER_CHANCE = 0.04;
 
@@ -21,7 +23,7 @@ export interface GameHandlers {
   onTap(tile: Tile): void;
   /** The field was tapped away from any tile. */
   onTapEmpty(): void;
-  /** A bomb exploded and destroyed these tiles. */
+  /** A bomb or green pumpkin exploded and destroyed these tiles. */
   onExplode?(destroyed: Tile[]): void;
   /** Called once per animation frame while running, with the frame time and the play time since the last frame. */
   onFrame?(now: number, elapsed: number): void;
@@ -93,6 +95,17 @@ export class Game {
     for (const tile of tiles) this.world.remove(tile);
   }
 
+  /** Blows up a tile (a tapped green pumpkin) and the tiles around it. */
+  explode(tile: Tile): void {
+    if (!this.world.all().includes(tile)) return;
+    this.showExplosion(this.world.explode(tile), performance.now());
+  }
+
+  private showExplosion(explosion: Explosion, now: number): void {
+    this.blasts.push({ x: explosion.x, y: explosion.y, radius: explosion.radius, start: now });
+    if (explosion.destroyed.length > 0) this.handlers.onExplode?.(explosion.destroyed);
+  }
+
   private readonly tick = (now: number): void => {
     const elapsed = Math.min(now - this.last, MAX_FRAME_MS);
     this.acc += elapsed;
@@ -100,10 +113,7 @@ export class Game {
     while (this.acc >= STEP_MS) {
       this.acc -= STEP_MS;
       this.spawnDue(STEP_MS);
-      for (const explosion of this.world.step(STEP_MS)) {
-        this.blasts.push({ x: explosion.x, y: explosion.y, radius: explosion.radius, start: now });
-        if (explosion.destroyed.length > 0) this.handlers.onExplode?.(explosion.destroyed);
-      }
+      for (const explosion of this.world.step(STEP_MS)) this.showExplosion(explosion, now);
     }
     this.handlers.onFrame?.(now, elapsed);
     this.draw();
@@ -122,6 +132,8 @@ export class Game {
       else if (roll < JOKER_CHANCE + BOMB_CHANCE) this.world.spawn('', x, y, r, 'bomb');
       else if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE) {
         this.world.spawn(pickLetter(this.lang), x, y, r, 'double');
+      } else if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE + GREEN_CHANCE) {
+        this.world.spawn(pickLetter(this.lang), x, y, r, 'green');
       } else this.world.spawn(pickLetter(this.lang), x, y, r);
     }
   }

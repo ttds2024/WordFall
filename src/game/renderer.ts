@@ -1,4 +1,5 @@
 import badUrl from '../images/bad.png';
+import greenUrl from '../images/green.png';
 import pumpkinSvg from '../images/pumpkin.svg?raw';
 import starUrl from '../images/star.svg';
 import type { Theme } from '../settings';
@@ -6,6 +7,8 @@ import type { Tile } from './physics';
 
 const COLORS = {
   body: '#ff7a18',
+  /** A green pumpkin while its picture loads. */
+  green: '#76a95a',
   bodySelected: '#ffd23f',
   rib: 'rgba(120, 40, 0, 0.35)',
   stem: '#3f6b2a',
@@ -37,6 +40,8 @@ export interface Blast {
 const STAR_ASPECT = 512 / 492.289;
 /** Width over height of src/images/bad.png (318 × 304). */
 const BAD_ASPECT = 318 / 304;
+/** src/images/green.png is square; its stem takes the top fifth, so the body sits low. */
+const GREEN_LETTER_DROP = 0.3;
 
 /**
  * src/images/pumpkin.svg cropped to the pumpkin itself (its 800 × 600 page has wide margins),
@@ -79,8 +84,9 @@ function drawCentred(
 
 /**
  * Draws the tiles: pumpkins with letters, ×2 pumpkins (src/images/pumpkin.svg) with a letter and
- * a ×2 badge, letterless bad pumpkins (src/images/bad.png) that explode, and joker stars. In the
- * 8-bit style they are square pixel blocks instead, and at Christmas baubles, a gold star and coal.
+ * a ×2 badge, letterless bad pumpkins (src/images/bad.png) that explode, green pumpkins
+ * (src/images/green.png) with a letter that explode when tapped, and joker stars. In the 8-bit
+ * style they are square pixel blocks instead, and at Christmas baubles, a gold star and coal.
  */
 export function drawTiles(
   ctx: CanvasRenderingContext2D,
@@ -124,12 +130,15 @@ export function drawTiles(
     }
 
     const double = tile.kind === 'double' ? picture(doubleUrl) : undefined;
+    const green = tile.kind === 'green' ? picture(greenUrl) : undefined;
     if (double) {
       if (tile.selected) drawHalo(ctx, r);
       ctx.shadowBlur = 0;
       drawCentred(ctx, double, r * 2.2, DOUBLE_BOX.width / DOUBLE_BOX.height);
+    } else if (green) {
+      drawCentred(ctx, green, r * 2.3, 1);
     } else {
-      drawPumpkin(ctx, r, tile.selected);
+      drawPumpkin(ctx, r, tile.selected, tile.kind === 'green' ? COLORS.green : undefined);
     }
 
     ctx.rotate(-tile.body.angle);
@@ -137,14 +146,19 @@ export function drawTiles(
     ctx.font = `bold ${Math.round(r * 1.05)}px system-ui, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(tile.letter, 0, r * 0.14);
+    ctx.fillText(tile.letter, 0, r * (green ? GREEN_LETTER_DROP : 0.14));
     if (tile.kind === 'double') drawDoubleBadge(ctx, r);
     ctx.restore();
   }
 }
 
-function drawPumpkin(ctx: CanvasRenderingContext2D, r: number, selected: boolean): void {
-  ctx.fillStyle = selected ? COLORS.bodySelected : COLORS.body;
+function drawPumpkin(
+  ctx: CanvasRenderingContext2D,
+  r: number,
+  selected: boolean,
+  body: string = COLORS.body,
+): void {
+  ctx.fillStyle = selected ? COLORS.bodySelected : body;
   ctx.beginPath();
   ctx.ellipse(0, 0, r, r * 0.92, 0, 0, Math.PI * 2);
   ctx.fill();
@@ -300,6 +314,7 @@ const PIXEL = {
   letter: { fill: '#ffa300', shade: '#ab5236', light: '#ffcc80' },
   joker: { fill: '#83769c', shade: '#5f574f', light: '#c2c3c7' },
   bomb: { fill: '#ff004d', shade: '#7e2553', light: '#ff77a8' },
+  green: { fill: '#00e436', shade: '#008751', light: '#a8ffb8' },
   sparks: ['#ffec27', '#ffa300', '#ff004d', '#fff1e8'],
 };
 
@@ -311,8 +326,8 @@ function notchedSquare(ctx: CanvasRenderingContext2D, half: number, notch: numbe
 
 /**
  * An 8-bit tile: a square block, upright whatever the body's spin, with a bevel and a frame
- * (yellow when you picked it, blue when the bot did). Letters orange, ×2 with a chip, the
- * joker purple with ★, the bomb red with a pixel bomb.
+ * (yellow when you picked it, blue when the bot did). Letters orange (green for the ones that
+ * explode when tapped), ×2 with a chip, the joker purple with ★, the bomb red with a pixel bomb.
  */
 function drawPixelTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
   const { x, y } = tile.body.position;
@@ -320,7 +335,13 @@ function drawPixelTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
   const half = Math.round(r * 0.9);
   const px = Math.max(2, Math.round(r / 8));
   const look =
-    tile.kind === 'joker' ? PIXEL.joker : tile.kind === 'bomb' ? PIXEL.bomb : PIXEL.letter;
+    tile.kind === 'joker'
+      ? PIXEL.joker
+      : tile.kind === 'bomb'
+        ? PIXEL.bomb
+        : tile.kind === 'green'
+          ? PIXEL.green
+          : PIXEL.letter;
 
   ctx.save();
   ctx.translate(Math.round(x), Math.round(y));
@@ -400,6 +421,8 @@ const XMAS = {
     { fill: '#2e6fa3', shade: '#1d4f73', ink: '#fff6e5' },
   ],
   gold: { fill: '#f2c14e', shade: '#b8862b', ink: '#3a2a00' },
+  /** The bauble that explodes when tapped: lime, with a lit fuse on its cap. */
+  lime: { fill: '#9be564', shade: '#4f8a2a', ink: '#173300' },
   cap: '#f2c14e',
   capShade: '#b8862b',
   shine: 'rgba(255, 255, 255, 0.55)',
@@ -416,8 +439,8 @@ const XMAS = {
 
 /**
  * A Christmas tile, hanging upright whatever the body's spin: a bauble with a gold cap and a
- * shine (red, green or blue; gold with a ×2 tag for ×2 letters), the joker as a gold star and the
- * bomb as a lump of coal with a lit fuse. Your picks glow gold, the bot's ice blue.
+ * shine (red, green or blue; gold with a ×2 tag for ×2 letters; lime with a lit fuse for the ones
+ * that explode when tapped), the joker as a gold star and the bomb as a lump of coal with a lit fuse. Your picks glow gold, the bot's ice blue.
  */
 function drawChristmasTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
   const { x, y } = tile.body.position;
@@ -440,7 +463,11 @@ function drawChristmasTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
 
 function drawBauble(ctx: CanvasRenderingContext2D, tile: Tile, r: number): void {
   const look =
-    tile.kind === 'double' ? XMAS.gold : XMAS.baubles[tile.body.id % XMAS.baubles.length]!;
+    tile.kind === 'double'
+      ? XMAS.gold
+      : tile.kind === 'green'
+        ? XMAS.lime
+        : XMAS.baubles[tile.body.id % XMAS.baubles.length]!;
   const ball = r * 0.9;
   const cy = r * 0.1;
   if (tile.selected || tile.bot) {
@@ -454,6 +481,7 @@ function drawBauble(ctx: CanvasRenderingContext2D, tile: Tile, r: number): void 
   ctx.fillRect(-r * 0.22, cy - ball - r * 0.2, r * 0.44, r * 0.26);
   ctx.fillStyle = XMAS.capShade;
   ctx.fillRect(-r * 0.22, cy - ball, r * 0.44, r * 0.06);
+  if (tile.kind === 'green') drawFuse(ctx, cy - ball - r * 0.2, r);
 
   ctx.fillStyle = look.shade;
   ctx.beginPath();
@@ -537,6 +565,21 @@ function drawCoal(ctx: CanvasRenderingContext2D, r: number): void {
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
+}
+
+/** A short lit fuse rising from `top` (a bauble's cap). */
+function drawFuse(ctx: CanvasRenderingContext2D, top: number, r: number): void {
+  ctx.strokeStyle = XMAS.fuse;
+  ctx.lineWidth = Math.max(2, r * 0.08);
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(0, top);
+  ctx.quadraticCurveTo(r * 0.05, top - r * 0.25, r * 0.28, top - r * 0.3);
+  ctx.stroke();
+  ctx.fillStyle = XMAS.spark;
+  ctx.beginPath();
+  ctx.arc(r * 0.3, top - r * 0.3, r * 0.12, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 /** A Christmas explosion: flakes of snow and gold flying out and fading. */
