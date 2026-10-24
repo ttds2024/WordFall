@@ -151,7 +151,7 @@ export function startApp(defaultLanguage: Language): void {
         ui.fieldWrap.clientHeight,
       );
       game.removeTiles(result.items);
-      showScoreFloat(ui.fieldWrap, at, pointsText(points, multiplier), result.word);
+      showScoreFloat(ui.fieldWrap, at, pointsText(points), result.word);
       sounds.play('success');
       bumpScore(ui.vsYouScore);
     } else {
@@ -231,7 +231,7 @@ export function startApp(defaultLanguage: Language): void {
       botScore += points;
       tracker.markUsed(word);
       game.removeTiles(tiles);
-      showScoreFloat(ui.fieldWrap, at, `🤖 ${pointsText(points, multiplier)}`, word, 'bot');
+      showScoreFloat(ui.fieldWrap, at, `🤖 ${pointsText(points)}`, word, 'bot');
       bumpScore(ui.vsBotScore);
     } else {
       showScoreFloat(ui.fieldWrap, at, t(settings.lang, 'botMissed'), word, 'bot');
