@@ -61,6 +61,13 @@ browser, until the player signs out. Each button stays hidden until its app ID i
 Sber ID is not supported yet: it needs a client secret and a TLS client certificate issued by Sber,
 which must live on a server.
 
+## Multiplayer server
+
+`server/` holds the multiplayer server (Colyseus): rooms of 2–4 players, a shared 2-minute round,
+words checked and scored on the server with the game's own `src/core`. It runs in Docker behind
+Caddy on any VPS; see [server/README.md](server/README.md) (in Russian) for the protocol and the
+deployment steps. The game does not connect to it yet.
+
 ## Deployment
 
 Every push to `main` is built and deployed to GitHub Pages by

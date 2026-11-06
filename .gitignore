@@ -9,3 +9,6 @@ ios
 
 # Local build settings (e.g. sign-in app IDs)
 .env.local
+
+# Server settings (the domain for Caddy)
+server/.env

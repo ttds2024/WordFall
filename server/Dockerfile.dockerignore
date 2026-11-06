@@ -1,0 +1,9 @@
+# Used by `docker build -f server/Dockerfile .` (BuildKit): only what the image needs.
+*
+!server/package.json
+!server/package-lock.json
+!server/src
+server/src/**/*.test.ts
+!src/core
+src/core/**/*.test.ts
+!data
