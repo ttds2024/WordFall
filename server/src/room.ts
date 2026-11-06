@@ -2,8 +2,9 @@ import { Room, type Client, type Delayed } from '@colyseus/core';
 import { ROUND_MS } from '../../src/core/round.ts';
 import type { Language } from '../../src/i18n/index.ts';
 import { loadDictionary } from './dictionaries.ts';
+import type { Found, Phase } from '../../src/online/protocol.ts';
 import { Match, parseSubmission, type Verdict } from './match.ts';
-import { Player, WordfallState, type Phase } from './state.ts';
+import { Player, WordfallState } from './state.ts';
 
 /** Countdown between the room filling up and the round starting. */
 export const COUNTDOWN_MS = 3000;
@@ -30,7 +31,7 @@ export interface ServerMessages {
   /** To the submitter: whether the word scored. */
   verdict: Verdict;
   /** To everyone: a player scored a word, which nobody can score again this round. */
-  found: { sessionId: string; word: string; points: number };
+  found: Found;
 }
 
 function parseLang(value: unknown): Language {
@@ -191,11 +192,12 @@ export class WordfallRoom extends Room<{ state: WordfallState }> {
     if (!verdict.ok) return;
     player.score += verdict.points;
     player.words += 1;
-    this.broadcast('found', {
+    const found: Found = {
       sessionId: client.sessionId,
       word: verdict.word,
       points: verdict.points,
-    });
+    };
+    this.broadcast('found', found);
   }
 
   private rematch(client: Client): void {

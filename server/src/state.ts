@@ -17,16 +17,9 @@ export const Player = schema(
 );
 export type Player = SchemaType<typeof Player>;
 
-/**
- * - waiting: the room is filling up;
- * - countdown: everyone is in, the round starts when `timeLeftMs` reaches 0;
- * - playing: the round is on, `timeLeftMs` counts down from ROUND_MS;
- * - finished: the scores are final; players may ask for a rematch.
- */
-export type Phase = 'waiting' | 'countdown' | 'playing' | 'finished';
-
 export const WordfallState = schema(
   {
+    /** A Phase (src/online/protocol.ts). */
     phase: t.string().default('waiting'),
     lang: t.string().default('ru'),
     /** Players the round needs before it starts. */

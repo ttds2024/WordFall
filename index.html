@@ -46,10 +46,11 @@
               <small data-i18n="sec"></small>
             </span>
           </div>
-          <div class="vs-card vs-bot">
+          <!-- The bot's card, or online the other player's (their initial and name). -->
+          <div id="vs-rival" class="vs-card vs-bot">
             <b id="vs-bot-score" class="vs-score">0</b>
             <span class="vs-who">
-              <span class="vs-avatar"
+              <span id="vs-rival-avatar" class="vs-avatar"
                 ><svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -65,7 +66,7 @@
                   <circle cx="9" cy="13" r="1.3" />
                   <circle cx="15" cy="13" r="1.3" /></svg
               ></span>
-              <span class="vs-label" data-i18n="bot"></span>
+              <span id="vs-rival-label" class="vs-label"></span>
             </span>
           </div>
         </div>
@@ -133,6 +134,15 @@
             <b data-i18n="playBot"></b>
             <small data-i18n="playBotHint"></small>
           </button>
+          <!-- Online play, shown when the build has a server address (VITE_MULTIPLAYER_URL). -->
+          <button id="play-online" class="online" type="button" hidden>
+            <b data-i18n="playOnline"></b>
+            <small data-i18n="playOnlineHint"></small>
+          </button>
+          <button id="play-friend" class="online" type="button" hidden>
+            <b data-i18n="playFriend"></b>
+            <small data-i18n="playFriendHint"></small>
+          </button>
         </div>
         <button id="menu-settings" type="button" data-i18n="settings"></button>
       </section>
@@ -185,7 +195,7 @@
               <b id="result-score"></b>
             </div>
             <div id="result-bot-box" class="result-score result-bot" hidden>
-              <span data-i18n="bot"></span>
+              <span id="result-rival-label"></span>
               <b id="result-bot"></b>
             </div>
           </div>
@@ -193,6 +203,34 @@
             <button class="primary" value="again" data-i18n="playAgain"></button>
             <button value="menu" data-i18n="menu"></button>
           </div>
+        </form>
+      </dialog>
+      <!-- Getting into an online match: a friend's room by code, then waiting and the countdown. -->
+      <dialog id="lobby" class="lobby">
+        <form method="dialog">
+          <h2 id="lobby-title"></h2>
+          <div id="lobby-friend" class="lobby-friend" hidden>
+            <button id="lobby-create" class="primary" type="button" data-i18n="createRoom"></button>
+            <span class="lobby-or" data-i18n="or"></span>
+            <div class="lobby-join">
+              <input
+                id="lobby-code-input"
+                class="lobby-input"
+                maxlength="6"
+                autocomplete="off"
+                autocapitalize="characters"
+                spellcheck="false"
+                enterkeyhint="go"
+              />
+              <button id="lobby-join" type="button" data-i18n="join"></button>
+            </div>
+          </div>
+          <div id="lobby-code" class="lobby-code" hidden>
+            <span data-i18n="roomCode"></span>
+            <b id="lobby-code-value"></b>
+          </div>
+          <p id="lobby-status" class="lobby-status" aria-live="polite"></p>
+          <button id="lobby-cancel" value="cancel" data-i18n="cancel"></button>
         </form>
       </dialog>
     </main>

@@ -1,5 +1,5 @@
 # WordFall multiplayer server. Build from the repository root, since the server shares
-# src/core (dictionary, scoring) and data/ (word lists) with the game:
+# src/core (dictionary, scoring), src/online/protocol.ts and data/ (word lists) with the game:
 #   docker build -f server/Dockerfile -t wordfall-server .
 
 FROM node:22-alpine AS build
@@ -7,6 +7,7 @@ WORKDIR /app/server
 COPY server/package.json server/package-lock.json ./
 RUN npm ci
 COPY src/core /app/src/core
+COPY src/online/protocol.ts /app/src/online/protocol.ts
 COPY server/src ./src
 RUN npm run build
 

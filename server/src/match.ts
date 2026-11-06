@@ -2,6 +2,9 @@ import type { Dictionary } from '../../src/core/dictionary.ts';
 import { scoreWord, wordMultiplier } from '../../src/core/scoring.ts';
 import { JOKER, MIN_WORD_LENGTH, normalizeWord } from '../../src/core/word.ts';
 import type { Language } from '../../src/i18n/index.ts';
+import type { Submission, Verdict } from '../../src/online/protocol.ts';
+
+export type { Submission, Verdict };
 
 /** Longest word a client may submit; longer submissions are refused unread. */
 export const MAX_WORD_LENGTH = 24;
@@ -10,16 +13,6 @@ const LETTERS: Record<Language, RegExp> = {
   en: /^[a-z★]+$/,
   ru: /^[а-я★]+$/,
 };
-
-/** What a client sends: the tapped letters in order (JOKER for a star) and how many were ×2. */
-export interface Submission {
-  letters: string;
-  doubles: number;
-}
-
-export type Verdict =
-  | { ok: true; word: string; points: number }
-  | { ok: false; reason: 'invalid' | 'short' | 'unknown' | 'used' };
 
 /** Reads a client message into a Submission, or undefined if it is not one. */
 export function parseSubmission(message: unknown): Submission | undefined {

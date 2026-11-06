@@ -13,4 +13,14 @@ describe('RoundTimer', () => {
       expect(timer.advance(10)).toBe(false);
     }
   });
+
+  it('follows another clock', () => {
+    const timer = new RoundTimer('online');
+    timer.sync(90_000);
+    expect(timer.remaining).toBe(90_000);
+    timer.sync(ROUND_MS * 2);
+    expect(timer.remaining).toBe(ROUND_MS);
+    timer.sync(0);
+    expect(timer.over).toBe(true);
+  });
 });

@@ -38,6 +38,31 @@ open from the start menu only; there is no Settings button during a round.
   wide screens the score group keeps its phone width (at most 480 px), centred. There is
   no "who's ahead" indicator beyond the two scores. At the end the result window says who won.
 
+## Playing online
+
+With a server address in the build (`VITE_MULTIPLAYER_URL`, see `server/`), the start menu also
+offers **Play online** and **Play with a friend**, in yellow under the two modes on this device:
+
+- **Play online** pairs the player with someone waiting for a game in the same language. A window
+  says it is looking for an opponent, with Cancel.
+- **Play with a friend** offers **Create a room**, which shows a 6-character code to send, or a
+  field for a friend's code and **Join**. A wrong code says there is no such room.
+- Once both are in, the window counts down 3 seconds and the round starts for both at once.
+- Each player has their own field, but the letters come from a generator seeded by the server, so
+  both get the same letters in the same order.
+- The top bar is the face-off of the bot mode, with the other player's initial and name in place
+  of the robot. Their score follows the server; when they score, their word and points rise in
+  blue from the top of the field. A player who drops out is dimmed.
+- Words are checked on the device as before, then sent to the server, which has the last word:
+  the tiles stay lit until it answers. Found words are shared as against the bot, so a word the
+  other player found first is refused with "Already found".
+- The server's clock ends the round. ☰ opens the menu but cannot stop the round, which goes on
+  meanwhile; starting another game from the menu leaves the match.
+- The result window says who won. **Play again** asks for a rematch, which starts once both have
+  asked; if the other player has gone, it finds a new match. **Menu** leaves the match.
+- If the connection is lost for good, the round ends with "Lost connection to the server".
+- The online code (`@colyseus/sdk`) is loaded only when the player goes online.
+
 ## Accounts
 
 Players can sign in with **Yandex ID** or **VK ID** from the start menu; signed in, the menu shows

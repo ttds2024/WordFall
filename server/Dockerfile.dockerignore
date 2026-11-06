@@ -6,4 +6,5 @@
 server/src/**/*.test.ts
 !src/core
 src/core/**/*.test.ts
+!src/online/protocol.ts
 !data

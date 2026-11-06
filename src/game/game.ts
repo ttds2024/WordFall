@@ -1,6 +1,7 @@
 import type { Language } from '../i18n';
 import type { Theme } from '../settings';
 import { pickLetter } from '../core/letters';
+import type { Random } from '../core/random';
 import { JOKER } from '../core/word';
 import { PhysicsWorld, type Explosion, type Tile } from './physics';
 import { drawExplosions, drawTiles, type Blast } from './renderer';
@@ -43,6 +44,8 @@ export class Game {
   private blasts: Blast[] = [];
   /** How the tiles look. */
   private theme: Theme = 'halloween';
+  /** Where the tiles come from: Math.random, or a seeded generator in an online match. */
+  private random: Random = Math.random;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -73,9 +76,13 @@ export class Game {
     cancelAnimationFrame(this.frame);
   }
 
-  /** Empties the field, optionally switching to a new language's letters. */
-  reset(lang: Language = this.lang): void {
+  /**
+   * Empties the field, optionally switching to a new language's letters. With `random`, the
+   * tiles that follow (their kinds, letters and where they fall) come from it.
+   */
+  reset(lang: Language = this.lang, random: Random = Math.random): void {
     this.lang = lang;
+    this.random = random;
     for (const tile of this.world.all()) this.world.remove(tile);
     this.blasts = [];
     this.draw();
@@ -124,17 +131,20 @@ export class Game {
     const due = this.spawner.update(ms, this.world.count);
     const { width } = this.world.size;
     const r = this.radius;
+    const random = this.random;
     for (let i = 0; i < due; i++) {
-      const x = r + Math.random() * Math.max(0, width - 2 * r);
+      const x = r + random() * Math.max(0, width - 2 * r);
       const y = -r - i * r * 2.2;
-      const roll = Math.random();
+      const roll = random();
+      // Drawn for every tile, so the sequence stays the same whatever the tile turns out to be.
+      const letter = pickLetter(this.lang, random);
       if (roll < JOKER_CHANCE) this.world.spawn(JOKER, x, y, r, 'joker');
       else if (roll < JOKER_CHANCE + BOMB_CHANCE) this.world.spawn('', x, y, r, 'bomb');
       else if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE) {
-        this.world.spawn(pickLetter(this.lang), x, y, r, 'double');
+        this.world.spawn(letter, x, y, r, 'double');
       } else if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE + GREEN_CHANCE) {
-        this.world.spawn(pickLetter(this.lang), x, y, r, 'green');
-      } else this.world.spawn(pickLetter(this.lang), x, y, r);
+        this.world.spawn(letter, x, y, r, 'green');
+      } else this.world.spawn(letter, x, y, r);
     }
   }
 

@@ -158,8 +158,8 @@ button:disabled {
   grid-area: buttons;
 }
 
-/* Playing alone there is no bot card; its place stays empty so the ring stays centred. */
-#app:not([data-mode='bot']) .vs-bot {
+/* Playing alone there is no rival card; its place stays empty so the ring stays centred. */
+#app:not([data-mode='bot'], [data-mode='online']) .vs-bot {
   visibility: hidden;
 }
 
@@ -828,9 +828,130 @@ dialog .primary {
   color: var(--bg);
 }
 
-#play-bot b {
+#play-bot b,
+.menu-options .online b {
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+/* Online play in yellow, after the two modes on this device. */
+.menu-options .online {
+  background: var(--yellow);
+  border-color: var(--yellow);
+  box-shadow: 0 var(--edge) 0 #d9a900;
+  color: var(--bg);
+}
+
+.menu-options .online[hidden] {
+  display: none;
+}
+
+/* Online, the rival's name can be long: it is cut short under the avatar. */
+#vs-rival-label {
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A rival who has dropped (and may still reconnect) is shown dimmed. */
+.vs-card.offline {
+  opacity: 0.4;
+}
+
+/* The online lobby: create a room or join one by code, then the code and the countdown. */
+.lobby {
+  text-align: center;
+}
+
+.lobby form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lobby h2 {
+  margin: 0;
+}
+
+.lobby [hidden] {
+  display: none;
+}
+
+.lobby-friend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lobby-or {
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.lobby-join {
+  display: flex;
+  gap: 8px;
+}
+
+.lobby-input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 2px solid var(--panel-border);
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.lobby-input::placeholder {
+  color: var(--muted);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+
+.lobby-input:focus-visible {
+  outline: none;
+  border-color: var(--blue);
+}
+
+.lobby-code {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.lobby-code b {
+  color: var(--yellow);
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  -webkit-user-select: all;
+  user-select: all;
+}
+
+.lobby-status {
+  margin: 0;
+  min-height: 1.4em;
+  color: var(--muted);
+}
+
+.lobby-status.bad {
+  color: var(--bad);
 }
 
 /* Settings on the menu: a quiet text button. */

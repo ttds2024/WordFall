@@ -66,7 +66,13 @@ which must live on a server.
 `server/` holds the multiplayer server (Colyseus): rooms of 2–4 players, a shared 2-minute round,
 words checked and scored on the server with the game's own `src/core`. It runs in Docker behind
 Caddy on any VPS; see [server/README.md](server/README.md) (in Russian) for the protocol and the
-deployment steps. The game does not connect to it yet.
+deployment steps.
+
+The game connects to it when the build has its address: set the repository variable
+`MULTIPLAYER_URL` (e.g. `wss://play.example.ru`) under **Settings → Secrets and variables →
+Actions → Variables**, and the menu shows **Play online** and **Play with a friend**. For local
+development put `VITE_MULTIPLAYER_URL=ws://localhost:2567` in `.env.local` and run the server with
+`cd server && npm run dev`.
 
 ## Deployment
 
