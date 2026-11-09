@@ -6,4 +6,8 @@ interface ImportMetaEnv {
   readonly VITE_YANDEX_CLIENT_ID?: string;
   /** VK ID app's ID (id.vk.ru/business/go); unset hides the VK sign-in button. */
   readonly VITE_VK_APP_ID?: string;
+  /** The Supabase project's URL; with the key below it turns on saved rounds and the leaderboard. */
+  readonly VITE_SUPABASE_URL?: string;
+  /** The Supabase project's publishable (or legacy anon) key: public, safe in the build. */
+  readonly VITE_SUPABASE_PUBLISHABLE_KEY?: string;
 }

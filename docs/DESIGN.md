@@ -53,6 +53,32 @@ in the game yet.
   repository variables); a provider without one is hidden.
 - **Sber ID** needs a client secret and a TLS client certificate, so it waits for a backend.
 
+## Online scores
+
+Optional, on **Supabase** (`supabase/`, `src/backend/`), for testing. A build without
+`VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` has none of it and never downloads the
+Supabase library. The site itself stays on GitHub Pages.
+
+- **Guests, no accounts:** the first visit makes the browser a guest: a random 256-bit secret
+  token, kept in local storage with a name ("Guest 4821" until the player changes it in the
+  leaderboard window; at most 24 characters). Whoever holds the token is that player. The database
+  keeps only the token's SHA-256. This is separate from the Yandex ID / VK ID sign-in, which still
+  only shows the name and avatar.
+- **Rounds:** when the time runs out the round is saved by `submit_round()`: the token, the name,
+  the mode, the language, the words with their multipliers and the bot's score. A guest's first
+  round makes them a player; each round updates their name. The database works the score out from
+  the words (100 a letter × the multiplier) and refuses impossible lists (unknown letters, a word
+  twice, a multiplier the word cannot have, more than 120 words) and a second round within 110
+  seconds. It does not check the words against the word list. A save that fails is dropped
+  silently; the game never waits for it.
+- **Leaderboard:** the start menu's **Leaderboard** button opens the best score of each player in
+  the game's language, on your own or against the bot (the top 20), this device's line outlined in
+  yellow, and the box for the player's name.
+- **Access:** the browser cannot read or write the tables; it can only call the two functions,
+  which give out names and scores.
+- **Limits:** nothing stops someone making many guests, and a guest who clears their browser's
+  data starts again as a new one.
+
 ## Physics
 
 - **Engine:** Matter.js.

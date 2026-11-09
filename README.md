@@ -61,6 +61,34 @@ browser, until the player signs out. Each button stays hidden until its app ID i
 Sber ID is not supported yet: it needs a client secret and a TLS client certificate issued by Sber,
 which must live on a server.
 
+## Online scores (Supabase)
+
+With a [Supabase](https://supabase.com/) project the game saves finished rounds and shows a
+leaderboard on the start menu. Without one it plays as before, offline. There are no accounts:
+each browser is a guest, known by a secret token it makes and keeps, with a name the player can
+change in the leaderboard window. (This is for testing; it does not use the Yandex ID / VK ID
+sign-in above.) The database lives in `supabase/migrations/`.
+
+1. Create a project at <https://supabase.com/dashboard>. Note its **Project URL**
+   (`https://<ref>.supabase.co`) and **publishable key** (Project Settings → API keys).
+2. In GitHub, open **Settings → Secrets and variables → Actions → Variables** and add the
+   repository variables `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (public values).
+3. Put the database on the project, either way:
+   - run the SQL in `supabase/migrations/` in the project's SQL editor, or
+   - add the repository variable `SUPABASE_PROJECT_REF` (the `<ref>` in the URL) and the secrets
+     `SUPABASE_ACCESS_TOKEN` (<https://supabase.com/dashboard/account/tokens>) and
+     `SUPABASE_DB_PASSWORD`, then run the **Supabase** workflow. It runs by itself afterwards
+     whenever `supabase/` changes on `main`, and skips itself while the secrets are not set.
+4. Run **Deploy to GitHub Pages** again: the Leaderboard button appears.
+
+For local development put `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in `.env.local`.
+
+Scores are worked out by the database from the words of the round, not taken from the browser,
+and a guest can save one round every 110 seconds. Words are not checked against the word list
+there yet, and nothing stops someone making many guests, so treat the leaderboard as a test.
+Clearing the browser's data makes a new guest; the old scores stay on the board under the old
+name.
+
 ## Deployment
 
 Every push to `main` is built and deployed to GitHub Pages by

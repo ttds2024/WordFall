@@ -134,8 +134,29 @@
             <small data-i18n="playBotHint"></small>
           </button>
         </div>
-        <button id="menu-settings" type="button" data-i18n="settings"></button>
+        <div class="menu-links">
+          <!-- Shown when the game has a backend to keep scores in. -->
+          <button id="menu-board" type="button" data-i18n="leaderboard" hidden></button>
+          <button id="menu-settings" type="button" data-i18n="settings"></button>
+        </div>
       </section>
+      <!-- The best scores, in the game's language. -->
+      <dialog id="board" class="board">
+        <form method="dialog">
+          <h2 data-i18n="leaderboard"></h2>
+          <div class="board-tabs" role="tablist">
+            <button id="board-solo" type="button" role="tab" data-i18n="boardSolo"></button>
+            <button id="board-bot" type="button" role="tab" data-i18n="boardBot"></button>
+          </div>
+          <ol id="board-rows" class="board-rows" hidden></ol>
+          <p id="board-note" class="board-note" aria-live="polite"></p>
+          <div class="field">
+            <label class="field-label" for="board-name" data-i18n="boardName"></label>
+            <input id="board-name" type="text" autocomplete="nickname" />
+          </div>
+          <button class="primary" value="done" data-i18n="done"></button>
+        </form>
+      </dialog>
       <dialog id="settings">
         <form method="dialog">
           <h2 data-i18n="settings"></h2>
