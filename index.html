@@ -50,6 +50,7 @@
             <b id="vs-bot-score" class="vs-score">0</b>
             <span class="vs-who">
               <span class="vs-avatar"
+                ><b id="vs-opp-letter" class="vs-opp"></b
                 ><svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -65,7 +66,8 @@
                   <circle cx="9" cy="13" r="1.3" />
                   <circle cx="15" cy="13" r="1.3" /></svg
               ></span>
-              <span class="vs-label" data-i18n="bot"></span>
+              <span class="vs-label vs-bot-only" data-i18n="bot"></span>
+              <span id="vs-opp-name" class="vs-label vs-opp"></span>
             </span>
           </div>
         </div>
@@ -133,6 +135,10 @@
             <b data-i18n="playBot"></b>
             <small data-i18n="playBotHint"></small>
           </button>
+          <button id="play-online" type="button" hidden>
+            <b data-i18n="playOnline"></b>
+            <small data-i18n="playOnlineHint"></small>
+          </button>
         </div>
         <button id="menu-settings" type="button" data-i18n="settings"></button>
       </section>
@@ -175,6 +181,29 @@
           <button class="primary" value="done" data-i18n="done"></button>
         </form>
       </dialog>
+      <!-- Online play: a quick match with anyone, or a private room shared by its code. -->
+      <dialog id="online" class="online">
+        <form method="dialog">
+          <h2 data-i18n="playOnline"></h2>
+          <div id="online-choose" class="online-choose">
+            <button id="online-quick" class="primary" type="button" data-i18n="quickMatch"></button>
+            <button id="online-create" type="button" data-i18n="createRoom"></button>
+            <div class="online-join">
+              <input
+                id="online-code"
+                maxlength="4"
+                autocomplete="off"
+                autocapitalize="characters"
+                spellcheck="false"
+              />
+              <button id="online-join" type="button" data-i18n="joinRoom"></button>
+            </div>
+          </div>
+          <p id="online-status" class="online-status" aria-live="polite"></p>
+          <b id="online-room" class="online-room" hidden></b>
+          <button value="cancel" data-i18n="cancel"></button>
+        </form>
+      </dialog>
       <!-- The result of a finished round, over the start menu. -->
       <dialog id="result" class="result">
         <form method="dialog">
@@ -185,7 +214,7 @@
               <b id="result-score"></b>
             </div>
             <div id="result-bot-box" class="result-score result-bot" hidden>
-              <span data-i18n="bot"></span>
+              <span id="result-bot-label"></span>
               <b id="result-bot"></b>
             </div>
           </div>

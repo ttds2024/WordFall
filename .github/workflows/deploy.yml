@@ -31,6 +31,8 @@ jobs:
           # Actions → Variables. Unset hides that provider's button.
           VITE_YANDEX_CLIENT_ID: ${{ vars.YANDEX_CLIENT_ID }}
           VITE_VK_APP_ID: ${{ vars.VK_APP_ID }}
+          # The multiplayer server's wss://…/ws address; unset hides "Play vs player".
+          VITE_MULTIPLAYER_URL: ${{ vars.MULTIPLAYER_URL }}
       - uses: actions/configure-pages@v5
         with:
           enablement: true

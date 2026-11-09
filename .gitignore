@@ -9,3 +9,7 @@ ios
 
 # Local build settings (e.g. sign-in app IDs)
 .env.local
+
+# .NET build output (server/)
+bin
+obj

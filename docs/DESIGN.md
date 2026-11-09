@@ -9,6 +9,9 @@ The game opens on a start menu with two modes:
 - **Play 2 min:** a 2-minute round on your own. The top bar shows your score next to the timer, a
   green ring that empties anticlockwise over the round with the seconds left inside, red in the last 30 seconds; when it runs out the result window shows the final score.
 - **Play vs AI:** a 2-minute round against a bot (see below).
+- **Play vs player:** a 2-minute round online against another person, by quick match or in a
+  private room with a code; see [MULTIPLAYER.md](MULTIPLAYER.md). Shown only when the game was
+  built with a multiplayer server address.
 
 There is no untimed mode: a round against the bot needs an end to decide who won.
 
@@ -52,6 +55,8 @@ in the game yet.
 - App IDs come from the build (`VITE_YANDEX_CLIENT_ID`, `VITE_VK_APP_ID`, filled from GitHub
   repository variables); a provider without one is hidden.
 - **Sber ID** needs a client secret and a TLS client certificate, so it waits for a backend.
+- Online play sends the signed-in name (or "Player") to the multiplayer server, which shows it to
+  the other player and keeps nothing.
 
 ## Physics
 
@@ -86,6 +91,9 @@ in the game yet.
   a tapped star stays on the field and the game says "You can hold at most 3 stars". Stars on
   the field can still be blown up, and the bot never takes them.
 - **Speed:** constant; no difficulty curve yet.
+- **Seeded tiles:** every tile's kind, letter and entry point come from the round's seed and the
+  tile's number (`src/core/tiles.ts`). Offline the seed is random; online both players get the
+  server's, so they see the same tiles.
 
 ## Submitting words
 

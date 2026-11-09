@@ -1,21 +1,19 @@
 import Matter from 'matter-js';
+import type { TileKind } from '../core/tiles';
+
+export type { TileKind } from '../core/tiles';
 
 const { Bodies, Body, Composite, Engine, Events } = Matter;
-
-/**
- * A pumpkin is an ordinary letter; a double is a letter that doubles the score of a word using
- * it; a bomb (a bad pumpkin) has no letter and explodes when it hits something; a green pumpkin
- * shows a letter but explodes when tapped; a joker (a star, letter JOKER) stands for any one letter.
- */
-export type TileKind = 'pumpkin' | 'double' | 'bomb' | 'green' | 'joker';
 
 export interface Tile {
   readonly id: number;
   readonly letter: string;
   readonly kind: TileKind;
   readonly body: Matter.Body;
+  /** The tile's number in its round (see tileSpec); the same on both players' fields online. */
+  readonly seq: number;
   selected: boolean;
-  /** Picked by the bot, which is about to try a word with it. */
+  /** Picked by the bot (or, online, by the other player), which is about to try a word with it. */
   bot: boolean;
 }
 
@@ -82,14 +80,21 @@ export class PhysicsWorld {
   }
 
   /** Adds a tile centred at (x, y). */
-  spawn(letter: string, x: number, y: number, radius: number, kind: TileKind = 'pumpkin'): Tile {
+  spawn(
+    letter: string,
+    x: number,
+    y: number,
+    radius: number,
+    kind: TileKind = 'pumpkin',
+    seq = -1,
+  ): Tile {
     const body = Bodies.circle(x, y, radius, {
       restitution: 0.3,
       friction: 0.05,
       frictionAir: 0.02,
       density: 0.002,
     });
-    const tile: Tile = { id: body.id, letter, kind, body, selected: false, bot: false };
+    const tile: Tile = { id: body.id, letter, kind, body, seq, selected: false, bot: false };
     this.tiles.set(tile.id, tile);
     Composite.add(this.engine.world, body);
     return tile;
