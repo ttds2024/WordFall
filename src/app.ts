@@ -2,6 +2,8 @@ import { setupAuth } from './auth/ui';
 import { setupBoard } from './backend/board-ui';
 import { submitRound } from './backend/client';
 import { defaultName, loadGuest, saveGuest } from './backend/guest';
+import { outcome, type Match } from './backend/match';
+import { setupMatch } from './backend/match-ui';
 import type { FoundWord } from './backend/rounds';
 import { BOT_ACCURACY, BOT_THINK_MS, BotClock, findWord, pickMiss } from './core/bot';
 import { Dictionary } from './core/dictionary';
@@ -43,6 +45,9 @@ function isTile(item: WordItem): item is Tile {
   return item !== HAND_JOKER;
 }
 
+/** After our time is up, how long to wait for a friend's final score before settling without it. */
+const RIVAL_WAIT_MS = 10_000;
+
 /** The timer turns red in the last this-many milliseconds. */
 const LOW_TIME_MS = 30_000;
 
@@ -77,6 +82,10 @@ export function startApp(defaultLanguage: Language): void {
     vsAvatar: element('#vs-avatar'),
     vsYouScore: element('#vs-you-score'),
     vsBotScore: element('#vs-bot-score'),
+    vsBotLabel: element('#vs-bot-label'),
+    vsRivalInitial: element('#vs-rival-initial'),
+    resultBotLabel: element('#result-bot-label'),
+    resultAgain: element<HTMLButtonElement>('#result-again'),
     jokerButton: element<HTMLButtonElement>('#joker-button'),
     jokerCount: element('#joker-count'),
     vsRing: element('#vs-ring'),
@@ -127,9 +136,42 @@ export function startApp(defaultLanguage: Language): void {
   let round: RoundTimer | undefined;
   /** The kind of the last round started, for "Play again". */
   let lastKind: RoundKind = 'solo';
+  /** The finished round the result window is showing. */
+  let result: { kind: RoundKind; timeUp: boolean } | undefined;
   let dictionary: Dictionary | undefined;
-  // The bot, when playing against one: its score, when it next tries, and the try in progress.
-  let botScore = 0;
+  // The other side's score: the bot's, or the friend's in a match.
+  let rivalScore = 0;
+  // A match against a friend: the connection, their name, and how their round ended (their time
+  // ran out, they left, or nothing was heard of them for too long after ours).
+  let match: Match | undefined;
+  let rivalName = '';
+  let rivalDone: 'final' | 'left' | 'silent' | undefined;
+  let rivalTimer = 0;
+  const matchUi = setupMatch({
+    language: () => settings.lang,
+    name: () => guest.name,
+    start(started, opponentName) {
+      match = started;
+      rivalName = opponentName || t(settings.lang, 'friend');
+      startRound('match');
+    },
+    // Once the friend's round is over their score stands.
+    score(points) {
+      if (rivalDone) return;
+      rivalScore = points;
+      renderResult();
+    },
+    final(points) {
+      if (rivalDone) return;
+      rivalScore = points;
+      settleRival('final');
+    },
+    left() {
+      if (round) showToast(t(settings.lang, 'friendLeft'), 'bad');
+      settleRival('left');
+    },
+  });
+  // The bot, when playing against one: when it next tries, and the try in progress.
   let botClock: BotClock | undefined;
   let botTry: { tiles: Tile[]; correct: boolean; word: string; wait: number } | undefined;
 
@@ -179,6 +221,7 @@ export function startApp(defaultLanguage: Language): void {
       const multiplier = wordMultiplier(result.items);
       const points = scoreWord(result.word) * multiplier;
       score += points;
+      match?.sendScore(score);
       found.push({ word: result.word, multiplier });
       // A joker from the stock is spent once its word scores.
       if (result.items.includes(HAND_JOKER)) jokers--;
@@ -267,7 +310,7 @@ export function startApp(defaultLanguage: Language): void {
     if (correct && !tracker.isUsed(word)) {
       const multiplier = wordMultiplier(tiles);
       const points = scoreWord(word) * multiplier;
-      botScore += points;
+      rivalScore += points;
       tracker.markUsed(word);
       game.removeTiles(tiles);
       showScoreFloat(ui.fieldWrap, at, `🤖 ${pointsText(points)}`, word, 'bot');
@@ -283,16 +326,22 @@ export function startApp(defaultLanguage: Language): void {
   }
 
   function startRound(kind: RoundKind): void {
+    // Any other round ends a match still open (one whose result was waiting for the friend).
+    if (kind !== 'match') closeMatch(true);
+    window.clearTimeout(rivalTimer);
+    rivalDone = undefined;
     lastKind = kind;
     round = new RoundTimer(kind);
     score = 0;
     found = [];
     jokers = START_JOKERS;
     stopBot();
-    botScore = 0;
+    rivalScore = 0;
     botClock = kind === 'bot' ? new BotClock() : undefined;
-    // Against the bot the top bar also shows the bot's score.
+    // Against the bot or a friend the top bar also shows their score, under their name.
     document.getElementById('app')!.dataset.mode = kind;
+    ui.vsBotLabel.textContent = kind === 'match' ? rivalName : t(settings.lang, 'bot');
+    ui.vsRivalInitial.textContent = rivalName.charAt(0).toUpperCase();
     ui.vsAvatar.textContent = (auth.name() ?? t(settings.lang, 'you')).charAt(0).toUpperCase();
     tracker.reset();
     game.reset();
@@ -305,6 +354,14 @@ export function startApp(defaultLanguage: Language): void {
   /** ☰ during a round: pauses it (timer and bot included) and opens the menu, with ✕ to resume. */
   function pauseRound(): void {
     if (!round) return;
+    // A match cannot wait: ☰ leaves it, and the friend is told.
+    if (match) {
+      closeMatch(true);
+      dropRound();
+      game.stop();
+      ui.menu.hidden = false;
+      return;
+    }
     game.stop();
     ui.menuClose.hidden = false;
     ui.menu.hidden = false;
@@ -335,30 +392,80 @@ export function startApp(defaultLanguage: Language): void {
     game.stop();
     stopBot();
     clearWord();
-    // Against the bot, the title says who won; otherwise whether time ran out.
-    const title = botClock
-      ? t(settings.lang, score > botScore ? 'youWin' : score < botScore ? 'botWins' : 'draw')
-      : timeUp
-        ? t(settings.lang, 'timeUp')
-        : '';
+    if (match) {
+      match.sendFinal(score);
+      // If the friend's own time is not up yet, wait a little for their final score.
+      if (!rivalDone) rivalTimer = window.setTimeout(() => settleRival('silent'), RIVAL_WAIT_MS);
+      else closeMatch(false);
+    }
+    result = { kind: lastKind, timeUp };
+    renderResult();
+    ui.menu.hidden = false;
+    ui.result.showModal();
+    // The round goes to the leaderboard (not a match); if that fails the game just goes on.
+    if (timeUp && lastKind !== 'match') {
+      const report = { kind: lastKind, lang: settings.lang, words: found, botScore: rivalScore };
+      submitRound(guest, report).catch(() => {});
+    }
+  }
+
+  /**
+   * The result window's words: against the bot or a friend, who won (or that the friend is still
+   * playing, or left); otherwise whether time ran out. A friend's score can still change.
+   */
+  function renderResult(): void {
+    if (!result) return;
+    const lang = settings.lang;
+    let title = '';
+    if (result.kind === 'match') {
+      const won = { win: 'youWin', loss: 'friendWins', draw: 'draw' } as const;
+      title = !rivalDone
+        ? t(lang, 'matchWaitingResult')
+        : rivalDone === 'left'
+          ? t(lang, 'friendLeft')
+          : t(lang, won[outcome(score, rivalScore)]);
+    } else if (result.kind === 'bot') {
+      title = t(lang, score > rivalScore ? 'youWin' : score < rivalScore ? 'botWins' : 'draw');
+    } else if (result.timeUp) {
+      title = t(lang, 'timeUp');
+    }
     ui.resultTitle.textContent = title;
     ui.resultTitle.hidden = !title;
     ui.resultScore.textContent = String(score);
-    ui.resultBot.textContent = String(botScore);
-    ui.resultBotBox.hidden = !botClock;
-    ui.menu.hidden = false;
-    ui.result.showModal();
-    // The round goes to the leaderboard; if that fails the game just goes on.
-    if (timeUp) {
-      const kind = botClock ? 'bot' : 'solo';
-      submitRound(guest, { kind, lang: settings.lang, words: found, botScore }).catch(() => {});
-    }
+    ui.resultBot.textContent = String(rivalScore);
+    ui.resultBotLabel.textContent = result.kind === 'match' ? rivalName : t(lang, 'bot');
+    ui.resultBotBox.hidden = result.kind === 'solo';
+    ui.resultAgain.textContent = t(lang, result.kind === 'match' ? 'newMatch' : 'playAgain');
+  }
+
+  /** The friend's round is over, one way or another; once ours is too, so is the match. */
+  function settleRival(how: 'final' | 'left' | 'silent'): void {
+    if (rivalDone) return;
+    rivalDone = how;
+    window.clearTimeout(rivalTimer);
+    if (!round) closeMatch(false);
+    renderResult();
+  }
+
+  /** Hangs up the match, telling the friend if we are walking out on it. */
+  function closeMatch(leaving: boolean): void {
+    window.clearTimeout(rivalTimer);
+    if (leaving) match?.leave();
+    else match?.close();
+    match = undefined;
   }
 
   /** Closing the result: "Play again" starts the same kind of round; otherwise the menu stays. */
   function closeResult(): void {
-    if (ui.result.returnValue === 'again') startRound(lastKind);
+    const again = ui.result.returnValue === 'again';
     ui.result.returnValue = '';
+    // Closed while still waiting for the friend's final score: the match is over for us.
+    closeMatch(true);
+    result = undefined;
+    if (!again) return;
+    // A new match needs a new code; any other round just starts again.
+    if (lastKind === 'match') matchUi.open();
+    else startRound(lastKind);
   }
 
   /** A tapped star leaves the field and joins the player's stock; with a full stock it stays. */
@@ -445,7 +552,7 @@ export function startApp(defaultLanguage: Language): void {
   /** The top bar: the scores, and the ring emptying with the seconds left. */
   function renderBar(remaining: number): void {
     ui.vsYouScore.textContent = String(score);
-    ui.vsBotScore.textContent = String(botScore);
+    ui.vsBotScore.textContent = String(rivalScore);
     const seconds = Math.ceil(remaining / 1000);
     ui.vsSeconds.textContent = String(seconds);
     ui.vsRingFill.style.strokeDasharray = ringDashes(remaining / ROUND_MS, settings.theme);
@@ -521,6 +628,8 @@ export function startApp(defaultLanguage: Language): void {
   ui.playBot.addEventListener('click', () => startRound('bot'));
   ui.dialog.addEventListener('close', applySettings);
   ui.result.addEventListener('close', closeResult);
+  // Leaving the page leaves the match.
+  window.addEventListener('pagehide', () => closeMatch(true));
   window.addEventListener('keydown', (e) => {
     // An open window (settings, the leaderboard) has the keyboard.
     if (document.querySelector('dialog[open]') || !round) return;

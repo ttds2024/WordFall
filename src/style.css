@@ -159,19 +159,27 @@ button:disabled {
 }
 
 /* Playing alone there is no bot card; its place stays empty so the ring stays centred. */
-#app:not([data-mode='bot']) .vs-bot {
+#app:not([data-mode='bot']):not([data-mode='match']) .vs-bot {
   visibility: hidden;
+}
+
+/* The other side's avatar: the bot's face, or in a match the friend's initial. */
+#app[data-mode='match'] .vs-bot-icon,
+#app:not([data-mode='match']) .vs-rival-initial {
+  display: none;
 }
 
 .versus {
   grid-area: versus;
 }
 
-#app[data-mode='bot'] .word-box {
+#app[data-mode='bot'] .word-box,
+#app[data-mode='match'] .word-box {
   grid-area: word;
 }
 
-#app[data-mode='bot'] .hud-buttons {
+#app[data-mode='bot'] .hud-buttons,
+#app[data-mode='match'] .hud-buttons {
   grid-area: buttons;
 }
 
@@ -852,6 +860,59 @@ dialog .primary {
 #play-bot b {
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+.menu-options [hidden] {
+  display: none;
+}
+
+/* The match window: create a match or join one; then the code to send to the friend. */
+.match [hidden] {
+  display: none;
+}
+
+.match-choose .primary {
+  margin-bottom: 20px;
+}
+
+.match-join {
+  display: flex;
+  gap: 10px;
+}
+
+.match-join input {
+  flex: 1;
+  min-width: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.match-waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.match-waiting p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.match-code {
+  color: var(--yellow);
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  /* Letter-spacing trails the last letter; this keeps the code centred. */
+  margin-right: -0.18em;
+  user-select: all;
+}
+
+.match form > button:last-child {
+  width: 100%;
 }
 
 /* Under the play buttons: the leaderboard and settings, side by side. */

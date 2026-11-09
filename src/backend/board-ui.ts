@@ -1,8 +1,7 @@
-import type { RoundKind } from '../core/round';
 import { t, type Language } from '../i18n';
 import { backendEnabled, fetchBoard } from './client';
 import { cleanName, MAX_NAME, type Guest } from './guest';
-import type { BoardRow } from './rounds';
+import type { BoardKind, BoardRow } from './rounds';
 
 function element<T extends HTMLElement>(selector: string): T {
   const el = document.querySelector<T>(selector);
@@ -28,7 +27,7 @@ export function setupBoard(
     tabs: {
       solo: element<HTMLButtonElement>('#board-solo'),
       bot: element<HTMLButtonElement>('#board-bot'),
-    } satisfies Record<RoundKind, HTMLButtonElement>,
+    } satisfies Record<BoardKind, HTMLButtonElement>,
     rows: element<HTMLOListElement>('#board-rows'),
     note: element('#board-note'),
     name: element<HTMLInputElement>('#board-name'),
@@ -36,7 +35,7 @@ export function setupBoard(
   ui.open.hidden = !backendEnabled;
   if (!backendEnabled) return;
 
-  let kind: RoundKind = 'solo';
+  let kind: BoardKind = 'solo';
   let state: State = 'loading';
   /** Only the latest request's answer is shown. */
   let request = 0;
