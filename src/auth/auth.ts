@@ -1,11 +1,10 @@
 /**
- * Sign-in with Yandex ID and VK ID, in the browser (it works with no server at all).
+ * Sign-in with Yandex ID and VK ID, entirely in the browser (the game has no server).
  *
  * Yandex ID uses the OAuth implicit flow: the token comes back in the URL fragment and is used
  * once to read the player's name and avatar. VK ID uses OAuth 2.1 with PKCE: the code comes back
  * in the query string and is exchanged for a token without a client secret. Tokens are never
- * stored; only the profile is kept, so signing out just forgets it. With a backend (Supabase,
- * src/backend/), the token is also sent to it once, to open the player's account there.
+ * stored; only the profile is kept, so signing out just forgets it.
  *
  * Sber ID is not here: it needs a client secret and a TLS client certificate, so it needs a server.
  */
@@ -143,26 +142,14 @@ export function cleanUrl(url: URL): string {
   return clean.toString();
 }
 
-/** A finished sign-in: who the player is, and the provider's token that proves it. */
-export interface Login {
-  profile: Profile;
-  /** Used once more, to sign in to the game's backend if it has one; never stored. */
-  accessToken: string;
-}
-
 /** Turns the provider's answer into the player's profile. */
 export async function finishLogin(
   result: Extract<RedirectResult, { kind: 'yandex' | 'vk' }>,
   config: AuthConfig,
   redirect: string,
   fetchFn: Fetch = fetch,
-): Promise<Login> {
-  if (result.kind === 'yandex') {
-    return {
-      profile: await yandexProfile(result.accessToken, fetchFn),
-      accessToken: result.accessToken,
-    };
-  }
+): Promise<Profile> {
+  if (result.kind === 'yandex') return yandexProfile(result.accessToken, fetchFn);
   const appId = config.vkAppId ?? '';
   const exchange = new URLSearchParams({
     grant_type: 'authorization_code',
@@ -184,10 +171,7 @@ export async function finishLogin(
     access_token: token.access_token,
   });
   const name = [info.user?.first_name, info.user?.last_name].filter(Boolean).join(' ');
-  return {
-    profile: { provider: 'vk', name: name || 'VK ID', avatar: info.user?.avatar || undefined },
-    accessToken: token.access_token,
-  };
+  return { provider: 'vk', name: name || 'VK ID', avatar: info.user?.avatar || undefined };
 }
 
 /** Reads the Yandex profile; if that fails the player is still signed in, just without a name. */

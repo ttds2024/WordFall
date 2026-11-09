@@ -1,6 +1,7 @@
 import type { RoundKind } from '../core/round';
 import { normalizeWord } from '../core/word';
 import type { Language } from '../i18n';
+import type { Guest } from './guest';
 
 /** A word the player scored, with its multiplier (1, or 2 for each ×2 tile in it). */
 export interface FoundWord {
@@ -18,16 +19,23 @@ export interface RoundReport {
 }
 
 /**
- * The arguments of the database's submit_round(). The score is not sent: the database works it
- * out from the words, so a made-up total cannot be saved.
+ * The arguments of the database's submit_round(): who played, and the round. The score is not
+ * sent: the database works it out from the words, so a made-up total cannot be saved.
  */
-export function roundArgs(report: RoundReport): {
+export function roundArgs(
+  guest: Guest,
+  report: RoundReport,
+): {
+  p_token: string;
+  p_name: string;
   p_kind: RoundKind;
   p_lang: Language;
   p_words: { w: string; m: number }[];
   p_bot_score: number | null;
 } {
   return {
+    p_token: guest.token,
+    p_name: guest.name,
     p_kind: report.kind,
     p_lang: report.lang,
     p_words: report.words.map(({ word, multiplier }) => ({
@@ -42,9 +50,8 @@ export function roundArgs(report: RoundReport): {
 export interface BoardRow {
   rank: number;
   name: string;
-  avatar?: string;
   score: number;
-  /** Whether this is the signed-in player. */
+  /** Whether this is the player on this device. */
   me: boolean;
 }
 
@@ -57,11 +64,6 @@ export function readBoard(data: unknown): BoardRow[] {
     rows.push({
       rank: Number(item.rank) || rows.length + 1,
       name: item.name,
-      // Only https pictures are shown.
-      avatar:
-        typeof item.avatar === 'string' && item.avatar.startsWith('https://')
-          ? item.avatar
-          : undefined,
       score: item.score,
       me: item.is_me === true,
     });

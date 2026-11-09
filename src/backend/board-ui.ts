@@ -1,6 +1,7 @@
 import type { RoundKind } from '../core/round';
 import { t, type Language } from '../i18n';
 import { backendEnabled, fetchBoard } from './client';
+import { cleanName, MAX_NAME, type Guest } from './guest';
 import type { BoardRow } from './rounds';
 
 function element<T extends HTMLElement>(selector: string): T {
@@ -13,9 +14,14 @@ type State = 'loading' | 'failed' | BoardRow[];
 
 /**
  * The leaderboard: a button on the start menu (hidden without a backend) and the window it opens,
- * with the best scores in the game's language, on your own or against the bot.
+ * with the best scores in the game's language, on your own or against the bot, and the name this
+ * player's scores are saved under. rename() is called when the player changes that name.
  */
-export function setupBoard(language: () => Language, signedIn: () => boolean): void {
+export function setupBoard(
+  language: () => Language,
+  guest: () => Guest,
+  rename: (name: string) => void,
+): void {
   const ui = {
     open: element<HTMLButtonElement>('#menu-board'),
     dialog: element<HTMLDialogElement>('#board'),
@@ -25,7 +31,7 @@ export function setupBoard(language: () => Language, signedIn: () => boolean): v
     } satisfies Record<RoundKind, HTMLButtonElement>,
     rows: element<HTMLOListElement>('#board-rows'),
     note: element('#board-note'),
-    signIn: element('#board-sign-in'),
+    name: element<HTMLInputElement>('#board-name'),
   };
   ui.open.hidden = !backendEnabled;
   if (!backendEnabled) return;
@@ -52,7 +58,6 @@ export function setupBoard(language: () => Language, signedIn: () => boolean): v
             : undefined;
     ui.note.textContent = note ? t(language(), note) : '';
     ui.note.hidden = !note;
-    ui.signIn.hidden = signedIn();
   }
 
   async function load(): Promise<void> {
@@ -61,7 +66,7 @@ export function setupBoard(language: () => Language, signedIn: () => boolean): v
     render();
     let loaded: State;
     try {
-      loaded = await fetchBoard(language(), kind);
+      loaded = await fetchBoard(language(), kind, guest());
     } catch {
       loaded = 'failed';
     }
@@ -70,7 +75,15 @@ export function setupBoard(language: () => Language, signedIn: () => boolean): v
     render();
   }
 
+  ui.name.maxLength = MAX_NAME;
+  // An emptied name goes back to what it was.
+  ui.name.addEventListener('change', () => {
+    const name = cleanName(ui.name.value);
+    if (name) rename(name);
+    ui.name.value = guest().name;
+  });
   ui.open.addEventListener('click', () => {
+    ui.name.value = guest().name;
     ui.dialog.showModal();
     void load();
   });
@@ -83,7 +96,7 @@ export function setupBoard(language: () => Language, signedIn: () => boolean): v
   }
 }
 
-/** One line: the place, the picture (or the name's first letter), the name and the score. */
+/** One line: the place, the name's first letter, the name and the score. */
 function rowElement(row: BoardRow): HTMLLIElement {
   const li = document.createElement('li');
   li.className = row.me ? 'board-row me' : 'board-row';
@@ -92,16 +105,7 @@ function rowElement(row: BoardRow): HTMLLIElement {
   rank.textContent = String(row.rank);
   const picture = document.createElement('span');
   picture.className = 'board-avatar';
-  if (row.avatar) {
-    const img = document.createElement('img');
-    img.alt = '';
-    img.referrerPolicy = 'no-referrer';
-    img.loading = 'lazy';
-    img.src = row.avatar;
-    picture.append(img);
-  } else {
-    picture.textContent = row.name.charAt(0).toUpperCase();
-  }
+  picture.textContent = row.name.charAt(0).toUpperCase();
   const name = document.createElement('span');
   name.className = 'board-name';
   name.textContent = row.name;

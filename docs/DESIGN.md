@@ -41,43 +41,43 @@ open from the start menu only; there is no Settings button during a round.
 ## Accounts
 
 Players can sign in with **Yandex ID** or **VK ID** from the start menu; signed in, the menu shows
-their name, avatar and provider with a Sign out button. Signing in is optional; it puts the
-player's rounds on the leaderboard when the game has a backend (see Online scores).
+their name, avatar and provider with a Sign out button. Signing in is optional and changes nothing
+in the game yet.
 
-- No server is needed: Yandex ID uses the OAuth implicit flow, VK ID OAuth 2.1 with PKCE and no client
+- No server: Yandex ID uses the OAuth implicit flow, VK ID OAuth 2.1 with PKCE and no client
   secret, both from the browser (`src/auth/`). Access tokens are used once to read the profile and
   never stored; only the name, avatar and provider are kept in local storage.
 - The `state` sent to the provider must come back unchanged, and is accepted only once, so a
   forged or replayed answer is refused.
 - App IDs come from the build (`VITE_YANDEX_CLIENT_ID`, `VITE_VK_APP_ID`, filled from GitHub
   repository variables); a provider without one is hidden.
-- **Sber ID** needs a client secret and a TLS client certificate, which must live on a server; it
-  is not there yet.
+- **Sber ID** needs a client secret and a TLS client certificate, so it waits for a backend.
 
 ## Online scores
 
-Optional, on **Supabase** (`supabase/`, `src/backend/`). A build without `VITE_SUPABASE_URL` and
-`VITE_SUPABASE_PUBLISHABLE_KEY` has none of it and never downloads the Supabase library. The site
-itself stays on GitHub Pages.
+Optional, on **Supabase** (`supabase/`, `src/backend/`), for testing. A build without
+`VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` has none of it and never downloads the
+Supabase library. The site itself stays on GitHub Pages.
 
-- **Accounts:** Yandex ID and VK ID are not sign-in providers Supabase knows, so the browser flows
-  above stay. After one, the game sends the provider's token to the `provider-login` Edge
-  Function, which checks it with the provider (and that it was issued to this game's app), finds
-  or makes the player's Supabase account, saves the name and avatar in `profiles`, and answers
-  with a one-time token the game trades for a session. With a backend, signed in means signed in
-  there too: if that step fails the sign-in fails, and a profile remembered without a session is
-  forgotten.
-- **Rounds:** when the time runs out, a signed-in player's round is saved by `submit_round()`: the
-  mode, the language, the words with their multipliers and the bot's score. The database works the
-  score out from the words (100 a letter × the multiplier) and refuses impossible lists (unknown
-  letters, a word twice, a multiplier the word cannot have, more than 120 words) and a second
-  round within 110 seconds. It does not check the words against the word list. A save that fails
-  is dropped silently; the game never waits for it.
+- **Guests, no accounts:** the first visit makes the browser a guest: a random 256-bit secret
+  token, kept in local storage with a name ("Guest 4821" until the player changes it in the
+  leaderboard window; at most 24 characters). Whoever holds the token is that player. The database
+  keeps only the token's SHA-256. This is separate from the Yandex ID / VK ID sign-in, which still
+  only shows the name and avatar.
+- **Rounds:** when the time runs out the round is saved by `submit_round()`: the token, the name,
+  the mode, the language, the words with their multipliers and the bot's score. A guest's first
+  round makes them a player; each round updates their name. The database works the score out from
+  the words (100 a letter × the multiplier) and refuses impossible lists (unknown letters, a word
+  twice, a multiplier the word cannot have, more than 120 words) and a second round within 110
+  seconds. It does not check the words against the word list. A save that fails is dropped
+  silently; the game never waits for it.
 - **Leaderboard:** the start menu's **Leaderboard** button opens the best score of each player in
-  the game's language, on your own or against the bot (the top 20), the signed-in player's line
-  outlined in yellow. Anyone can read it; signed-out players see a hint to sign in.
-- **Access:** the browser cannot write the tables. `profiles` is readable by all, `rounds` by its
-  player only; the leaderboard function gives out names, avatars and scores.
+  the game's language, on your own or against the bot (the top 20), this device's line outlined in
+  yellow, and the box for the player's name.
+- **Access:** the browser cannot read or write the tables; it can only call the two functions,
+  which give out names and scores.
+- **Limits:** nothing stops someone making many guests, and a guest who clears their browser's
+  data starts again as a new one.
 
 ## Physics
 

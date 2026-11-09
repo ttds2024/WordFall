@@ -114,7 +114,7 @@ describe('finishLogin', () => {
       .mockResolvedValue(
         json({ display_name: 'Ann', default_avatar_id: '123/abc', is_avatar_empty: false }),
       );
-    const { profile, accessToken } = await finishLogin(
+    const profile = await finishLogin(
       { kind: 'yandex', accessToken: 'tok' },
       config,
       REDIRECT,
@@ -125,13 +125,12 @@ describe('finishLogin', () => {
       name: 'Ann',
       avatar: 'https://avatars.yandex.net/get-yapic/123/abc/islands-68',
     });
-    expect(accessToken).toBe('tok');
     expect(fetchFn.mock.calls[0]![1].headers).toEqual({ Authorization: 'OAuth tok' });
   });
 
   it('still signs a Yandex player in when the profile cannot be read', async () => {
     const fetchFn = vi.fn().mockRejectedValue(new TypeError('Failed to fetch'));
-    const { profile } = await finishLogin(
+    const profile = await finishLogin(
       { kind: 'yandex', accessToken: 'tok' },
       config,
       REDIRECT,
@@ -154,9 +153,8 @@ describe('finishLogin', () => {
       codeVerifier: 'v',
       state: 's2',
     };
-    const { profile, accessToken } = await finishLogin(result, config, REDIRECT, fetchFn);
+    const profile = await finishLogin(result, config, REDIRECT, fetchFn);
     expect(profile).toEqual({ provider: 'vk', name: 'Ivan P', avatar: 'a.jpg' });
-    expect(accessToken).toBe('at');
 
     const [tokenUrl, tokenInit] = fetchFn.mock.calls[0]!;
     const u = new URL(tokenUrl);

@@ -150,7 +150,10 @@
           </div>
           <ol id="board-rows" class="board-rows" hidden></ol>
           <p id="board-note" class="board-note" aria-live="polite"></p>
-          <p id="board-sign-in" class="board-note" data-i18n="boardSignIn" hidden></p>
+          <div class="field">
+            <label class="field-label" for="board-name" data-i18n="boardName"></label>
+            <input id="board-name" type="text" autocomplete="nickname" />
+          </div>
           <button class="primary" value="done" data-i18n="done"></button>
         </form>
       </dialog>

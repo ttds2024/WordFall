@@ -54,7 +54,8 @@ const strings = {
     boardLoading: 'Loading…',
     boardEmpty: 'No scores yet. Be the first!',
     boardFailed: 'Could not load the leaderboard',
-    boardSignIn: 'Sign in to put your scores on the leaderboard.',
+    boardName: 'Your name on the leaderboard',
+    guest: 'Guest',
   },
   ru: {
     title: 'WordFall',
@@ -106,7 +107,8 @@ const strings = {
     boardLoading: 'Загрузка…',
     boardEmpty: 'Результатов пока нет. Станьте первым!',
     boardFailed: 'Не удалось загрузить таблицу лидеров',
-    boardSignIn: 'Войдите, чтобы ваши результаты попали в таблицу лидеров.',
+    boardName: 'Ваше имя в таблице лидеров',
+    guest: 'Гость',
   },
 } satisfies Record<Language, Record<string, string>>;
 

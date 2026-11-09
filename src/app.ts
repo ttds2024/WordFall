@@ -1,6 +1,7 @@
 import { setupAuth } from './auth/ui';
 import { setupBoard } from './backend/board-ui';
 import { submitRound } from './backend/client';
+import { defaultName, loadGuest, saveGuest } from './backend/guest';
 import type { FoundWord } from './backend/rounds';
 import { BOT_ACCURACY, BOT_THINK_MS, BotClock, findWord, pickMiss } from './core/bot';
 import { Dictionary } from './core/dictionary';
@@ -105,9 +106,15 @@ export function startApp(defaultLanguage: Language): void {
   const sounds = new Sounds();
   sounds.enabled = settings.sound;
   const auth = setupAuth(() => settings.lang);
+  // Online the player is a guest, known by a secret token this browser keeps.
+  const guest = loadGuest(storage, () => defaultName(t(settings.lang, 'guest')));
   setupBoard(
     () => settings.lang,
-    () => auth.name() !== undefined,
+    () => guest,
+    (name) => {
+      guest.name = name;
+      saveGuest(storage, guest);
+    },
   );
   let dictionaryState: DictionaryState = 'loading';
   let loadToken = 0;
@@ -341,10 +348,10 @@ export function startApp(defaultLanguage: Language): void {
     ui.resultBotBox.hidden = !botClock;
     ui.menu.hidden = false;
     ui.result.showModal();
-    // A signed-in player's round goes to the leaderboard; if that fails the game just goes on.
+    // The round goes to the leaderboard; if that fails the game just goes on.
     if (timeUp) {
       const kind = botClock ? 'bot' : 'solo';
-      submitRound({ kind, lang: settings.lang, words: found, botScore }).catch(() => {});
+      submitRound(guest, { kind, lang: settings.lang, words: found, botScore }).catch(() => {});
     }
   }
 

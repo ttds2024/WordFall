@@ -688,6 +688,27 @@ fieldset small {
   cursor: pointer;
 }
 
+/* A text box (the name on the leaderboard), in the look of the dropdown. */
+.field input[type='text'] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--panel-border);
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-weight: 800;
+}
+
+.field .field-label {
+  text-align: left;
+}
+
+.field input[type='text']:focus-visible {
+  outline: none;
+  border-color: var(--blue);
+}
+
 .field select:focus-visible {
   outline: none;
   border-color: var(--blue);
@@ -918,12 +939,6 @@ dialog .primary {
   border-radius: 50%;
   background: var(--panel-border);
   font-weight: 900;
-}
-
-.board-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .board-name {
