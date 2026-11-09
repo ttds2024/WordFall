@@ -48,6 +48,13 @@ const strings = {
     youWin: 'You win!',
     botWins: 'The bot wins!',
     draw: "It's a draw!",
+    leaderboard: 'Leaderboard',
+    boardSolo: 'On your own',
+    boardBot: 'Vs AI',
+    boardLoading: 'Loading…',
+    boardEmpty: 'No scores yet. Be the first!',
+    boardFailed: 'Could not load the leaderboard',
+    boardSignIn: 'Sign in to put your scores on the leaderboard.',
   },
   ru: {
     title: 'WordFall',
@@ -93,6 +100,13 @@ const strings = {
     youWin: 'Вы победили!',
     botWins: 'Победил бот!',
     draw: 'Ничья!',
+    leaderboard: 'Таблица лидеров',
+    boardSolo: 'В одиночку',
+    boardBot: 'Против ИИ',
+    boardLoading: 'Загрузка…',
+    boardEmpty: 'Результатов пока нет. Станьте первым!',
+    boardFailed: 'Не удалось загрузить таблицу лидеров',
+    boardSignIn: 'Войдите, чтобы ваши результаты попали в таблицу лидеров.',
   },
 } satisfies Record<Language, Record<string, string>>;
 

@@ -1,0 +1,46 @@
+name: Supabase
+
+# Applies the database migrations and deploys the sign-in function in supabase/ to the project.
+# It does nothing until the project is named: set the variable SUPABASE_PROJECT_REF and the
+# secrets SUPABASE_ACCESS_TOKEN and SUPABASE_DB_PASSWORD (see the README).
+
+on:
+  push:
+    branches: [main]
+    paths: ['supabase/**', '.github/workflows/supabase.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: vars.SUPABASE_PROJECT_REF != ''
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+      # The same public app IDs the game is built with; the function refuses tokens of other apps.
+      YANDEX_CLIENT_ID: ${{ vars.YANDEX_CLIENT_ID }}
+      VK_APP_ID: ${{ vars.VK_APP_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase link --project-ref "$PROJECT_REF"
+      - run: supabase db push
+      - name: Set the sign-in app IDs
+        run: |
+          args=()
+          [ -n "$YANDEX_CLIENT_ID" ] && args+=("YANDEX_CLIENT_ID=$YANDEX_CLIENT_ID")
+          [ -n "$VK_APP_ID" ] && args+=("VK_APP_ID=$VK_APP_ID")
+          if [ ${#args[@]} -gt 0 ]; then
+            supabase secrets set --project-ref "$PROJECT_REF" "${args[@]}"
+          fi
+      - run: supabase functions deploy provider-login --project-ref "$PROJECT_REF"

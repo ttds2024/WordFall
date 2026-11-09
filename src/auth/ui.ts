@@ -1,3 +1,4 @@
+import { backendEnabled, hasSession, signInBackend, signOutBackend } from '../backend/client';
 import { t, type Language } from '../i18n';
 import {
   cleanUrl,
@@ -37,6 +38,9 @@ function element<T extends HTMLElement>(selector: string): T {
 /**
  * The sign-in block on the start menu. Finishes a sign-in when the page is the provider's
  * return address. Returns render(), to call when the language changes.
+ *
+ * With a backend, signed in means signed in there too: the sign-in fails if the backend does not
+ * open the player's account, and a profile remembered without a session is forgotten.
  */
 export function setupAuth(language: () => Language): {
   render(): void;
@@ -111,13 +115,27 @@ export function setupAuth(language: () => Language): {
     busy = true;
     render();
     try {
-      profile = await finishLogin(result, CONFIG, redirectUri(location));
+      const login = await finishLogin(result, CONFIG, redirectUri(location));
+      if (backendEnabled) await signInBackend(login.profile.provider, login.accessToken);
+      profile = login.profile;
       saveProfile(storage, profile);
     } catch {
       failed = true;
     }
     busy = false;
     render();
+  }
+
+  function forget(): void {
+    profile = undefined;
+    saveProfile(storage, undefined);
+    render();
+  }
+
+  /** A profile from before the backend, or whose session is gone: the player signs in again. */
+  async function checkSession(): Promise<void> {
+    if (!backendEnabled || !profile || busy) return;
+    if (!(await hasSession()) && !busy) forget();
   }
 
   for (const provider of providers) {
@@ -130,13 +148,14 @@ export function setupAuth(language: () => Language): {
     });
   }
   ui.signOut.addEventListener('click', () => {
-    profile = undefined;
     failed = false;
-    saveProfile(storage, undefined);
-    render();
+    forget();
+    if (backendEnabled) signOutBackend().catch(() => {});
   });
 
   render();
-  void finishRedirect();
+  void finishRedirect()
+    .then(checkSession)
+    .catch(() => {});
   return { render, name: () => profile?.name };
 }

@@ -1,4 +1,7 @@
 import { setupAuth } from './auth/ui';
+import { setupBoard } from './backend/board-ui';
+import { submitRound } from './backend/client';
+import type { FoundWord } from './backend/rounds';
 import { BOT_ACCURACY, BOT_THINK_MS, BotClock, findWord, pickMiss } from './core/bot';
 import { Dictionary } from './core/dictionary';
 import { ROUND_MS, RoundTimer, type RoundKind } from './core/round';
@@ -102,9 +105,15 @@ export function startApp(defaultLanguage: Language): void {
   const sounds = new Sounds();
   sounds.enabled = settings.sound;
   const auth = setupAuth(() => settings.lang);
+  setupBoard(
+    () => settings.lang,
+    () => auth.name() !== undefined,
+  );
   let dictionaryState: DictionaryState = 'loading';
   let loadToken = 0;
   let score = 0;
+  /** The words the player scored this round, for the saved round. */
+  let found: FoundWord[] = [];
   /** Stars collected this round and not spent yet (one may be in the word being built). */
   let jokers = 0;
   let toastTimer = 0;
@@ -163,6 +172,7 @@ export function startApp(defaultLanguage: Language): void {
       const multiplier = wordMultiplier(result.items);
       const points = scoreWord(result.word) * multiplier;
       score += points;
+      found.push({ word: result.word, multiplier });
       // A joker from the stock is spent once its word scores.
       if (result.items.includes(HAND_JOKER)) jokers--;
       const tiles = result.items.filter(isTile);
@@ -269,6 +279,7 @@ export function startApp(defaultLanguage: Language): void {
     lastKind = kind;
     round = new RoundTimer(kind);
     score = 0;
+    found = [];
     jokers = START_JOKERS;
     stopBot();
     botScore = 0;
@@ -330,6 +341,11 @@ export function startApp(defaultLanguage: Language): void {
     ui.resultBotBox.hidden = !botClock;
     ui.menu.hidden = false;
     ui.result.showModal();
+    // A signed-in player's round goes to the leaderboard; if that fails the game just goes on.
+    if (timeUp) {
+      const kind = botClock ? 'bot' : 'solo';
+      submitRound({ kind, lang: settings.lang, words: found, botScore }).catch(() => {});
+    }
   }
 
   /** Closing the result: "Play again" starts the same kind of round; otherwise the menu stays. */
@@ -499,7 +515,8 @@ export function startApp(defaultLanguage: Language): void {
   ui.dialog.addEventListener('close', applySettings);
   ui.result.addEventListener('close', closeResult);
   window.addEventListener('keydown', (e) => {
-    if (ui.dialog.open || !round) return;
+    // An open window (settings, the leaderboard) has the keyboard.
+    if (document.querySelector('dialog[open]') || !round) return;
     if (!ui.menu.hidden) {
       if (e.key === 'Escape') resumeRound();
       return;

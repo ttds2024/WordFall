@@ -44,8 +44,9 @@ unsigned iOS simulator build on every pull request and push to `main`.
 ## Sign-in (Yandex ID, VK ID)
 
 Players can sign in on the start menu; the game then shows their name and avatar. It all happens
-in the browser (the site has no server), and nothing but the name and avatar is kept, in the
-browser, until the player signs out. Each button stays hidden until its app ID is set.
+in the browser, and nothing but the name and avatar is kept there until the player signs out
+(with [Supabase](#online-scores-supabase), signing in also opens the player's account for the
+leaderboard). Each button stays hidden until its app ID is set.
 
 1. **Yandex ID:** create an app at <https://oauth.yandex.ru/client/new> for the web, with access to
    the user's name and avatar (login:info, login:avatar). Add the game's address as a Redirect URI,
@@ -60,6 +61,32 @@ browser, until the player signs out. Each button stays hidden until its app ID i
 
 Sber ID is not supported yet: it needs a client secret and a TLS client certificate issued by Sber,
 which must live on a server.
+
+## Online scores (Supabase)
+
+With a [Supabase](https://supabase.com/) project the game saves signed-in players' rounds and
+shows a leaderboard on the start menu. Without one it plays as before, offline. The database
+(`supabase/migrations/`) and the sign-in function (`supabase/functions/provider-login/`) live in
+this repository and are put on the project by the **Supabase** workflow.
+
+1. Create a project at <https://supabase.com/dashboard>. Note its **Project URL**
+   (`https://<ref>.supabase.co`) and **publishable key** (Project Settings → API keys), and the
+   database password you chose.
+2. Create an access token at <https://supabase.com/dashboard/account/tokens>.
+3. In GitHub, open **Settings → Secrets and variables → Actions** and add
+   - variables `SUPABASE_PROJECT_REF` (the `<ref>` in the URL), `SUPABASE_URL` and
+     `SUPABASE_PUBLISHABLE_KEY` (public values);
+   - secrets `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD`.
+4. Run the **Supabase** workflow (Actions → Supabase → Run workflow): it creates the tables and
+   deploys the sign-in function, with the `YANDEX_CLIENT_ID` and `VK_APP_ID` variables above. It
+   runs by itself afterwards whenever `supabase/` changes on `main`.
+5. Run **Deploy to GitHub Pages** again: the Leaderboard button appears.
+
+For local development put `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in `.env.local`.
+
+Scores are worked out by the database from the words of the round, not taken from the browser,
+and a player can save one round every 110 seconds. Words are not checked against the word list
+there yet.
 
 ## Deployment
 
