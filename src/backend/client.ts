@@ -7,10 +7,10 @@
  * game plays exactly as before, and the Supabase library is not even downloaded.
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { RoundKind } from '../core/round';
 import type { Language } from '../i18n';
 import type { Guest } from './guest';
-import { readBoard, roundArgs, type BoardRow, type RoundReport } from './rounds';
+import { channelName, Match, readMessage, type MatchEvents } from './match';
+import { readBoard, roundArgs, type BoardKind, type BoardRow, type RoundReport } from './rounds';
 
 const URL = import.meta.env.VITE_SUPABASE_URL || undefined;
 const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || undefined;
@@ -41,7 +41,7 @@ export async function submitRound(guest: Guest, report: RoundReport): Promise<bo
 /** The best scores in one language and mode, highest first, with this guest's line marked. */
 export async function fetchBoard(
   lang: Language,
-  kind: RoundKind,
+  kind: BoardKind,
   guest: Guest,
 ): Promise<BoardRow[]> {
   const { data, error } = await (
@@ -49,4 +49,39 @@ export async function fetchBoard(
   ).rpc('leaderboard', { p_lang: lang, p_kind: kind, p_token: guest.token });
   if (error) throw error;
   return readBoard(data);
+}
+
+/**
+ * Connects a match (see match.ts) to its channel: a Supabase Realtime broadcast channel named
+ * after the code, which carries each player's messages to the other and keeps nothing. The match
+ * reports through its events, also when the connection cannot be made.
+ */
+export async function connectMatch(
+  code: string,
+  role: 'host' | 'guest',
+  name: string,
+  events: MatchEvents,
+): Promise<Match> {
+  const db = await supabase();
+  const channel = db.channel(channelName(code), { config: { broadcast: { self: false } } });
+  const match = new Match(
+    code,
+    role,
+    name,
+    {
+      send: (message) => void channel.send({ type: 'broadcast', event: 'match', payload: message }),
+      close: () => void db.removeChannel(channel),
+    },
+    events,
+  );
+  channel.on('broadcast', { event: 'match' }, ({ payload }) => {
+    const message = readMessage(payload);
+    if (message) match.receive(message);
+  });
+  channel.subscribe((status) => {
+    if (status === 'SUBSCRIBED') match.open();
+    // Before the round starts a broken connection ends the match; after, the library reconnects.
+    else if (status !== 'CLOSED' && !match.started) match.fail('failed');
+  });
+  return match;
 }

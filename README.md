@@ -63,8 +63,10 @@ which must live on a server.
 
 ## Online scores (Supabase)
 
-With a [Supabase](https://supabase.com/) project the game saves finished rounds and shows a
-leaderboard on the start menu. Without one it plays as before, offline. There are no accounts:
+With a [Supabase](https://supabase.com/) project the game saves finished rounds, shows a
+leaderboard on the start menu, and lets two players play a match against each other (**Play vs
+friend**: one creates a match and sends its 5-character code or link, the other joins with it).
+Without one it plays as before, offline. There are no accounts:
 each browser is a guest, known by a secret token it makes and keeps, with a name the player can
 change in the leaderboard window. (This is for testing; it does not use the Yandex ID / VK ID
 sign-in above.) The database lives in `supabase/migrations/`.
@@ -88,6 +90,10 @@ and a guest can save one round every 110 seconds. Words are not checked against 
 there yet, and nothing stops someone making many guests, so treat the leaderboard as a test.
 Clearing the browser's data makes a new guest; the old scores stay on the board under the old
 name.
+
+Matches need nothing in the database: the two browsers talk over a Supabase Realtime broadcast
+channel named after the code, which must allow public access (the default: Realtime → Settings →
+"Allow public access"). Each player reports their own score, and match rounds are not saved.
 
 ## Deployment
 

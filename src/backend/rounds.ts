@@ -9,9 +9,12 @@ export interface FoundWord {
   multiplier: number;
 }
 
+/** The rounds that are saved and have a leaderboard; matches against a friend are not. */
+export type BoardKind = Exclude<RoundKind, 'match'>;
+
 /** A finished round, as the game knows it. */
 export interface RoundReport {
-  kind: RoundKind;
+  kind: BoardKind;
   lang: Language;
   words: readonly FoundWord[];
   /** The bot's score, in a round against it. */
@@ -28,7 +31,7 @@ export function roundArgs(
 ): {
   p_token: string;
   p_name: string;
-  p_kind: RoundKind;
+  p_kind: BoardKind;
   p_lang: Language;
   p_words: { w: string; m: number }[];
   p_bot_score: number | null;

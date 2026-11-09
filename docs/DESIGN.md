@@ -9,6 +9,8 @@ The game opens on a start menu with two modes:
 - **Play 2 min:** a 2-minute round on your own. The top bar shows your score next to the timer, a
   green ring that empties anticlockwise over the round with the seconds left inside, red in the last 30 seconds; when it runs out the result window shows the final score.
 - **Play vs AI:** a 2-minute round against a bot (see below).
+- **Play vs friend:** a 2-minute match against another player (see Playing against a friend);
+  shown only when the game has a backend.
 
 There is no untimed mode: a round against the bot needs an end to decide who won.
 
@@ -37,6 +39,29 @@ open from the start menu only; there is no Settings button during a round.
   the word being built goes on the row below. The same compact design on phones and desktops; on
   wide screens the score group keeps its phone width (at most 480 px), centred. There is
   no "who's ahead" indicator beyond the two scores. At the end the result window says who won.
+
+## Playing against a friend
+
+**Play vs friend** opens a window to create a match or join one. It needs the backend (see Online
+scores), and is hidden without it.
+
+- **The code:** creating a match makes a 5-character code (letters and digits, without the
+  look-alikes I, O, 0 and 1) and waits. The friend types it, in any case, or opens the link
+  **Copy link** gives (`?match=CODE`), which opens the window with the code filled in. The round
+  starts for both the moment the friend joins. A code nobody is waiting on is refused after 6
+  seconds; a third player is told the match is full.
+- **The round:** each player has their own field and letters, in their own language and style,
+  for the same 2 minutes. The top bar is the face-off of a round against the bot, with the
+  friend's name, initial and live score in the bot's place. Nothing is shared between the fields.
+- **No pause:** ☰ leaves the match; the friend is told and plays on to the end of their time.
+- **The result:** when the time runs out the result window says who won, with both scores. If the
+  friend's time is not up yet (their game was held up) it says it is waiting for them, for at most
+  10 seconds, and their score keeps updating; after that their last score counts. If the friend
+  left, it says so. **New match** opens the window again: a rematch is a new code.
+- **How it works:** nothing is stored. The two browsers exchange small messages (join, start,
+  score, final score, left) over a Supabase Realtime broadcast channel named after the code
+  (`src/backend/match.ts`). Each browser reports its own score, which is fine between friends;
+  match rounds are not saved and do not go on the leaderboard.
 
 ## Accounts
 
