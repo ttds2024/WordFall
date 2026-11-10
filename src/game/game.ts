@@ -43,6 +43,8 @@ export class Game {
   private blasts: Blast[] = [];
   /** How the tiles look. */
   private theme: Theme = 'halloween';
+  /** Decides what falls and where; seeded in a match, so both players get the same tiles. */
+  private random: () => number = Math.random;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -73,9 +75,15 @@ export class Game {
     cancelAnimationFrame(this.frame);
   }
 
-  /** Empties the field, optionally switching to a new language's letters. */
-  reset(lang: Language = this.lang): void {
+  /**
+   * Empties the field, optionally switching to a new language's letters. `random` decides what
+   * falls from now on: the same generator gives the same tiles in the same order.
+   */
+  reset(lang: Language = this.lang, random: () => number = Math.random): void {
     this.lang = lang;
+    this.random = random;
+    this.acc = 0;
+    this.spawner = new Spawner(SPAWN_INTERVAL_MS, this.spawner.maxTiles);
     for (const tile of this.world.all()) this.world.remove(tile);
     this.blasts = [];
     this.draw();
@@ -125,16 +133,18 @@ export class Game {
     const { width } = this.world.size;
     const r = this.radius;
     for (let i = 0; i < due; i++) {
-      const x = r + Math.random() * Math.max(0, width - 2 * r);
+      const random = this.random;
+      const x = r + random() * Math.max(0, width - 2 * r);
       const y = -r - i * r * 2.2;
-      const roll = Math.random();
+      const roll = random();
+      const letter = (): string => pickLetter(this.lang, random);
       if (roll < JOKER_CHANCE) this.world.spawn(JOKER, x, y, r, 'joker');
       else if (roll < JOKER_CHANCE + BOMB_CHANCE) this.world.spawn('', x, y, r, 'bomb');
       else if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE) {
-        this.world.spawn(pickLetter(this.lang), x, y, r, 'double');
+        this.world.spawn(letter(), x, y, r, 'double');
       } else if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE + GREEN_CHANCE) {
-        this.world.spawn(pickLetter(this.lang), x, y, r, 'green');
-      } else this.world.spawn(pickLetter(this.lang), x, y, r);
+        this.world.spawn(letter(), x, y, r, 'green');
+      } else this.world.spawn(letter(), x, y, r);
     }
   }
 

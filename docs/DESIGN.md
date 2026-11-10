@@ -50,16 +50,22 @@ scores), and is hidden without it.
   **Copy link** gives (`?match=CODE`), which opens the window with the code filled in. The round
   starts for both the moment the friend joins. A code nobody is waiting on is refused after 6
   seconds; a third player is told the match is full.
-- **The round:** each player has their own field and letters, in their own language and style,
-  for the same 2 minutes. The top bar is the face-off of a round against the bot, with the
-  friend's name, initial and live score in the bot's place. Nothing is shared between the fields.
+- **The round:** each player has their own field, in their own language and style, for the same
+  2 minutes. The round is the same for both: it starts at the same moment (a second after the
+  friend joins, the joiner allowing for the time the answer took to reach them), its time runs on
+  the clock and not on play time, so it ends at the same moment even if a player's game was held
+  up (their tab was in the background), and the same tiles fall in the same order and columns
+  for both (the creator sends a seed for them; players in different languages get different
+  letters). The top bar is the face-off of a round against the bot, with the
+  friend's name, initial and live score in the bot's place. What a player does on their field
+  (words, explosions) does not touch the other's.
 - **No pause:** ☰ leaves the match; the friend is told and plays on to the end of their time.
 - **The result:** when the time runs out the result window says who won, with both scores. If the
   friend's time is not up yet (their game was held up) it says it is waiting for them, for at most
   10 seconds, and their score keeps updating; after that their last score counts. If the friend
   left, it says so. **New match** opens the window again: a rematch is a new code.
-- **How it works:** nothing is stored. The two browsers exchange small messages (join, start,
-  score, final score, left) over a Supabase Realtime broadcast channel named after the code
+- **How it works:** nothing is stored. The two browsers exchange small messages (join, start
+  with the seed, score, final score, left) over a Supabase Realtime broadcast channel named after the code
   (`src/backend/match.ts`). Each browser reports its own score, which is fine between friends;
   match rounds are not saved and do not go on the leaderboard.
 

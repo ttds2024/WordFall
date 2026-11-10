@@ -2,11 +2,12 @@ import { setupAuth } from './auth/ui';
 import { setupBoard } from './backend/board-ui';
 import { submitRound } from './backend/client';
 import { defaultName, loadGuest, saveGuest } from './backend/guest';
-import { outcome, type Match } from './backend/match';
+import { outcome, type Match, type MatchStart } from './backend/match';
 import { setupMatch } from './backend/match-ui';
 import type { FoundWord } from './backend/rounds';
 import { BOT_ACCURACY, BOT_THINK_MS, BotClock, findWord, pickMiss } from './core/bot';
 import { Dictionary } from './core/dictionary';
+import { seededRandom } from './core/random';
 import { ROUND_MS, RoundTimer, type RoundKind } from './core/round';
 import { scoreWord, wordMultiplier } from './core/scoring';
 import { JOKER } from './core/word';
@@ -147,13 +148,15 @@ export function startApp(defaultLanguage: Language): void {
   let rivalName = '';
   let rivalDone: 'final' | 'left' | 'silent' | undefined;
   let rivalTimer = 0;
+  /** Holds the field back until a match's round starts, at the same moment for both players. */
+  let startTimer = 0;
   const matchUi = setupMatch({
     language: () => settings.lang,
     name: () => guest.name,
-    start(started, opponentName) {
+    start(started, opponentName, start) {
       match = started;
       rivalName = opponentName || t(settings.lang, 'friend');
-      startRound('match');
+      startRound('match', start);
     },
     // Once the friend's round is over their score stands.
     score(points) {
@@ -325,13 +328,18 @@ export function startApp(defaultLanguage: Language): void {
     botTry = undefined;
   }
 
-  function startRound(kind: RoundKind): void {
+  /**
+   * Starts a round. A match's round is the same for both players: it starts after start.delay,
+   * runs on the clock rather than on play time, and drops the letters start.seed gives.
+   */
+  function startRound(kind: RoundKind, start?: MatchStart): void {
     // Any other round ends a match still open (one whose result was waiting for the friend).
     if (kind !== 'match') closeMatch(true);
     window.clearTimeout(rivalTimer);
+    window.clearTimeout(startTimer);
     rivalDone = undefined;
     lastKind = kind;
-    round = new RoundTimer(kind);
+    round = start ? new RoundTimer(kind, Date.now, start.delay) : new RoundTimer(kind);
     score = 0;
     found = [];
     jokers = START_JOKERS;
@@ -344,11 +352,21 @@ export function startApp(defaultLanguage: Language): void {
     ui.vsRivalInitial.textContent = rivalName.charAt(0).toUpperCase();
     ui.vsAvatar.textContent = (auth.name() ?? t(settings.lang, 'you')).charAt(0).toUpperCase();
     tracker.reset();
-    game.reset();
+    game.stop();
+    game.reset(undefined, start ? seededRandom(start.seed) : undefined);
     ui.menuClose.hidden = true;
     ui.menu.hidden = true;
     render();
-    game.start();
+    if (start && start.delay > 0) startTimer = window.setTimeout(() => game.start(), start.delay);
+    else game.start();
+  }
+
+  /**
+   * A match's time runs out on the clock even while the game is not drawing (the tab is in the
+   * background), so the friend is not left waiting for this player's final score.
+   */
+  function checkMatchClock(): void {
+    if (round?.kind === 'match' && round.advance(0)) endRound();
   }
 
   /** ☰ during a round: pauses it (timer and bot included) and opens the menu, with ✕ to resume. */
@@ -450,6 +468,7 @@ export function startApp(defaultLanguage: Language): void {
   /** Hangs up the match, telling the friend if we are walking out on it. */
   function closeMatch(leaving: boolean): void {
     window.clearTimeout(rivalTimer);
+    window.clearTimeout(startTimer);
     if (leaving) match?.leave();
     else match?.close();
     match = undefined;
@@ -630,6 +649,8 @@ export function startApp(defaultLanguage: Language): void {
   ui.result.addEventListener('close', closeResult);
   // Leaving the page leaves the match.
   window.addEventListener('pagehide', () => closeMatch(true));
+  window.setInterval(checkMatchClock, 500);
+  document.addEventListener('visibilitychange', checkMatchClock);
   window.addEventListener('keydown', (e) => {
     // An open window (settings, the leaderboard) has the keyboard.
     if (document.querySelector('dialog[open]') || !round) return;
