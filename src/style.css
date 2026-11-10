@@ -159,38 +159,30 @@ button:disabled {
 }
 
 /* Playing alone there is no bot card; its place stays empty so the ring stays centred. */
-#app[data-mode='solo'] .vs-bot,
-#app:not([data-mode]) .vs-bot {
+#app:not([data-mode='bot']):not([data-mode='match']):not([data-mode='pvp']) .vs-bot {
   visibility: hidden;
 }
 
-/* Online the right-hand card is the other player: their initial and name instead of the robot. */
-.vs-opp,
-#app[data-mode='pvp'] .vs-bot svg,
-#app[data-mode='pvp'] .vs-bot-only {
+/* The other side's avatar: the bot's face, or against a player their initial. */
+#app[data-mode='match'] .vs-bot-icon,
+#app[data-mode='pvp'] .vs-bot-icon,
+#app:not([data-mode='match']):not([data-mode='pvp']) .vs-rival-initial {
   display: none;
-}
-
-#app[data-mode='pvp'] .vs-opp {
-  display: inline;
-}
-
-#vs-opp-name {
-  max-width: 72px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .versus {
   grid-area: versus;
 }
 
-#app[data-mode='bot'] .word-box {
+#app[data-mode='bot'] .word-box,
+#app[data-mode='match'] .word-box,
+#app[data-mode='pvp'] .word-box {
   grid-area: word;
 }
 
-#app[data-mode='bot'] .hud-buttons {
+#app[data-mode='bot'] .hud-buttons,
+#app[data-mode='match'] .hud-buttons,
+#app[data-mode='pvp'] .hud-buttons {
   grid-area: buttons;
 }
 
@@ -707,6 +699,27 @@ fieldset small {
   cursor: pointer;
 }
 
+/* A text box (the name on the leaderboard), in the look of the dropdown. */
+.field input[type='text'] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--panel-border);
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-weight: 800;
+}
+
+.field .field-label {
+  text-align: left;
+}
+
+.field input[type='text']:focus-visible {
+  outline: none;
+  border-color: var(--blue);
+}
+
 .field select:focus-visible {
   outline: none;
   border-color: var(--blue);
@@ -928,7 +941,73 @@ dialog .primary {
   letter-spacing: 0.06em;
 }
 
-/* Settings on the menu: a quiet text button. */
+.menu-options [hidden] {
+  display: none;
+}
+
+/* The match window: create a match or join one; then the code to send to the friend. */
+.match [hidden] {
+  display: none;
+}
+
+.match-choose .primary {
+  margin-bottom: 20px;
+}
+
+.match-join {
+  display: flex;
+  gap: 10px;
+}
+
+.match-join input {
+  flex: 1;
+  min-width: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.match-waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.match-waiting p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.match-code {
+  color: var(--yellow);
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  /* Letter-spacing trails the last letter; this keeps the code centred. */
+  margin-right: -0.18em;
+  user-select: all;
+}
+
+.match form > button:last-child {
+  width: 100%;
+}
+
+/* Under the play buttons: the leaderboard and settings, side by side. */
+.menu-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 12px;
+}
+
+.menu-links [hidden] {
+  display: none;
+}
+
+/* The leaderboard and settings on the menu: quiet text buttons. */
+#menu-board,
 #menu-settings {
   border-color: transparent;
   background: transparent;
@@ -936,6 +1015,89 @@ dialog .primary {
   color: var(--blue);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+/* The leaderboard window: a tab per mode, then the best scores. */
+.board [hidden] {
+  display: none;
+}
+
+.board-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.board-tabs button {
+  flex: 1;
+}
+
+.board-tabs button[aria-selected='true'] {
+  border-color: var(--blue);
+  box-shadow: 0 var(--edge) 0 var(--blue-edge);
+  color: var(--blue);
+}
+
+.board-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: min(46vh, 420px);
+  margin: 0 0 16px;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: 2.2em 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 2px solid var(--panel-border);
+  border-radius: 12px;
+}
+
+.board-row.me {
+  border-color: var(--yellow);
+}
+
+.board-rank {
+  color: var(--muted);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.board-avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--panel-border);
+  font-weight: 900;
+}
+
+.board-name {
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.board-score {
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.board-note {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
 }
 
 .account {

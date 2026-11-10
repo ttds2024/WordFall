@@ -69,12 +69,15 @@ export class Game {
 
   /**
    * Empties the field, optionally switching to a new language's letters. The tiles to come follow
-   * `seed`: online both players get the server's, so they see the same letters in the same order.
+   * `seed`: against another player both get the same one, so they see the same letters in the
+   * same order.
    */
   reset(lang: Language = this.lang, seed: number = randomSeed()): void {
     this.lang = lang;
     this.seed = seed;
     this.nextSeq = 0;
+    this.acc = 0;
+    this.spawner = new Spawner(SPAWN_INTERVAL_MS, this.spawner.maxTiles);
     for (const tile of this.world.all()) this.world.remove(tile);
     this.blasts = [];
     this.draw();

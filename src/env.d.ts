@@ -8,4 +8,8 @@ interface ImportMetaEnv {
   readonly VITE_VK_APP_ID?: string;
   /** The multiplayer server's WebSocket URL (wss://…/ws); unset hides "Play vs player". */
   readonly VITE_MULTIPLAYER_URL?: string;
+  /** The Supabase project's URL; with the key below it turns on saved rounds and the leaderboard. */
+  readonly VITE_SUPABASE_URL?: string;
+  /** The Supabase project's publishable (or legacy anon) key: public, safe in the build. */
+  readonly VITE_SUPABASE_PUBLISHABLE_KEY?: string;
 }

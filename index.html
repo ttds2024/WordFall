@@ -49,9 +49,11 @@
           <div class="vs-card vs-bot">
             <b id="vs-bot-score" class="vs-score">0</b>
             <span class="vs-who">
+              <!-- The bot's face, or in a match the friend's initial. -->
               <span class="vs-avatar"
-                ><b id="vs-opp-letter" class="vs-opp"></b
+                ><b id="vs-rival-initial" class="vs-rival-initial"></b
                 ><svg
+                  class="vs-bot-icon"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -66,8 +68,7 @@
                   <circle cx="9" cy="13" r="1.3" />
                   <circle cx="15" cy="13" r="1.3" /></svg
               ></span>
-              <span class="vs-label vs-bot-only" data-i18n="bot"></span>
-              <span id="vs-opp-name" class="vs-label vs-opp"></span>
+              <span id="vs-bot-label" class="vs-label" data-i18n="bot"></span>
             </span>
           </div>
         </div>
@@ -135,13 +136,74 @@
             <b data-i18n="playBot"></b>
             <small data-i18n="playBotHint"></small>
           </button>
+          <!-- Shown when the game was built with a multiplayer server's address. -->
           <button id="play-online" type="button" hidden>
             <b data-i18n="playOnline"></b>
             <small data-i18n="playOnlineHint"></small>
           </button>
+          <!-- Shown when the game has a backend to connect two players. -->
+          <button id="play-friend" type="button" hidden>
+            <b data-i18n="playFriend"></b>
+            <small data-i18n="playFriendHint"></small>
+          </button>
         </div>
-        <button id="menu-settings" type="button" data-i18n="settings"></button>
+        <div class="menu-links">
+          <!-- Shown when the game has a backend to keep scores in. -->
+          <button id="menu-board" type="button" data-i18n="leaderboard" hidden></button>
+          <button id="menu-settings" type="button" data-i18n="settings"></button>
+        </div>
       </section>
+      <!-- A match against a friend: create one and share its code, or join with a code. -->
+      <dialog id="match" class="match">
+        <form method="dialog">
+          <h2 data-i18n="playFriend"></h2>
+          <div id="match-choose" class="match-choose">
+            <button
+              id="match-create"
+              class="primary"
+              type="button"
+              data-i18n="matchCreate"
+            ></button>
+            <div class="field">
+              <label class="field-label" for="match-code-input" data-i18n="matchCodeLabel"></label>
+              <div class="match-join">
+                <input
+                  id="match-code-input"
+                  type="text"
+                  autocomplete="off"
+                  autocapitalize="characters"
+                  spellcheck="false"
+                />
+                <button id="match-join" type="button" data-i18n="matchJoin"></button>
+              </div>
+            </div>
+          </div>
+          <div id="match-waiting" class="match-waiting" hidden>
+            <p data-i18n="matchWaiting"></p>
+            <b id="match-code" class="match-code"></b>
+            <button id="match-copy" type="button" data-i18n="matchCopy"></button>
+          </div>
+          <p id="match-note" class="board-note" aria-live="polite" hidden></p>
+          <button value="cancel" data-i18n="cancel"></button>
+        </form>
+      </dialog>
+      <!-- The best scores, in the game's language. -->
+      <dialog id="board" class="board">
+        <form method="dialog">
+          <h2 data-i18n="leaderboard"></h2>
+          <div class="board-tabs" role="tablist">
+            <button id="board-solo" type="button" role="tab" data-i18n="boardSolo"></button>
+            <button id="board-bot" type="button" role="tab" data-i18n="boardBot"></button>
+          </div>
+          <ol id="board-rows" class="board-rows" hidden></ol>
+          <p id="board-note" class="board-note" aria-live="polite"></p>
+          <div class="field">
+            <label class="field-label" for="board-name" data-i18n="boardName"></label>
+            <input id="board-name" type="text" autocomplete="nickname" />
+          </div>
+          <button class="primary" value="done" data-i18n="done"></button>
+        </form>
+      </dialog>
       <dialog id="settings">
         <form method="dialog">
           <h2 data-i18n="settings"></h2>
@@ -214,12 +276,12 @@
               <b id="result-score"></b>
             </div>
             <div id="result-bot-box" class="result-score result-bot" hidden>
-              <span id="result-bot-label"></span>
+              <span id="result-bot-label" data-i18n="bot"></span>
               <b id="result-bot"></b>
             </div>
           </div>
           <div class="result-actions">
-            <button class="primary" value="again" data-i18n="playAgain"></button>
+            <button id="result-again" class="primary" value="again" data-i18n="playAgain"></button>
             <button value="menu" data-i18n="menu"></button>
           </div>
         </form>

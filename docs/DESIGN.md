@@ -12,6 +12,8 @@ The game opens on a start menu with two modes:
 - **Play vs player:** a 2-minute round online against another person, by quick match or in a
   private room with a code; see [MULTIPLAYER.md](MULTIPLAYER.md). Shown only when the game was
   built with a multiplayer server address.
+- **Play vs friend:** a 2-minute match against another player (see Playing against a friend);
+  shown only when the game has a backend.
 
 There is no untimed mode: a round against the bot needs an end to decide who won.
 
@@ -41,6 +43,35 @@ open from the start menu only; there is no Settings button during a round.
   wide screens the score group keeps its phone width (at most 480 px), centred. There is
   no "who's ahead" indicator beyond the two scores. At the end the result window says who won.
 
+## Playing against a friend
+
+**Play vs friend** opens a window to create a match or join one. It needs the backend (see Online
+scores), and is hidden without it.
+
+- **The code:** creating a match makes a 5-character code (letters and digits, without the
+  look-alikes I, O, 0 and 1) and waits. The friend types it, in any case, or opens the link
+  **Copy link** gives (`?match=CODE`), which opens the window with the code filled in. The round
+  starts for both the moment the friend joins. A code nobody is waiting on is refused after 6
+  seconds; a third player is told the match is full.
+- **The round:** each player has their own field, in their own language and style, for the same
+  2 minutes. The round is the same for both: it starts at the same moment (a second after the
+  friend joins, the joiner allowing for the time the answer took to reach them), its time runs on
+  the clock and not on play time, so it ends at the same moment even if a player's game was held
+  up (their tab was in the background), and the same tiles fall in the same order and columns
+  for both (the creator sends a seed for them; players in different languages get different
+  letters). The top bar is the face-off of a round against the bot, with the
+  friend's name, initial and live score in the bot's place. What a player does on their field
+  (words, explosions) does not touch the other's.
+- **No pause:** ☰ leaves the match; the friend is told and plays on to the end of their time.
+- **The result:** when the time runs out the result window says who won, with both scores. If the
+  friend's time is not up yet (their game was held up) it says it is waiting for them, for at most
+  10 seconds, and their score keeps updating; after that their last score counts. If the friend
+  left, it says so. **New match** opens the window again: a rematch is a new code.
+- **How it works:** nothing is stored. The two browsers exchange small messages (join, start
+  with the seed, score, final score, left) over a Supabase Realtime broadcast channel named after the code
+  (`src/backend/match.ts`). Each browser reports its own score, which is fine between friends;
+  match rounds are not saved and do not go on the leaderboard.
+
 ## Accounts
 
 Players can sign in with **Yandex ID** or **VK ID** from the start menu; signed in, the menu shows
@@ -57,6 +88,32 @@ in the game yet.
 - **Sber ID** needs a client secret and a TLS client certificate, so it waits for a backend.
 - Online play sends the signed-in name (or "Player") to the multiplayer server, which shows it to
   the other player and keeps nothing.
+
+## Online scores
+
+Optional, on **Supabase** (`supabase/`, `src/backend/`), for testing. A build without
+`VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` has none of it and never downloads the
+Supabase library. The site itself stays on GitHub Pages.
+
+- **Guests, no accounts:** the first visit makes the browser a guest: a random 256-bit secret
+  token, kept in local storage with a name ("Guest 4821" until the player changes it in the
+  leaderboard window; at most 24 characters). Whoever holds the token is that player. The database
+  keeps only the token's SHA-256. This is separate from the Yandex ID / VK ID sign-in, which still
+  only shows the name and avatar.
+- **Rounds:** when the time runs out the round is saved by `submit_round()`: the token, the name,
+  the mode, the language, the words with their multipliers and the bot's score. A guest's first
+  round makes them a player; each round updates their name. The database works the score out from
+  the words (100 a letter × the multiplier) and refuses impossible lists (unknown letters, a word
+  twice, a multiplier the word cannot have, more than 120 words) and a second round within 110
+  seconds. It does not check the words against the word list. A save that fails is dropped
+  silently; the game never waits for it.
+- **Leaderboard:** the start menu's **Leaderboard** button opens the best score of each player in
+  the game's language, on your own or against the bot (the top 20), this device's line outlined in
+  yellow, and the box for the player's name.
+- **Access:** the browser cannot read or write the tables; it can only call the two functions,
+  which give out names and scores.
+- **Limits:** nothing stops someone making many guests, and a guest who clears their browser's
+  data starts again as a new one.
 
 ## Physics
 
