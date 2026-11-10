@@ -1,0 +1,5 @@
+# TLS for the multiplayer server (see docker-compose.yml). DOMAIN must point at this machine,
+# with ports 80 and 443 open, for the certificate to be issued.
+{$DOMAIN} {
+	reverse_proxy server:8080
+}

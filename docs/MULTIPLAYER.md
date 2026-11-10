@@ -93,6 +93,19 @@ docker build -f server/Dockerfile -t wordfall-server .   # from the repository r
 docker run -p 8080:8080 wordfall-server
 ```
 
+On a VPS, `server/docker-compose.yml` runs the server with [Caddy](https://caddyserver.com) in
+front of it, which gets the TLS certificate by itself. Point a domain name at the machine, open
+ports 80 and 443, and in `server/`:
+
+```sh
+cp .env.example .env          # set DOMAIN to the domain name
+docker compose up -d --build
+```
+
+The game's address is then `wss://DOMAIN/ws`; `https://DOMAIN/healthz` shows that it is up. Only
+the GitHub Pages site may connect, unless `ALLOWED_ORIGIN` in `.env` names another page. To update
+the server, `git pull` and run the last command again.
+
 - It listens on plain HTTP on `PORT` (default 8080). Put it behind TLS: browsers on an `https://`
   page only connect to `wss://`. A reverse proxy (nginx, Caddy, or the cloud's load balancer)
   with a certificate in front is the usual way; it must pass WebSocket upgrades through.

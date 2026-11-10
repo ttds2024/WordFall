@@ -1,0 +1,39 @@
+# The multiplayer server behind Caddy, which gets a TLS certificate for DOMAIN by itself and
+# passes WebSockets through. On the VPS, from this folder:
+#   cp .env.example .env    # then set DOMAIN
+#   docker compose up -d --build
+# The game then connects to wss://DOMAIN/ws. See docs/MULTIPLAYER.md.
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    environment:
+      # The pages allowed to connect. For another one (e.g. the game's page on Yandex Games) add
+      # Multiplayer__AllowedOrigins__1, and so on.
+      Multiplayer__AllowedOrigins__0: ${ALLOWED_ORIGIN:-https://ttds2024.github.io}
+    # Reached only through Caddy: no port is published.
+    expose:
+      - '8080'
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - server
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env to the server's domain name}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # The certificates; kept across restarts so they are not requested again each time.
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
