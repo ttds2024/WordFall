@@ -7,12 +7,13 @@ import { setupMatch } from './backend/match-ui';
 import type { FoundWord } from './backend/rounds';
 import { BOT_ACCURACY, BOT_THINK_MS, BotClock, findWord, pickMiss } from './core/bot';
 import { Dictionary } from './core/dictionary';
-import { seededRandom } from './core/random';
 import { ROUND_MS, RoundTimer, type RoundKind } from './core/round';
 import { scoreWord, wordMultiplier } from './core/scoring';
 import { JOKER } from './core/word';
 import { WordTracker, type SubmitResult, type WordStatus } from './core/word-tracker';
 import { Game } from './game/game';
+import { MatchConnection, serverUrl } from './net/match';
+import { normalizeCode, ROOM_CODE, type ServerMessage } from './net/protocol';
 import { bumpScore, floatPosition, pointsText, showScoreFloat } from './score-float';
 import type { Tile } from './game/physics';
 import { t, type Language, type StringKey } from './i18n';
@@ -94,6 +95,15 @@ export function startApp(defaultLanguage: Language): void {
     vsSeconds: element('#vs-seconds'),
     resultBot: element('#result-bot'),
     resultBotBox: element('#result-bot-box'),
+    playOnline: element<HTMLButtonElement>('#play-online'),
+    online: element<HTMLDialogElement>('#online'),
+    onlineChoose: element('#online-choose'),
+    onlineQuick: element<HTMLButtonElement>('#online-quick'),
+    onlineCreate: element<HTMLButtonElement>('#online-create'),
+    onlineJoin: element<HTMLButtonElement>('#online-join'),
+    onlineCode: element<HTMLInputElement>('#online-code'),
+    onlineStatus: element('#online-status'),
+    onlineRoom: element('#online-room'),
     fieldWrap: element('.field-wrap'),
     menu: element('#menu'),
     result: element<HTMLDialogElement>('#result'),
@@ -138,7 +148,7 @@ export function startApp(defaultLanguage: Language): void {
   /** The kind of the last round started, for "Play again". */
   let lastKind: RoundKind = 'solo';
   /** The finished round the result window is showing. */
-  let result: { kind: RoundKind; timeUp: boolean } | undefined;
+  let result: { kind: RoundKind; timeUp: boolean; title?: string } | undefined;
   let dictionary: Dictionary | undefined;
   // The other side's score: the bot's, or the friend's in a match.
   let rivalScore = 0;
@@ -177,11 +187,22 @@ export function startApp(defaultLanguage: Language): void {
   // The bot, when playing against one: when it next tries, and the try in progress.
   let botClock: BotClock | undefined;
   let botTry: { tiles: Tile[]; correct: boolean; word: string; wait: number } | undefined;
+  // Online on a shared field: the connection to the server (the other player's name and score are
+  // rivalName and rivalScore), the
+  // word claim waiting for the server's answer, and the picks last shown to the other player.
+  const onlineUrl = serverUrl();
+  let server: MatchConnection | undefined;
+  let pendingClaim: number | undefined;
+  let claimId = 0;
+  let sentPicks = '';
 
   const game = new Game(element<HTMLCanvasElement>('#field'), settings.lang, {
     onTap(tile) {
-      // Bombs carry no letter; they only explode. Letters the bot has picked are its own.
-      if (tile.kind === 'bomb' || tile.bot) return;
+      // Bombs carry no letter; they only explode. Letters the bot has picked are its own; online
+      // the other player's picks are fair game, whoever claims the word first gets them.
+      if (tile.kind === 'bomb' || (tile.bot && round?.kind !== 'pvp')) return;
+      // Online, the word sent to the server stays as it is until the server answers.
+      if (pendingClaim !== undefined) return;
       // A green pumpkin blows up, with the tiles around it.
       if (tile.kind === 'green') {
         game.explode(tile);
@@ -209,7 +230,8 @@ export function startApp(defaultLanguage: Language): void {
     },
     onFrame(_now, elapsed) {
       if (!round) return;
-      if (round.advance(elapsed)) {
+      // Online the server ends the round, and says who won.
+      if (round.advance(elapsed) && round.kind !== 'pvp') {
         endRound();
         return;
       }
@@ -323,17 +345,23 @@ export function startApp(defaultLanguage: Language): void {
     }
   }
 
+  /** Whether the other side of a round of this kind is a person, shown by name and initial. */
+  function versusPlayer(kind: RoundKind): boolean {
+    return kind === 'match' || kind === 'pvp';
+  }
+
   function stopBot(): void {
     for (const tile of botTry?.tiles ?? []) tile.bot = false;
     botTry = undefined;
   }
 
   /**
-   * Starts a round. A match's round is the same for both players: it starts after start.delay,
-   * runs on the clock rather than on play time, and drops the letters start.seed gives.
+   * Starts a round. Against another player the round is the same for both: it drops the tiles
+   * start.seed gives, starts after start.delay, and runs on the clock rather than on play time.
    */
   function startRound(kind: RoundKind, start?: MatchStart): void {
-    // Any other round ends a match still open (one whose result was waiting for the friend).
+    // Any other round ends a game against a player that is still open.
+    if (kind !== 'pvp') leaveServer();
     if (kind !== 'match') closeMatch(true);
     window.clearTimeout(rivalTimer);
     window.clearTimeout(startTimer);
@@ -348,12 +376,14 @@ export function startApp(defaultLanguage: Language): void {
     botClock = kind === 'bot' ? new BotClock() : undefined;
     // Against the bot or a friend the top bar also shows their score, under their name.
     document.getElementById('app')!.dataset.mode = kind;
-    ui.vsBotLabel.textContent = kind === 'match' ? rivalName : t(settings.lang, 'bot');
+    ui.vsBotLabel.textContent = versusPlayer(kind) ? rivalName : t(settings.lang, 'bot');
     ui.vsRivalInitial.textContent = rivalName.charAt(0).toUpperCase();
     ui.vsAvatar.textContent = (auth.name() ?? t(settings.lang, 'you')).charAt(0).toUpperCase();
+    pendingClaim = undefined;
+    sentPicks = '';
     tracker.reset();
     game.stop();
-    game.reset(undefined, start ? seededRandom(start.seed) : undefined);
+    game.reset(settings.lang, start?.seed);
     ui.menuClose.hidden = true;
     ui.menu.hidden = true;
     render();
@@ -380,7 +410,8 @@ export function startApp(defaultLanguage: Language): void {
       ui.menu.hidden = false;
       return;
     }
-    game.stop();
+    // An online round cannot wait either: it goes on behind the menu.
+    if (round.kind !== 'pvp') game.stop();
     ui.menuClose.hidden = false;
     ui.menu.hidden = false;
   }
@@ -395,14 +426,18 @@ export function startApp(defaultLanguage: Language): void {
 
   /** Drops a paused round without a result, e.g. when the language changes under it. */
   function dropRound(): void {
+    leaveServer();
     round = undefined;
     stopBot();
     clearWord();
     ui.menuClose.hidden = true;
   }
 
-  /** Stops play and shows the result in its own window, over the start menu. */
-  function endRound(): void {
+  /**
+   * Stops play and shows the result in its own window, over the start menu. Online, `title` is
+   * set from the server's verdict.
+   */
+  function endRound(title?: string): void {
     if (!round) return;
     const timeUp = round.over;
     round = undefined;
@@ -416,12 +451,13 @@ export function startApp(defaultLanguage: Language): void {
       if (!rivalDone) rivalTimer = window.setTimeout(() => settleRival('silent'), RIVAL_WAIT_MS);
       else closeMatch(false);
     }
-    result = { kind: lastKind, timeUp };
+    result = { kind: lastKind, timeUp, title };
     renderResult();
     ui.menu.hidden = false;
     ui.result.showModal();
-    // The round goes to the leaderboard (not a match); if that fails the game just goes on.
-    if (timeUp && lastKind !== 'match') {
+    // The round goes to the leaderboard (not one against a player); if that fails the game just
+    // goes on.
+    if (timeUp && lastKind !== 'match' && lastKind !== 'pvp') {
       const report = { kind: lastKind, lang: settings.lang, words: found, botScore: rivalScore };
       submitRound(guest, report).catch(() => {});
     }
@@ -435,7 +471,9 @@ export function startApp(defaultLanguage: Language): void {
     if (!result) return;
     const lang = settings.lang;
     let title = '';
-    if (result.kind === 'match') {
+    if (result.title) {
+      title = result.title;
+    } else if (result.kind === 'match') {
       const won = { win: 'youWin', loss: 'friendWins', draw: 'draw' } as const;
       title = !rivalDone
         ? t(lang, 'matchWaitingResult')
@@ -451,7 +489,7 @@ export function startApp(defaultLanguage: Language): void {
     ui.resultTitle.hidden = !title;
     ui.resultScore.textContent = String(score);
     ui.resultBot.textContent = String(rivalScore);
-    ui.resultBotLabel.textContent = result.kind === 'match' ? rivalName : t(lang, 'bot');
+    ui.resultBotLabel.textContent = versusPlayer(result.kind) ? rivalName : t(lang, 'bot');
     ui.resultBotBox.hidden = result.kind === 'solo';
     ui.resultAgain.textContent = t(lang, result.kind === 'match' ? 'newMatch' : 'playAgain');
   }
@@ -484,6 +522,7 @@ export function startApp(defaultLanguage: Language): void {
     if (!again) return;
     // A new match needs a new code; any other round just starts again.
     if (lastKind === 'match') matchUi.open();
+    else if (lastKind === 'pvp') openOnline();
     else startRound(lastKind);
   }
 
@@ -491,6 +530,11 @@ export function startApp(defaultLanguage: Language): void {
   function collectJoker(tile: Tile): void {
     if (jokers >= MAX_JOKERS) {
       showToast(t(settings.lang, 'jokersFull'), 'bad');
+      return;
+    }
+    // Online the server hands out stars, so both players cannot take the same one.
+    if (round?.kind === 'pvp') {
+      server?.send({ type: 'star', tile: tile.seq });
       return;
     }
     game.removeTiles([tile]);
@@ -524,7 +568,224 @@ export function startApp(defaultLanguage: Language): void {
 
   function submitWord(): void {
     if (tracker.status() === 'empty') return;
+    if (round?.kind === 'pvp') {
+      claimWord();
+      return;
+    }
     handleResult(tracker.submit());
+    render();
+  }
+
+  /** Online: a word checked here goes to the server, which scores it unless the other player was first. */
+  function claimWord(): void {
+    const status = tracker.status();
+    if (pendingClaim !== undefined || status === 'empty') return;
+    const resolved = tracker.resolved;
+    if (status !== 'valid' || !resolved) {
+      showToast(t(settings.lang, STATUS_TEXT[status]), 'bad');
+      return;
+    }
+    pendingClaim = ++claimId;
+    server?.send({
+      type: 'word',
+      id: pendingClaim,
+      tiles: tracker.items.map((item) => (isTile(item) ? item.seq : null)),
+      word: resolved,
+    });
+  }
+
+  /** Online: tells the other player which tiles are in the word being built, when they change. */
+  function sendPicks(): void {
+    if (round?.kind !== 'pvp' || !server) return;
+    const tiles = tracker.items.filter(isTile).map((tile) => tile.seq);
+    const key = tiles.join(',');
+    if (key === sentPicks) return;
+    sentPicks = key;
+    server.send({ type: 'pick', tiles });
+  }
+
+  /** "Play vs player": the window to find a match or share a room. */
+  function openOnline(): void {
+    if (!onlineUrl) return;
+    leaveServer();
+    showLobby('');
+    ui.onlineCode.value = '';
+    ui.online.showModal();
+  }
+
+  /** The lobby window: the choices, or (while connecting or waiting) a status line. */
+  function showLobby(status: string, choosing = true, code?: string): void {
+    ui.onlineChoose.hidden = !choosing;
+    ui.onlineStatus.textContent = status;
+    ui.onlineRoom.textContent = code ?? '';
+    ui.onlineRoom.hidden = !code;
+  }
+
+  function connect(): MatchConnection | undefined {
+    leaveServer();
+    if (!onlineUrl) return undefined;
+    showLobby(t(settings.lang, 'connecting'), false);
+    const connection = new MatchConnection(onlineUrl, {
+      onMessage: (message) => {
+        if (server === connection) handleServer(message);
+      },
+      onClose: () => {
+        if (server !== connection) return;
+        server = undefined;
+        if (round?.kind === 'pvp') endRound(t(settings.lang, 'connectionLost'));
+        else showLobby(t(settings.lang, 'offline'));
+      },
+    });
+    server = connection;
+    return connection;
+  }
+
+  function playerName(): string {
+    return auth.name() ?? t(settings.lang, 'player');
+  }
+
+  function quickMatch(): void {
+    connect()?.send({ type: 'quick', lang: settings.lang, name: playerName() });
+  }
+
+  function createRoom(): void {
+    connect()?.send({ type: 'create', lang: settings.lang, name: playerName() });
+  }
+
+  function joinRoom(): void {
+    const code = normalizeCode(ui.onlineCode.value);
+    if (!ROOM_CODE.test(code)) {
+      showLobby(t(settings.lang, 'noRoom'));
+      return;
+    }
+    connect()?.send({ type: 'join', code, lang: settings.lang, name: playerName() });
+  }
+
+  /** Closes the connection, if any; the server counts it as leaving the match. */
+  function leaveServer(): void {
+    const connection = server;
+    server = undefined;
+    connection?.close();
+    pendingClaim = undefined;
+  }
+
+  /** The lobby window closed: without a match starting, that means giving up on it. */
+  function closeOnline(): void {
+    if (ui.online.returnValue !== 'started') leaveServer();
+    ui.online.returnValue = '';
+  }
+
+  function handleServer(message: ServerMessage): void {
+    switch (message.type) {
+      case 'waiting':
+        showLobby(t(settings.lang, 'searching'), false);
+        break;
+      case 'room':
+        showLobby(t(settings.lang, 'roomOpen'), false, message.code);
+        break;
+      case 'error':
+        leaveServer();
+        showLobby(
+          t(
+            settings.lang,
+            message.reason === 'noRoom'
+              ? 'noRoom'
+              : message.reason === 'language'
+                ? 'roomLanguage'
+                : 'offline',
+          ),
+        );
+        break;
+      case 'start':
+        rivalName = message.opponent || t(settings.lang, 'opponent');
+        if (ui.online.open) ui.online.close('started');
+        ui.result.close();
+        startRound('pvp', { seed: message.seed, delay: 0 });
+        jokers = message.stars;
+        render();
+        break;
+      case 'pick': {
+        const picked = new Set(message.tiles);
+        for (const tile of game.tiles()) tile.bot = picked.has(tile.seq);
+        break;
+      }
+      case 'star':
+        jokers = message.stars;
+        game.removeTiles(game.tilesBySeq([message.tile]));
+        if (message.by === 'you') {
+          sounds.play('clicked');
+          bumpScore(ui.jokerButton);
+        }
+        render();
+        break;
+      case 'claimed':
+        onClaimed(message);
+        break;
+      case 'rejected':
+        if (message.id !== undefined) {
+          if (message.id !== pendingClaim) break;
+          pendingClaim = undefined;
+        }
+        showToast(
+          t(
+            settings.lang,
+            message.reason === 'taken'
+              ? 'tooSlow'
+              : message.reason === 'used'
+                ? 'statusUsed'
+                : message.reason === 'full'
+                  ? 'jokersFull'
+                  : 'statusUnknown',
+          ),
+          'bad',
+        );
+        render();
+        break;
+      case 'end': {
+        score = message.you;
+        rivalScore = message.opponent;
+        const key =
+          message.reason === 'left'
+            ? 'opponentLeft'
+            : score > rivalScore
+              ? 'youWin'
+              : score < rivalScore
+                ? 'opponentWins'
+                : 'draw';
+        leaveServer();
+        endRound(t(settings.lang, key));
+        break;
+      }
+    }
+  }
+
+  /** A word scored online, by either player: its tiles leave both fields. */
+  function onClaimed(message: Extract<ServerMessage, { type: 'claimed' }>): void {
+    const tiles = game.tilesBySeq(message.tiles);
+    const at = floatPosition(
+      tiles.map((tile) => tile.body.position),
+      ui.fieldWrap.clientWidth,
+      ui.fieldWrap.clientHeight,
+    );
+    tracker.markUsed(message.word);
+    score = message.you;
+    rivalScore = message.opponent;
+    jokers = message.stars;
+    const word = message.word.toUpperCase();
+    if (message.by === 'you') {
+      if (message.id === pendingClaim) pendingClaim = undefined;
+      clearWord();
+      showScoreFloat(ui.fieldWrap, at, pointsText(message.points), word);
+      sounds.play('success');
+      bumpScore(ui.vsYouScore);
+    } else {
+      // Their letters leave the word being built here.
+      for (const tile of tiles) tile.selected = false;
+      tracker.remove(tiles);
+      showScoreFloat(ui.fieldWrap, at, `${rivalName} ${pointsText(message.points)}`, word, 'bot');
+      bumpScore(ui.vsBotScore);
+    }
+    game.removeTiles(tiles);
     render();
   }
 
@@ -556,6 +817,7 @@ export function startApp(defaultLanguage: Language): void {
     ui.status.textContent = statusText(status);
     ui.status.dataset.status = dictionaryState === 'ready' ? status : 'empty';
     renderJokers();
+    sendPicks();
   }
 
   /** The joker button: how many stars are left to use, and whether one is in the word. */
@@ -587,6 +849,7 @@ export function startApp(defaultLanguage: Language): void {
     });
     ui.menuButton.setAttribute('aria-label', t(lang, 'menu'));
     ui.menuClose.setAttribute('aria-label', t(lang, 'resume'));
+    ui.onlineCode.placeholder = t(lang, 'roomCodePlaceholder');
     ui.langRu.textContent = __DICTIONARIES__.includes('ru')
       ? 'Русский'
       : `Русский (${t(lang, 'noDictionary')})`;
@@ -645,6 +908,18 @@ export function startApp(defaultLanguage: Language): void {
   ui.menuClose.addEventListener('click', resumeRound);
   ui.playTimed.addEventListener('click', () => startRound('solo'));
   ui.playBot.addEventListener('click', () => startRound('bot'));
+  ui.playOnline.hidden = !onlineUrl;
+  ui.playOnline.addEventListener('click', openOnline);
+  ui.onlineQuick.addEventListener('click', quickMatch);
+  ui.onlineCreate.addEventListener('click', createRoom);
+  ui.onlineJoin.addEventListener('click', joinRoom);
+  ui.onlineCode.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      joinRoom();
+    }
+  });
+  ui.online.addEventListener('close', closeOnline);
   ui.dialog.addEventListener('close', applySettings);
   ui.result.addEventListener('close', closeResult);
   // Leaving the page leaves the match.

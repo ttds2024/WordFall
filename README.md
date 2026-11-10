@@ -1,8 +1,7 @@
 # WordFall
 
-A Halloween word game: letters fall, tap them to make words in a 2-minute round, on your own or against
-an AI bot. English and
-Russian.
+A Halloween word game: letters fall, tap them to make words in a 2-minute round, on your own,
+against an AI bot or online against another player. English and Russian.
 
 See [docs/DESIGN.md](docs/DESIGN.md) for the design decisions.
 
@@ -18,6 +17,16 @@ npm install
 npm run dev      # start the dev server
 npm run check    # typecheck, lint, format check, unit tests
 npm run build    # production build in dist/
+```
+
+## Multiplayer server
+
+Online play (player vs player) uses a small ASP.NET Core server in `server/` (.NET 10, WebSockets).
+See [docs/MULTIPLAYER.md](docs/MULTIPLAYER.md) for how it works, running it locally and deploying it.
+
+```sh
+dotnet run --project server/WordFall.Server   # ws://localhost:8080/ws, used by `npm run dev`
+dotnet test server/WordFall.slnx
 ```
 
 ## Word lists

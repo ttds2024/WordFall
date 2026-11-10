@@ -1,0 +1,3202 @@
+[
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 0,
+    "kind": "pumpkin",
+    "letter": "A",
+    "x": 0.5464560757391155
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.8554311494808644
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "N",
+    "x": 0.2651473756413907
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "X",
+    "x": 0.7743486925028265
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 4,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.21900374488905072
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 5,
+    "kind": "pumpkin",
+    "letter": "H",
+    "x": 0.1863787081092596
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 6,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.8993907461408526
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 7,
+    "kind": "double",
+    "letter": "L",
+    "x": 0.7173392507247627
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 8,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.6764358058571815
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 9,
+    "kind": "double",
+    "letter": "O",
+    "x": 0.7736468829680234
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 10,
+    "kind": "double",
+    "letter": "H",
+    "x": 0.9084002983290702
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 11,
+    "kind": "pumpkin",
+    "letter": "N",
+    "x": 0.22621116740629077
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 12,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.59244294767268
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 13,
+    "kind": "pumpkin",
+    "letter": "U",
+    "x": 0.7304503705818206
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 14,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.03918984904885292
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 15,
+    "kind": "pumpkin",
+    "letter": "F",
+    "x": 0.45448497775942087
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 16,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.16025586728937924
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 17,
+    "kind": "pumpkin",
+    "letter": "D",
+    "x": 0.7361906534060836
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 18,
+    "kind": "green",
+    "letter": "T",
+    "x": 0.9493153584189713
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 19,
+    "kind": "pumpkin",
+    "letter": "G",
+    "x": 0.27118401578627527
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 20,
+    "kind": "double",
+    "letter": "B",
+    "x": 0.18936309264972806
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 21,
+    "kind": "pumpkin",
+    "letter": "H",
+    "x": 0.7154034897685051
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 22,
+    "kind": "pumpkin",
+    "letter": "W",
+    "x": 0.5545458449050784
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 23,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.9469349845312536
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 24,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.3054935724940151
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 25,
+    "kind": "pumpkin",
+    "letter": "V",
+    "x": 0.839546101167798
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 26,
+    "kind": "pumpkin",
+    "letter": "U",
+    "x": 0.7595507372170687
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 27,
+    "kind": "pumpkin",
+    "letter": "A",
+    "x": 0.5436326016206294
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 28,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.2794217166956514
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "M",
+    "x": 0.2916822205297649
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 30,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6764059560373425
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 31,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.9419498890638351
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.1933928260114044
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 33,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.4133686441928148
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 34,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.42962273419834673
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 35,
+    "kind": "pumpkin",
+    "letter": "U",
+    "x": 0.28943267092108727
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 36,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.9105293832253665
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 37,
+    "kind": "pumpkin",
+    "letter": "U",
+    "x": 0.9186993960756809
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.47136607207357883
+  },
+  {
+    "lang": "en",
+    "seed": 0,
+    "index": 39,
+    "kind": "pumpkin",
+    "letter": "P",
+    "x": 0.06827672338113189
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 0,
+    "kind": "double",
+    "letter": "E",
+    "x": 0.5117232985794544
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.5179393014404923
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.43002481618896127
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.5169890662655234
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 4,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.507446410600096
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 5,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.6232173424214125
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 6,
+    "kind": "pumpkin",
+    "letter": "N",
+    "x": 0.12226250884123147
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 7,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.23056533746421337
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 8,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6743049363140017
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 9,
+    "kind": "pumpkin",
+    "letter": "H",
+    "x": 0.8860152987763286
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 10,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.339272765442729
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 11,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.21683763130567968
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 12,
+    "kind": "pumpkin",
+    "letter": "V",
+    "x": 0.7205397628713399
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 13,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.7469420491252095
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 14,
+    "kind": "double",
+    "letter": "R",
+    "x": 0.051826012786477804
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 15,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.5400924778077751
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 16,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.13342432770878077
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 17,
+    "kind": "double",
+    "letter": "P",
+    "x": 0.5548347756266594
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 18,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.41727749328128994
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 19,
+    "kind": "green",
+    "letter": "M",
+    "x": 0.5769261117093265
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 20,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.2468773245345801
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 21,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.4004769064486027
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 22,
+    "kind": "pumpkin",
+    "letter": "I",
+    "x": 0.8776369662955403
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 23,
+    "kind": "double",
+    "letter": "N",
+    "x": 0.589848181931302
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 24,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.7081300816498697
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 25,
+    "kind": "double",
+    "letter": "H",
+    "x": 0.49421779601834714
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 26,
+    "kind": "pumpkin",
+    "letter": "A",
+    "x": 0.1469773326534778
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 27,
+    "kind": "pumpkin",
+    "letter": "Y",
+    "x": 0.32797983242198825
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 28,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.890505216550082
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.7635626248084009
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 30,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.4580124169588089
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 31,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.22162668220698833
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.39878186397254467
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 33,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.711628784891218
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 34,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.6635405686683953
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 35,
+    "kind": "pumpkin",
+    "letter": "U",
+    "x": 0.7827090518549085
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 36,
+    "kind": "double",
+    "letter": "E",
+    "x": 0.1478968756273389
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 37,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.15608442528173327
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "I",
+    "x": 0.36114446446299553
+  },
+  {
+    "lang": "en",
+    "seed": 1,
+    "index": 39,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.33587653120048344
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 0,
+    "kind": "pumpkin",
+    "letter": "M",
+    "x": 0.6450711293146014
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "H",
+    "x": 0.8449050302151591
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "U",
+    "x": 0.46299159550108016
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.5316231623291969
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 4,
+    "kind": "pumpkin",
+    "letter": "A",
+    "x": 0.9539151035714895
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 5,
+    "kind": "green",
+    "letter": "K",
+    "x": 0.14707742515020072
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 6,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.88320053787902
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 7,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.7166292956098914
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 8,
+    "kind": "pumpkin",
+    "letter": "C",
+    "x": 0.276420438895002
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 9,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.5397170283831656
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 10,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.09852850344032049
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 11,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.3868000835645944
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 12,
+    "kind": "pumpkin",
+    "letter": "D",
+    "x": 0.24024981097318232
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 13,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.10316656436771154
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 14,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.2836497381795198
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 15,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.6088613525498658
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 16,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.23233179398812354
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 17,
+    "kind": "green",
+    "letter": "N",
+    "x": 0.16799179068766534
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 18,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.7619897264521569
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 19,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.059384622843936086
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 20,
+    "kind": "pumpkin",
+    "letter": "A",
+    "x": 0.8379581945482641
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 21,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.1803767008241266
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 22,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.8084377890918404
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 23,
+    "kind": "pumpkin",
+    "letter": "W",
+    "x": 0.5532201300375164
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 24,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6392126956488937
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 25,
+    "kind": "green",
+    "letter": "C",
+    "x": 0.593185298377648
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 26,
+    "kind": "pumpkin",
+    "letter": "W",
+    "x": 0.04733047564513981
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 27,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.8879258914384991
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 28,
+    "kind": "pumpkin",
+    "letter": "V",
+    "x": 0.952727300580591
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "N",
+    "x": 0.2315396519843489
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 30,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.38994137453846633
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 31,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.5237098566722125
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.01909808232448995
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 33,
+    "kind": "pumpkin",
+    "letter": "K",
+    "x": 0.3990409765392542
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 34,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.6424329115543514
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 35,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.9164317215327173
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 36,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.5872470785398036
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 37,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6752652530558407
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "U",
+    "x": 0.33401526999659836
+  },
+  {
+    "lang": "en",
+    "seed": 123456789,
+    "index": 39,
+    "kind": "pumpkin",
+    "letter": "A",
+    "x": 0.5300298468209803
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 0,
+    "kind": "pumpkin",
+    "letter": "H",
+    "x": 0.9244008488021791
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.09478855575434864
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.3736497981008142
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "F",
+    "x": 0.37604538118466735
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 4,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.8562440124806017
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 5,
+    "kind": "pumpkin",
+    "letter": "N",
+    "x": 0.5869916647206992
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 6,
+    "kind": "green",
+    "letter": "U",
+    "x": 0.13445276021957397
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 7,
+    "kind": "double",
+    "letter": "A",
+    "x": 0.2567092126701027
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 8,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.18713339185342193
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 9,
+    "kind": "double",
+    "letter": "L",
+    "x": 0.7314541335217655
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 10,
+    "kind": "double",
+    "letter": "A",
+    "x": 0.5301454863511026
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 11,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.7361158647108823
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 12,
+    "kind": "double",
+    "letter": "T",
+    "x": 0.037383842980489135
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 13,
+    "kind": "pumpkin",
+    "letter": "W",
+    "x": 0.7683605917263776
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 14,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.4798991496209055
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 15,
+    "kind": "pumpkin",
+    "letter": "G",
+    "x": 0.891202901955694
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 16,
+    "kind": "green",
+    "letter": "D",
+    "x": 0.13081619353033602
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 17,
+    "kind": "pumpkin",
+    "letter": "H",
+    "x": 0.9796206252649426
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 18,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.4080110953655094
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 19,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.9249666077084839
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 20,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.7605714255478233
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 21,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6375486217439175
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 22,
+    "kind": "green",
+    "letter": "A",
+    "x": 0.03231857530772686
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 23,
+    "kind": "double",
+    "letter": "H",
+    "x": 0.6209103805013001
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 24,
+    "kind": "pumpkin",
+    "letter": "W",
+    "x": 0.16363684087991714
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 25,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.770199284190312
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 26,
+    "kind": "double",
+    "letter": "N",
+    "x": 0.8072185846976936
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 27,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.05888894572854042
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 28,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.8973426765296608
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "N",
+    "x": 0.12793044443242252
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 30,
+    "kind": "pumpkin",
+    "letter": "N",
+    "x": 0.24403036455623806
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 31,
+    "kind": "pumpkin",
+    "letter": "I",
+    "x": 0.4440286550670862
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.15427657472901046
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 33,
+    "kind": "pumpkin",
+    "letter": "N",
+    "x": 0.8261637245304883
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 34,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.037970479810610414
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 35,
+    "kind": "pumpkin",
+    "letter": "U",
+    "x": 0.8848985424265265
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 36,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.961100151296705
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 37,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.6329056562390178
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "G",
+    "x": 0.22917234268970788
+  },
+  {
+    "lang": "en",
+    "seed": 4294967295,
+    "index": 39,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.36521328892558813
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 0,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.15629516984336078
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "D",
+    "x": 0.39817559719085693
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "I",
+    "x": 0.7644513517152518
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.986326658166945
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 4,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.944070365279913
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 5,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.8654819000512362
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 6,
+    "kind": "double",
+    "letter": "H",
+    "x": 0.1325167913455516
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 7,
+    "kind": "pumpkin",
+    "letter": "W",
+    "x": 0.9618016805034131
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 8,
+    "kind": "pumpkin",
+    "letter": "W",
+    "x": 0.03242353769019246
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 9,
+    "kind": "double",
+    "letter": "T",
+    "x": 0.9617642255034298
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 10,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.09610156947746873
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 11,
+    "kind": "double",
+    "letter": "I",
+    "x": 0.3072878753300756
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 12,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.6274641305208206
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 13,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.5108233189675957
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 14,
+    "kind": "double",
+    "letter": "D",
+    "x": 0.3400908426847309
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 15,
+    "kind": "pumpkin",
+    "letter": "H",
+    "x": 0.7638902517501265
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 16,
+    "kind": "double",
+    "letter": "T",
+    "x": 0.4377182109747082
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 17,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.22094641043804586
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 18,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.8296242416836321
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 19,
+    "kind": "double",
+    "letter": "O",
+    "x": 0.3138292725197971
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 20,
+    "kind": "pumpkin",
+    "letter": "D",
+    "x": 0.33090936904773116
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 21,
+    "kind": "pumpkin",
+    "letter": "E",
+    "x": 0.7358251819387078
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 22,
+    "kind": "pumpkin",
+    "letter": "I",
+    "x": 0.3661757505033165
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 23,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.41509119630791247
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 24,
+    "kind": "pumpkin",
+    "letter": "M",
+    "x": 0.39016247261315584
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 25,
+    "kind": "green",
+    "letter": "O",
+    "x": 0.37112275534309447
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 26,
+    "kind": "pumpkin",
+    "letter": "O",
+    "x": 0.12669112905859947
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 27,
+    "kind": "green",
+    "letter": "N",
+    "x": 0.0904702611733228
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 28,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.06626304844394326
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "M",
+    "x": 0.8885136863682419
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 30,
+    "kind": "pumpkin",
+    "letter": "S",
+    "x": 0.7210078756324947
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 31,
+    "kind": "double",
+    "letter": "A",
+    "x": 0.41224372829310596
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.8532651094719768
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 33,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6818197662942111
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 34,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.9932517528068274
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 35,
+    "kind": "pumpkin",
+    "letter": "L",
+    "x": 0.07999092689715326
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 36,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.0312901905272156
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 37,
+    "kind": "pumpkin",
+    "letter": "R",
+    "x": 0.4579646522179246
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "T",
+    "x": 0.1938098028767854
+  },
+  {
+    "lang": "en",
+    "seed": 2654435769,
+    "index": 39,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.9842443661764264
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 0,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.5464560757391155
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "Д",
+    "x": 0.8554311494808644
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "Т",
+    "x": 0.2651473756413907
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "Ф",
+    "x": 0.7743486925028265
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 4,
+    "kind": "pumpkin",
+    "letter": "Н",
+    "x": 0.21900374488905072
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 5,
+    "kind": "pumpkin",
+    "letter": "Л",
+    "x": 0.1863787081092596
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 6,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.8993907461408526
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 7,
+    "kind": "double",
+    "letter": "П",
+    "x": 0.7173392507247627
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 8,
+    "kind": "pumpkin",
+    "letter": "К",
+    "x": 0.6764358058571815
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 9,
+    "kind": "double",
+    "letter": "И",
+    "x": 0.7736468829680234
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 10,
+    "kind": "double",
+    "letter": "В",
+    "x": 0.9084002983290702
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 11,
+    "kind": "pumpkin",
+    "letter": "С",
+    "x": 0.22621116740629077
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 12,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.59244294767268
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 13,
+    "kind": "pumpkin",
+    "letter": "У",
+    "x": 0.7304503705818206
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 14,
+    "kind": "pumpkin",
+    "letter": "К",
+    "x": 0.03918984904885292
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 15,
+    "kind": "pumpkin",
+    "letter": "З",
+    "x": 0.45448497775942087
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 16,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.16025586728937924
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 17,
+    "kind": "pumpkin",
+    "letter": "М",
+    "x": 0.7361906534060836
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 18,
+    "kind": "green",
+    "letter": "Е",
+    "x": 0.9493153584189713
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 19,
+    "kind": "pumpkin",
+    "letter": "Б",
+    "x": 0.27118401578627527
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 20,
+    "kind": "double",
+    "letter": "Ш",
+    "x": 0.18936309264972806
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 21,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.7154034897685051
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 22,
+    "kind": "pumpkin",
+    "letter": "Г",
+    "x": 0.5545458449050784
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 23,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.9469349845312536
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 24,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.3054935724940151
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 25,
+    "kind": "pumpkin",
+    "letter": "Ю",
+    "x": 0.839546101167798
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 26,
+    "kind": "pumpkin",
+    "letter": "Я",
+    "x": 0.7595507372170687
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 27,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.5436326016206294
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 28,
+    "kind": "pumpkin",
+    "letter": "Л",
+    "x": 0.2794217166956514
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "Я",
+    "x": 0.2916822205297649
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 30,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6764059560373425
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 31,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.9419498890638351
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.1933928260114044
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 33,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.4133686441928148
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 34,
+    "kind": "pumpkin",
+    "letter": "С",
+    "x": 0.42962273419834673
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 35,
+    "kind": "pumpkin",
+    "letter": "Я",
+    "x": 0.28943267092108727
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 36,
+    "kind": "pumpkin",
+    "letter": "И",
+    "x": 0.9105293832253665
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 37,
+    "kind": "pumpkin",
+    "letter": "У",
+    "x": 0.9186993960756809
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.47136607207357883
+  },
+  {
+    "lang": "ru",
+    "seed": 0,
+    "index": 39,
+    "kind": "pumpkin",
+    "letter": "Й",
+    "x": 0.06827672338113189
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 0,
+    "kind": "double",
+    "letter": "Е",
+    "x": 0.5117232985794544
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.5179393014404923
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "Д",
+    "x": 0.43002481618896127
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.5169890662655234
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 4,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.507446410600096
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 5,
+    "kind": "pumpkin",
+    "letter": "Л",
+    "x": 0.6232173424214125
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 6,
+    "kind": "pumpkin",
+    "letter": "С",
+    "x": 0.12226250884123147
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 7,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.23056533746421337
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 8,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6743049363140017
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 9,
+    "kind": "pumpkin",
+    "letter": "Л",
+    "x": 0.8860152987763286
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 10,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.339272765442729
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 11,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.21683763130567968
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 12,
+    "kind": "pumpkin",
+    "letter": "Ю",
+    "x": 0.7205397628713399
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 13,
+    "kind": "pumpkin",
+    "letter": "Л",
+    "x": 0.7469420491252095
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 14,
+    "kind": "double",
+    "letter": "К",
+    "x": 0.051826012786477804
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 15,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.5400924778077751
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 16,
+    "kind": "pumpkin",
+    "letter": "П",
+    "x": 0.13342432770878077
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 17,
+    "kind": "double",
+    "letter": "Х",
+    "x": 0.5548347756266594
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 18,
+    "kind": "pumpkin",
+    "letter": "И",
+    "x": 0.41727749328128994
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 19,
+    "kind": "green",
+    "letter": "Ы",
+    "x": 0.5769261117093265
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 20,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.2468773245345801
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 21,
+    "kind": "pumpkin",
+    "letter": "Д",
+    "x": 0.4004769064486027
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 22,
+    "kind": "pumpkin",
+    "letter": "Т",
+    "x": 0.8776369662955403
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 23,
+    "kind": "double",
+    "letter": "Т",
+    "x": 0.589848181931302
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 24,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.7081300816498697
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 25,
+    "kind": "double",
+    "letter": "В",
+    "x": 0.49421779601834714
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 26,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.1469773326534778
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 27,
+    "kind": "pumpkin",
+    "letter": "Ч",
+    "x": 0.32797983242198825
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 28,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.890505216550082
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.7635626248084009
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 30,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.4580124169588089
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 31,
+    "kind": "pumpkin",
+    "letter": "К",
+    "x": 0.22162668220698833
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.39878186397254467
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 33,
+    "kind": "pumpkin",
+    "letter": "Д",
+    "x": 0.711628784891218
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 34,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.6635405686683953
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 35,
+    "kind": "pumpkin",
+    "letter": "Я",
+    "x": 0.7827090518549085
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 36,
+    "kind": "double",
+    "letter": "Е",
+    "x": 0.1478968756273389
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 37,
+    "kind": "pumpkin",
+    "letter": "К",
+    "x": 0.15608442528173327
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "Н",
+    "x": 0.36114446446299553
+  },
+  {
+    "lang": "ru",
+    "seed": 1,
+    "index": 39,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.33587653120048344
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 0,
+    "kind": "pumpkin",
+    "letter": "Ы",
+    "x": 0.6450711293146014
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "В",
+    "x": 0.8449050302151591
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "У",
+    "x": 0.46299159550108016
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.5316231623291969
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 4,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.9539151035714895
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 5,
+    "kind": "green",
+    "letter": "Э",
+    "x": 0.14707742515020072
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 6,
+    "kind": "pumpkin",
+    "letter": "Н",
+    "x": 0.88320053787902
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 7,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.7166292956098914
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 8,
+    "kind": "pumpkin",
+    "letter": "П",
+    "x": 0.276420438895002
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 9,
+    "kind": "pumpkin",
+    "letter": "И",
+    "x": 0.5397170283831656
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 10,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.09852850344032049
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 11,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.3868000835645944
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 12,
+    "kind": "pumpkin",
+    "letter": "М",
+    "x": 0.24024981097318232
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 13,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.10316656436771154
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 14,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.2836497381795198
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 15,
+    "kind": "pumpkin",
+    "letter": "И",
+    "x": 0.6088613525498658
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 16,
+    "kind": "pumpkin",
+    "letter": "Н",
+    "x": 0.23233179398812354
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 17,
+    "kind": "green",
+    "letter": "Т",
+    "x": 0.16799179068766534
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 18,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.7619897264521569
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 19,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.059384622843936086
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 20,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.8379581945482641
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 21,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.1803767008241266
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 22,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.8084377890918404
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 23,
+    "kind": "pumpkin",
+    "letter": "Ы",
+    "x": 0.5532201300375164
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 24,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6392126956488937
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 25,
+    "kind": "green",
+    "letter": "У",
+    "x": 0.593185298377648
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 26,
+    "kind": "pumpkin",
+    "letter": "Г",
+    "x": 0.04733047564513981
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 27,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.8879258914384991
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 28,
+    "kind": "pumpkin",
+    "letter": "Ш",
+    "x": 0.952727300580591
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "С",
+    "x": 0.2315396519843489
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 30,
+    "kind": "pumpkin",
+    "letter": "Д",
+    "x": 0.38994137453846633
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 31,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.5237098566722125
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "Д",
+    "x": 0.01909808232448995
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 33,
+    "kind": "pumpkin",
+    "letter": "Щ",
+    "x": 0.3990409765392542
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 34,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.6424329115543514
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 35,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.9164317215327173
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 36,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.5872470785398036
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 37,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6752652530558407
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "У",
+    "x": 0.33401526999659836
+  },
+  {
+    "lang": "ru",
+    "seed": 123456789,
+    "index": 39,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.5300298468209803
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 0,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.9244008488021791
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "Д",
+    "x": 0.09478855575434864
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "Д",
+    "x": 0.3736497981008142
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "Г",
+    "x": 0.37604538118466735
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 4,
+    "kind": "pumpkin",
+    "letter": "Л",
+    "x": 0.8562440124806017
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 5,
+    "kind": "pumpkin",
+    "letter": "С",
+    "x": 0.5869916647206992
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 6,
+    "kind": "green",
+    "letter": "У",
+    "x": 0.13445276021957397
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 7,
+    "kind": "double",
+    "letter": "А",
+    "x": 0.2567092126701027
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 8,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.18713339185342193
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 9,
+    "kind": "double",
+    "letter": "Д",
+    "x": 0.7314541335217655
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 10,
+    "kind": "double",
+    "letter": "А",
+    "x": 0.5301454863511026
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 11,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.7361158647108823
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 12,
+    "kind": "double",
+    "letter": "Е",
+    "x": 0.037383842980489135
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 13,
+    "kind": "pumpkin",
+    "letter": "Ы",
+    "x": 0.7683605917263776
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 14,
+    "kind": "pumpkin",
+    "letter": "Н",
+    "x": 0.4798991496209055
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 15,
+    "kind": "pumpkin",
+    "letter": "З",
+    "x": 0.891202901955694
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 16,
+    "kind": "green",
+    "letter": "М",
+    "x": 0.13081619353033602
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 17,
+    "kind": "pumpkin",
+    "letter": "В",
+    "x": 0.9796206252649426
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 18,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.4080110953655094
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 19,
+    "kind": "pumpkin",
+    "letter": "Л",
+    "x": 0.9249666077084839
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 20,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.7605714255478233
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 21,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6375486217439175
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 22,
+    "kind": "green",
+    "letter": "И",
+    "x": 0.03231857530772686
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 23,
+    "kind": "double",
+    "letter": "В",
+    "x": 0.6209103805013001
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 24,
+    "kind": "pumpkin",
+    "letter": "Ь",
+    "x": 0.16363684087991714
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 25,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.770199284190312
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 26,
+    "kind": "double",
+    "letter": "С",
+    "x": 0.8072185846976936
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 27,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.05888894572854042
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 28,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.8973426765296608
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "С",
+    "x": 0.12793044443242252
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 30,
+    "kind": "pumpkin",
+    "letter": "С",
+    "x": 0.24403036455623806
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 31,
+    "kind": "pumpkin",
+    "letter": "Т",
+    "x": 0.4440286550670862
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.15427657472901046
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 33,
+    "kind": "pumpkin",
+    "letter": "Т",
+    "x": 0.8261637245304883
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 34,
+    "kind": "pumpkin",
+    "letter": "П",
+    "x": 0.037970479810610414
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 35,
+    "kind": "pumpkin",
+    "letter": "У",
+    "x": 0.8848985424265265
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 36,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.961100151296705
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 37,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.6329056562390178
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "Б",
+    "x": 0.22917234268970788
+  },
+  {
+    "lang": "ru",
+    "seed": 4294967295,
+    "index": 39,
+    "kind": "pumpkin",
+    "letter": "О",
+    "x": 0.36521328892558813
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 0,
+    "kind": "pumpkin",
+    "letter": "И",
+    "x": 0.15629516984336078
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 1,
+    "kind": "pumpkin",
+    "letter": "М",
+    "x": 0.39817559719085693
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 2,
+    "kind": "pumpkin",
+    "letter": "Н",
+    "x": 0.7644513517152518
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 3,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.986326658166945
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 4,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.944070365279913
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 5,
+    "kind": "pumpkin",
+    "letter": "А",
+    "x": 0.8654819000512362
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 6,
+    "kind": "double",
+    "letter": "В",
+    "x": 0.1325167913455516
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 7,
+    "kind": "pumpkin",
+    "letter": "Г",
+    "x": 0.9618016805034131
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 8,
+    "kind": "pumpkin",
+    "letter": "Ы",
+    "x": 0.03242353769019246
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 9,
+    "kind": "double",
+    "letter": "А",
+    "x": 0.9617642255034298
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 10,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.09610156947746873
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 11,
+    "kind": "double",
+    "letter": "Н",
+    "x": 0.3072878753300756
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 12,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.6274641305208206
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 13,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.5108233189675957
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 14,
+    "kind": "double",
+    "letter": "М",
+    "x": 0.3400908426847309
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 15,
+    "kind": "pumpkin",
+    "letter": "В",
+    "x": 0.7638902517501265
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 16,
+    "kind": "double",
+    "letter": "Е",
+    "x": 0.4377182109747082
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 17,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.22094641043804586
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 18,
+    "kind": "pumpkin",
+    "letter": "Н",
+    "x": 0.8296242416836321
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 19,
+    "kind": "double",
+    "letter": "И",
+    "x": 0.3138292725197971
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 20,
+    "kind": "pumpkin",
+    "letter": "М",
+    "x": 0.33090936904773116
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 21,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.7358251819387078
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 22,
+    "kind": "pumpkin",
+    "letter": "Н",
+    "x": 0.3661757505033165
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 23,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.41509119630791247
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 24,
+    "kind": "pumpkin",
+    "letter": "Я",
+    "x": 0.39016247261315584
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 25,
+    "kind": "green",
+    "letter": "И",
+    "x": 0.37112275534309447
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 26,
+    "kind": "pumpkin",
+    "letter": "Н",
+    "x": 0.12669112905859947
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 27,
+    "kind": "green",
+    "letter": "С",
+    "x": 0.0904702611733228
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 28,
+    "kind": "pumpkin",
+    "letter": "С",
+    "x": 0.06626304844394326
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 29,
+    "kind": "pumpkin",
+    "letter": "Ы",
+    "x": 0.8885136863682419
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 30,
+    "kind": "pumpkin",
+    "letter": "Р",
+    "x": 0.7210078756324947
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 31,
+    "kind": "double",
+    "letter": "А",
+    "x": 0.41224372829310596
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 32,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.8532651094719768
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 33,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.6818197662942111
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 34,
+    "kind": "joker",
+    "letter": "★",
+    "x": 0.9932517528068274
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 35,
+    "kind": "pumpkin",
+    "letter": "Д",
+    "x": 0.07999092689715326
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 36,
+    "kind": "pumpkin",
+    "letter": "К",
+    "x": 0.0312901905272156
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 37,
+    "kind": "pumpkin",
+    "letter": "Л",
+    "x": 0.4579646522179246
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 38,
+    "kind": "pumpkin",
+    "letter": "Е",
+    "x": 0.1938098028767854
+  },
+  {
+    "lang": "ru",
+    "seed": 2654435769,
+    "index": 39,
+    "kind": "bomb",
+    "letter": "",
+    "x": 0.9842443661764264
+  }
+]

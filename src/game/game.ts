@@ -1,7 +1,6 @@
 import type { Language } from '../i18n';
 import type { Theme } from '../settings';
-import { pickLetter } from '../core/letters';
-import { JOKER } from '../core/word';
+import { randomSeed, tileSpec } from '../core/tiles';
 import { PhysicsWorld, type Explosion, type Tile } from './physics';
 import { drawExplosions, drawTiles, type Blast } from './renderer';
 import { maxTilesFor, Spawner, tileRadius } from './spawner';
@@ -9,14 +8,6 @@ import { maxTilesFor, Spawner, tileRadius } from './spawner';
 const STEP_MS = 1000 / 60;
 const MAX_FRAME_MS = 250;
 const SPAWN_INTERVAL_MS = 900;
-/** Share of falling tiles that are bombs (no letter; they explode when they hit something). */
-export const BOMB_CHANCE = 0.1;
-/** Share of falling tiles that are ×2 letters. */
-export const DOUBLE_CHANCE = 0.08;
-/** Share of falling tiles that are green pumpkins (a letter; they explode when tapped). */
-export const GREEN_CHANCE = 0.05;
-/** Share of falling tiles that are jokers. */
-export const JOKER_CHANCE = 0.04;
 
 export interface GameHandlers {
   /** A tile was tapped. */
@@ -43,8 +34,9 @@ export class Game {
   private blasts: Blast[] = [];
   /** How the tiles look. */
   private theme: Theme = 'halloween';
-  /** Decides what falls and where; seeded in a match, so both players get the same tiles. */
-  private random: () => number = Math.random;
+  /** The round's seed, which decides every tile, and the number of the next tile to spawn. */
+  private seed = randomSeed();
+  private nextSeq = 0;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -76,12 +68,14 @@ export class Game {
   }
 
   /**
-   * Empties the field, optionally switching to a new language's letters. `random` decides what
-   * falls from now on: the same generator gives the same tiles in the same order.
+   * Empties the field, optionally switching to a new language's letters. The tiles to come follow
+   * `seed`: against another player both get the same one, so they see the same letters in the
+   * same order.
    */
-  reset(lang: Language = this.lang, random: () => number = Math.random): void {
+  reset(lang: Language = this.lang, seed: number = randomSeed()): void {
     this.lang = lang;
-    this.random = random;
+    this.seed = seed;
+    this.nextSeq = 0;
     this.acc = 0;
     this.spawner = new Spawner(SPAWN_INTERVAL_MS, this.spawner.maxTiles);
     for (const tile of this.world.all()) this.world.remove(tile);
@@ -97,6 +91,12 @@ export class Game {
   /** The tiles on the field. */
   tiles(): Tile[] {
     return this.world.all();
+  }
+
+  /** The tiles on the field with these numbers (those still there). */
+  tilesBySeq(seqs: readonly number[]): Tile[] {
+    const wanted = new Set(seqs);
+    return this.world.all().filter((tile) => wanted.has(tile.seq));
   }
 
   removeTiles(tiles: readonly Tile[]): void {
@@ -133,18 +133,11 @@ export class Game {
     const { width } = this.world.size;
     const r = this.radius;
     for (let i = 0; i < due; i++) {
-      const random = this.random;
-      const x = r + random() * Math.max(0, width - 2 * r);
+      const seq = this.nextSeq++;
+      const spec = tileSpec(this.seed, seq, this.lang);
+      const x = r + spec.x * Math.max(0, width - 2 * r);
       const y = -r - i * r * 2.2;
-      const roll = random();
-      const letter = (): string => pickLetter(this.lang, random);
-      if (roll < JOKER_CHANCE) this.world.spawn(JOKER, x, y, r, 'joker');
-      else if (roll < JOKER_CHANCE + BOMB_CHANCE) this.world.spawn('', x, y, r, 'bomb');
-      else if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE) {
-        this.world.spawn(letter(), x, y, r, 'double');
-      } else if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE + GREEN_CHANCE) {
-        this.world.spawn(letter(), x, y, r, 'green');
-      } else this.world.spawn(letter(), x, y, r);
+      this.world.spawn(spec.letter, x, y, r, spec.kind, seq);
     }
   }
 

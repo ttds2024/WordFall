@@ -1,5 +1,8 @@
-/** A round on your own, against the bot, or against a friend (a match); all last ROUND_MS. */
-export type RoundKind = 'solo' | 'bot' | 'match';
+/**
+ * A round on your own, against the bot, online against another player on one shared field (pvp),
+ * or against a friend on their own field (a match); all last ROUND_MS.
+ */
+export type RoundKind = 'solo' | 'bot' | 'pvp' | 'match';
 
 /** Length of a round: 2 minutes. */
 export const ROUND_MS = 2 * 60 * 1000;

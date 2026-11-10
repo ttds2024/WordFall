@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WordFall.Server.Tests/WordFall.Server.Tests.csproj" />
+  <Project Path="WordFall.Server/WordFall.Server.csproj" />
+</Solution>

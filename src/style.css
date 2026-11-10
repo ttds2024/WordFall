@@ -159,13 +159,14 @@ button:disabled {
 }
 
 /* Playing alone there is no bot card; its place stays empty so the ring stays centred. */
-#app:not([data-mode='bot']):not([data-mode='match']) .vs-bot {
+#app:not([data-mode='bot']):not([data-mode='match']):not([data-mode='pvp']) .vs-bot {
   visibility: hidden;
 }
 
-/* The other side's avatar: the bot's face, or in a match the friend's initial. */
+/* The other side's avatar: the bot's face, or against a player their initial. */
 #app[data-mode='match'] .vs-bot-icon,
-#app:not([data-mode='match']) .vs-rival-initial {
+#app[data-mode='pvp'] .vs-bot-icon,
+#app:not([data-mode='match']):not([data-mode='pvp']) .vs-rival-initial {
   display: none;
 }
 
@@ -174,12 +175,14 @@ button:disabled {
 }
 
 #app[data-mode='bot'] .word-box,
-#app[data-mode='match'] .word-box {
+#app[data-mode='match'] .word-box,
+#app[data-mode='pvp'] .word-box {
   grid-area: word;
 }
 
 #app[data-mode='bot'] .hud-buttons,
-#app[data-mode='match'] .hud-buttons {
+#app[data-mode='match'] .hud-buttons,
+#app[data-mode='pvp'] .hud-buttons {
   grid-area: buttons;
 }
 
@@ -771,6 +774,82 @@ dialog .primary {
   font-weight: 900;
   letter-spacing: 0.02em;
   color: var(--green);
+}
+
+/* Online play: quick match, a room for a friend, or joining one by its code. */
+#play-online {
+  background: var(--yellow);
+  border-color: var(--yellow);
+  box-shadow: 0 var(--edge) 0 #e0a800;
+  color: var(--bg);
+}
+
+#play-online[hidden],
+.online [hidden] {
+  display: none;
+}
+
+.online {
+  text-align: center;
+}
+
+.online form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.online h2 {
+  margin-bottom: 2px;
+}
+
+.online-choose {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.online-join {
+  display: flex;
+  gap: 10px;
+}
+
+.online-join input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 2px solid var(--panel-border);
+  border-radius: 16px;
+  box-shadow: 0 var(--edge) 0 var(--panel-border);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.online-join input:focus-visible {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 var(--edge) 0 var(--blue-edge);
+}
+
+.online-status {
+  margin: 0;
+  color: var(--muted);
+}
+
+.online-status:empty {
+  display: none;
+}
+
+.online-room {
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: var(--yellow);
+  user-select: all;
 }
 
 /* The result window: the title, the score (and the bot's), then Play again and Menu. */

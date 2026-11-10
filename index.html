@@ -136,6 +136,11 @@
             <b data-i18n="playBot"></b>
             <small data-i18n="playBotHint"></small>
           </button>
+          <!-- Shown when the game was built with a multiplayer server's address. -->
+          <button id="play-online" type="button" hidden>
+            <b data-i18n="playOnline"></b>
+            <small data-i18n="playOnlineHint"></small>
+          </button>
           <!-- Shown when the game has a backend to connect two players. -->
           <button id="play-friend" type="button" hidden>
             <b data-i18n="playFriend"></b>
@@ -236,6 +241,29 @@
             </label>
           </fieldset>
           <button class="primary" value="done" data-i18n="done"></button>
+        </form>
+      </dialog>
+      <!-- Online play: a quick match with anyone, or a private room shared by its code. -->
+      <dialog id="online" class="online">
+        <form method="dialog">
+          <h2 data-i18n="playOnline"></h2>
+          <div id="online-choose" class="online-choose">
+            <button id="online-quick" class="primary" type="button" data-i18n="quickMatch"></button>
+            <button id="online-create" type="button" data-i18n="createRoom"></button>
+            <div class="online-join">
+              <input
+                id="online-code"
+                maxlength="4"
+                autocomplete="off"
+                autocapitalize="characters"
+                spellcheck="false"
+              />
+              <button id="online-join" type="button" data-i18n="joinRoom"></button>
+            </div>
+          </div>
+          <p id="online-status" class="online-status" aria-live="polite"></p>
+          <b id="online-room" class="online-room" hidden></b>
+          <button value="cancel" data-i18n="cancel"></button>
         </form>
       </dialog>
       <!-- The result of a finished round, over the start menu. -->

@@ -9,8 +9,8 @@ export interface FoundWord {
   multiplier: number;
 }
 
-/** The rounds that are saved and have a leaderboard; matches against a friend are not. */
-export type BoardKind = Exclude<RoundKind, 'match'>;
+/** The rounds that are saved and have a leaderboard; rounds against another player are not. */
+export type BoardKind = Exclude<RoundKind, 'match' | 'pvp'>;
 
 /** A finished round, as the game knows it. */
 export interface RoundReport {
