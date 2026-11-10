@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   JOIN_TIMEOUT_MS,
+  START_LEAD_MS,
   Match,
   channelName,
   newCode,
@@ -52,11 +53,44 @@ describe('a match', () => {
     const host = room.join('host', 'Ann', 'h');
     expect(host.match.started).toBe(false);
     const guest = room.join('guest', 'Bo', 'g');
-    expect(host.events.onStart).toHaveBeenCalledWith('Bo');
-    expect(guest.events.onStart).toHaveBeenCalledWith('Ann');
+    const start = { seed: expect.any(Number), delay: START_LEAD_MS };
+    expect(host.events.onStart).toHaveBeenCalledWith('Bo', start);
+    expect(guest.events.onStart).toHaveBeenCalledWith('Ann', start);
+    // Both drop the same letters.
+    const seed = vi.mocked(host.events.onStart).mock.calls[0]![1].seed;
+    expect(vi.mocked(guest.events.onStart).mock.calls[0]![1].seed).toBe(seed);
     expect(guest.match.started).toBe(true);
     vi.advanceTimersByTime(JOIN_TIMEOUT_MS * 2);
     expect(guest.events.onError).not.toHaveBeenCalled();
+  });
+
+  it('starts the joiner sooner by half the round trip, so both start together', () => {
+    let now = 1000;
+    const events = (): MatchEvents => ({
+      onStart: vi.fn(),
+      onScore: vi.fn(),
+      onFinal: vi.fn(),
+      onLeft: vi.fn(),
+      onError: vi.fn(),
+    });
+    const sent: Message[] = [];
+    const wire: Wire = { send: (message) => sent.push(message), close: () => {} };
+    const hostEvents = events();
+    const guestEvents = events();
+    const clock = (): number => now;
+    const host = new Match('ABCDE', 'host', 'Ann', wire, hostEvents, 'h', clock, () => 0.5);
+    const guest = new Match('ABCDE', 'guest', 'Bo', wire, guestEvents, 'g', clock);
+    guest.open();
+    // 200 ms each way.
+    now += 200;
+    host.receive(sent[0]!);
+    expect(hostEvents.onStart).toHaveBeenCalledWith('Bo', { seed: 2 ** 31, delay: START_LEAD_MS });
+    now += 200;
+    guest.receive(sent[1]!);
+    expect(guestEvents.onStart).toHaveBeenCalledWith('Ann', {
+      seed: 2 ** 31,
+      delay: START_LEAD_MS - 200,
+    });
   });
 
   it('carries scores, the final score and leaving to the other player only', () => {

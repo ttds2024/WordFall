@@ -1,6 +1,6 @@
 /**
- * A match against a friend: two players, each on their own field, for the same 2 minutes, seeing
- * each other's score. One creates the match and gets a short code; the other joins with it.
+ * A match against a friend: two players, each on their own field with the same letters falling,
+ * for the same 2 minutes, seeing each other's score. One creates the match and gets a short code; the other joins with it.
  *
  * Nothing is stored. The two browsers talk over a channel named after the code (Supabase
  * Realtime broadcast, see connect()). Scores are whatever each browser says, which is fine
@@ -8,7 +8,8 @@
  *
  * The messages:
  *   join  {name}        a player with the code asks to play
- *   start {to, name}    the creator accepts the first one who asked: the round starts for both
+ *   start {to, name, seed}  the creator accepts the first one who asked: the round starts for
+ *                       both, with the letters this seed gives
  *   full  {to}          the creator refuses anyone after that
  *   score {score}       a player's score changed
  *   final {score}       a player's time ran out
@@ -20,6 +21,11 @@ const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 export const CODE_LENGTH = 5;
 /** How long a joiner waits for the creator's answer before giving up. */
 export const JOIN_TIMEOUT_MS = 6000;
+/**
+ * How long after accepting the joiner the creator's round starts. The joiner hears of it half a
+ * round trip later and waits that much less, so both rounds start at the same moment.
+ */
+export const START_LEAD_MS = 1000;
 
 export function newCode(random: () => number = Math.random): string {
   let code = '';
@@ -39,7 +45,7 @@ export function channelName(code: string): string {
 
 export type Message =
   | { t: 'join'; from: string; name: string }
-  | { t: 'start'; from: string; to: string; name: string }
+  | { t: 'start'; from: string; to: string; name: string; seed: number }
   | { t: 'full'; from: string; to: string }
   | { t: 'score' | 'final'; from: string; score: number }
   | { t: 'left'; from: string };
@@ -57,7 +63,9 @@ export function readMessage(data: unknown): Message | undefined {
     case 'join':
       return { t: 'join', from, name };
     case 'start':
-      return typeof m.to === 'string' ? { t: 'start', from, to: m.to, name } : undefined;
+      return typeof m.to === 'string'
+        ? { t: 'start', from, to: m.to, name, seed: typeof m.seed === 'number' ? m.seed >>> 0 : 0 }
+        : undefined;
     case 'full':
       return typeof m.to === 'string' ? { t: 'full', from, to: m.to } : undefined;
     case 'score':
@@ -80,9 +88,17 @@ export interface Wire {
 
 export type MatchError = 'notFound' | 'full' | 'failed';
 
+/** How the round starts: the same for both players. */
+export interface MatchStart {
+  /** Seeds the falling letters. */
+  seed: number;
+  /** Milliseconds from now until the round starts. */
+  delay: number;
+}
+
 export interface MatchEvents {
-  /** The other player is here: the round starts now. */
-  onStart(opponentName: string): void;
+  /** The other player is here: the round starts in start.delay ms. */
+  onStart(opponentName: string, start: MatchStart): void;
   onScore(score: number): void;
   /** The other player's time ran out, with this score. */
   onFinal(score: number): void;
@@ -103,6 +119,8 @@ export class Match {
   private opponent: string | undefined;
   private timer: Timer | undefined;
   private over = false;
+  /** When the joiner asked to play, to time the creator's answer. */
+  private askedAt = 0;
 
   constructor(
     readonly code: string,
@@ -111,6 +129,8 @@ export class Match {
     private readonly wire: Wire,
     private readonly events: MatchEvents,
     id: string = crypto.randomUUID(),
+    private readonly now: () => number = Date.now,
+    private readonly random: () => number = Math.random,
   ) {
     this.id = id;
   }
@@ -124,6 +144,7 @@ export class Match {
   open(): void {
     if (this.over || this.role === 'host') return;
     this.timer = setTimeout(() => this.fail('notFound'), JOIN_TIMEOUT_MS);
+    this.askedAt = this.now();
     this.wire.send({ t: 'join', from: this.id, name: this.name });
   }
 
@@ -133,8 +154,9 @@ export class Match {
       if (this.role !== 'host') return;
       if (this.opponent === undefined) {
         this.opponent = message.from;
-        this.wire.send({ t: 'start', from: this.id, to: message.from, name: this.name });
-        this.events.onStart(message.name);
+        const seed = Math.floor(this.random() * 2 ** 32) >>> 0;
+        this.wire.send({ t: 'start', from: this.id, to: message.from, name: this.name, seed });
+        this.events.onStart(message.name, { seed, delay: START_LEAD_MS });
       } else if (message.from !== this.opponent) {
         this.wire.send({ t: 'full', from: this.id, to: message.from });
       }
@@ -148,7 +170,9 @@ export class Match {
         return;
       }
       this.opponent = message.from;
-      this.events.onStart(message.name);
+      // The creator answered about half a round trip ago, and starts START_LEAD_MS after that.
+      const delay = Math.max(0, START_LEAD_MS - (this.now() - this.askedAt) / 2);
+      this.events.onStart(message.name, { seed: message.seed, delay });
       return;
     }
     // The rest counts only from the player this match is against.

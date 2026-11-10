@@ -1,6 +1,13 @@
 import { t, type Language, type StringKey } from '../i18n';
 import { backendEnabled, connectMatch } from './client';
-import { CODE_LENGTH, newCode, readCode, type Match, type MatchError } from './match';
+import {
+  CODE_LENGTH,
+  newCode,
+  readCode,
+  type Match,
+  type MatchError,
+  type MatchStart,
+} from './match';
 
 function element<T extends HTMLElement>(selector: string): T {
   const el = document.querySelector<T>(selector);
@@ -18,8 +25,8 @@ export interface MatchHandlers {
   language(): Language;
   /** The name the other player sees. */
   name(): string;
-  /** Both players are here: the round starts now. */
-  start(match: Match, opponentName: string): void;
+  /** Both players are here: the round starts in start.delay ms. */
+  start(match: Match, opponentName: string, start: MatchStart): void;
   score(score: number): void;
   final(score: number): void;
   left(): void;
@@ -81,11 +88,11 @@ export function setupMatch(handlers: MatchHandlers): { open(): void } {
     render();
     try {
       const match = await connectMatch(code, role, handlers.name(), {
-        onStart(opponentName) {
+        onStart(opponentName, start) {
           pending = undefined;
           state = 'choose';
           ui.dialog.close();
-          handlers.start(match, opponentName);
+          handlers.start(match, opponentName, start);
         },
         onScore: handlers.score,
         onFinal: handlers.final,
