@@ -5,7 +5,7 @@ namespace WordFall.Server.Tests;
 
 public class TilesTests
 {
-    private sealed record Case(string Lang, uint Seed, int Index, string Kind, string Letter, double X);
+    private sealed record Case(string Lang, uint Seed, int Index, string Kind, string Letter, double X, string[] Changed);
 
     private static Case[] Fixture() =>
         JsonSerializer.Deserialize<Case[]>(
@@ -23,6 +23,9 @@ public class TilesTests
             Assert.Equal(c.Kind, spec.Kind.ToString().ToLowerInvariant());
             Assert.Equal(c.Letter, spec.Letter);
             Assert.Equal(c.X, spec.X);
+            // The letters magic hats turn it into, one change after another.
+            for (var n = 0; n < c.Changed.Length; n++)
+                Assert.Equal(c.Changed[n], Tiles.Letter(c.Seed, c.Index, c.Lang, n + 1));
         }
     }
 

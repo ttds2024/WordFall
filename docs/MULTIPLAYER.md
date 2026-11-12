@@ -23,6 +23,10 @@ friend**, which opens a private room with a 4-letter code (no I, L or O) for the
 - **Bombs and green pumpkins** go off on each field separately.
 - **Ghost pumpkins** count as letters: a tapped one vanishes from your field only, and from the
   other player's once your word scores. If they score with it first, it leaves your word.
+- **Magic hats** work on each field separately too, but the letters stay the same for both: a
+  hat that changes letters on your field tells the server which, and the same tiles change on
+  the other player's field (each to its next letter, so two hats changing one tile at once still
+  agree). The server keeps count, and checks words against the letters as they are now.
 - **No pause.** ☰ opens the menu but the round goes on behind it; starting another game, or
   closing the page, leaves the match, and the other player wins.
 - The server's clock ends the round and decides the result: win, loss or draw, or "Your
@@ -47,8 +51,8 @@ friend**, which opens a private room with a 4-letter code (no I, L or O) for the
 - **The server is the referee.** It knows every tile from the seed (`server/WordFall.Server/Tiles.cs`
   ports `tileSpec` bit for bit) and loads the same word lists (`data/words_<lang>.txt`, cleaned
   the same way). For each word it checks that the tiles exist by now (one per 900 ms
-  since the start on average, plus a little slack: they fall one or two at a time), are letters (ghost pumpkins included; not bombs, green pumpkins or stars), are
-  untaken, spell the word (a star from the stock standing for any one letter) and that the word
+  since the start on average, plus a little slack: they fall one or two at a time), are letters (ghost pumpkins included; not bombs, magic hats, green pumpkins or stars), are
+  untaken, spell the word with the letters magic hats have left them (a star from the stock standing for any one letter) and that the word
   is in the list and not found yet; then it scores it (`src/core/scoring.ts`: 100 per letter,
   ×2 per ×2 tile) and tells both players. A player cannot score a word the game would not.
 - `server/fixtures/tiles.json` holds tiles both sides must agree on; the game's tests
@@ -68,6 +72,7 @@ are named by their number in the round; `null` in a word is a star from the stoc
 |                                        | `start {seed, lang, durationMs, opponent, stars}`              |
 | `pick {tiles}`                         | `pick {tiles}` (the other player's)                            |
 | `star {tile}`                          | `star {by, tile, stars}`                                       |
+| `hat {hat, tiles}`                     | `hat {tiles}` (the other player's)                             |
 | `word {id, tiles, word}`               | `claimed {by, id?, word, tiles, points, you, opponent, stars}` |
 |                                        | `rejected {id?, reason: taken \| used \| invalid \| full}`     |
 | `leave` (or just close the connection) | `end {you, opponent, reason: time \| left}`                    |

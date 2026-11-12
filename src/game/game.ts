@@ -1,7 +1,7 @@
 import type { Language } from '../i18n';
 import type { Theme } from '../settings';
-import { mulberry32, randomSeed, tileSpec } from '../core/tiles';
-import { PhysicsWorld, type Explosion, type Tile } from './physics';
+import { changedLetter, mulberry32, randomSeed, tileSpec } from '../core/tiles';
+import { PhysicsWorld, type Explosion, type Spell, type Tile } from './physics';
 import { drawExplosions, drawTiles, type Blast } from './renderer';
 import { maxTilesFor, Spawner, tileRadius } from './spawner';
 
@@ -18,6 +18,8 @@ export interface GameHandlers {
   onTapEmpty(): void;
   /** A bomb or green pumpkin exploded and destroyed these tiles. */
   onExplode?(destroyed: Tile[]): void;
+  /** Magic hat number `hat` touched a tile and gave these tiles new letters. */
+  onSpell?(hat: number, changed: Tile[]): void;
   /** Called once per animation frame while running, with the frame time and the play time since the last frame. */
   onFrame?(now: number, elapsed: number): void;
 }
@@ -39,6 +41,8 @@ export class Game {
   /** The round's seed, which decides every tile, and the number of the next tile to spawn. */
   private seed = randomSeed();
   private nextSeq = 0;
+  /** How many times magic hats have changed each tile's letter, by the tile's number. */
+  private readonly changes = new Map<number, number>();
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -78,6 +82,7 @@ export class Game {
     this.lang = lang;
     this.seed = seed;
     this.nextSeq = 0;
+    this.changes.clear();
     this.acc = 0;
     this.spawner = this.newSpawner(this.spawner.maxTiles);
     for (const tile of this.world.all()) this.world.remove(tile);
@@ -111,6 +116,25 @@ export class Game {
     this.showExplosion(this.world.explode(tile), performance.now());
   }
 
+  /**
+   * Gives the tiles with these numbers their next letters, as a magic hat does. Online the other
+   * player's hats do this too; a tile still to fall here enters with its changed letter.
+   */
+  changeLetters(seqs: readonly number[]): void {
+    for (const seq of seqs) this.changes.set(seq, (this.changes.get(seq) ?? 0) + 1);
+    for (const tile of this.tilesBySeq(seqs)) tile.letter = this.letterOf(tile.seq);
+  }
+
+  private letterOf(seq: number): string {
+    return changedLetter(this.seed, seq, this.lang, this.changes.get(seq) ?? 0);
+  }
+
+  private showSpell(spell: Spell, now: number): void {
+    this.blasts.push({ x: spell.x, y: spell.y, radius: spell.radius, start: now, magic: true });
+    this.changeLetters(spell.touched.map((tile) => tile.seq));
+    this.handlers.onSpell?.(spell.hat.seq, spell.touched);
+  }
+
   private showExplosion(explosion: Explosion, now: number): void {
     this.blasts.push({ x: explosion.x, y: explosion.y, radius: explosion.radius, start: now });
     if (explosion.destroyed.length > 0) this.handlers.onExplode?.(explosion.destroyed);
@@ -124,6 +148,7 @@ export class Game {
       this.acc -= STEP_MS;
       this.spawnDue(STEP_MS);
       for (const explosion of this.world.step(STEP_MS)) this.showExplosion(explosion, now);
+      for (const spell of this.world.takeSpells()) this.showSpell(spell, now);
     }
     this.handlers.onFrame?.(now, elapsed);
     this.draw();
@@ -149,7 +174,7 @@ export class Game {
       let y = -r;
       while (placed.some((p) => p.y === y && Math.abs(p.x - x) < r * 2.2)) y -= r * 2.2;
       placed.push({ x, y });
-      this.world.spawn(spec.letter, x, y, r, spec.kind, seq);
+      this.world.spawn(this.letterOf(seq), x, y, r, spec.kind, seq);
     }
   }
 

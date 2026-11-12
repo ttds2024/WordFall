@@ -7,9 +7,10 @@ import { JOKER } from './word';
  * it; a bomb (a bad pumpkin) has no letter and explodes when it hits something; a green pumpkin
  * shows a letter but explodes when tapped; a ghost is a letter that drifts straight down through
  * the other tiles and out of the field, and is used up by a tap (it vanishes, its letter joins the
- * word); a joker (a star, letter JOKER) stands for any one letter.
+ * word); a hat (a magic hat) has no letter and, when it touches a tile, gives the letters around
+ * it new ones; a joker (a star, letter JOKER) stands for any one letter.
  */
-export type TileKind = 'pumpkin' | 'double' | 'bomb' | 'green' | 'ghost' | 'joker';
+export type TileKind = 'pumpkin' | 'double' | 'bomb' | 'green' | 'ghost' | 'hat' | 'joker';
 
 /** Share of falling tiles that are jokers. */
 export const JOKER_CHANCE = 0.04;
@@ -21,6 +22,8 @@ export const DOUBLE_CHANCE = 0.08;
 export const GREEN_CHANCE = 0.05;
 /** Share of falling tiles that are ghost pumpkins (a letter; they pass through everything). */
 export const GHOST_CHANCE = 0.05;
+/** Share of falling tiles that are magic hats (no letter; they change the letters they land among). */
+export const HAT_CHANCE = 0.04;
 
 /** What the n-th tile of a round is, and where it enters: `x` is a share of the field's width. */
 export interface TileSpec {
@@ -68,5 +71,34 @@ export function tileSpec(seed: number, index: number, lang: Language): TileSpec 
   if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE + GREEN_CHANCE + GHOST_CHANCE) {
     return { kind: 'ghost', letter: pickLetter(lang, random), x };
   }
+  if (
+    roll <
+    JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE + GREEN_CHANCE + GHOST_CHANCE + HAT_CHANCE
+  ) {
+    return { kind: 'hat', letter: '', x };
+  }
   return { kind: 'pumpkin', letter: pickLetter(lang, random), x };
+}
+
+/**
+ * The letter of tile number `index` once magic hats have changed it `changes` times. Each change
+ * gives a letter other than the one before, and follows from the seed like the tile itself, so
+ * both players and the server (Tiles.Letter) agree on it.
+ */
+export function changedLetter(
+  seed: number,
+  index: number,
+  lang: Language,
+  changes: number,
+): string {
+  let letter = tileSpec(seed, index, lang).letter;
+  for (let n = 1; n <= changes; n++) {
+    const random = mulberry32(
+      (seed ^ Math.imul(index + 1, 0x9e3779b1) ^ Math.imul(n, 0x85ebca6b)) >>> 0,
+    );
+    let next = pickLetter(lang, random);
+    while (next === letter) next = pickLetter(lang, random);
+    letter = next;
+  }
+  return letter;
 }

@@ -7,7 +7,8 @@ const { Bodies, Body, Composite, Engine, Events } = Matter;
 
 export interface Tile {
   readonly id: number;
-  readonly letter: string;
+  /** Fixed, unless a magic hat changes it. */
+  letter: string;
   readonly kind: TileKind;
   readonly body: Matter.Body;
   /** The tile's number in its round (see tileSpec); the same on both players' fields online. */
@@ -35,6 +36,15 @@ export interface Explosion {
   destroyed: Tile[];
 }
 
+/** A magic hat that touched a tile: where, how far its spell reached, and the letter tiles in reach. */
+export interface Spell {
+  hat: Tile;
+  x: number;
+  y: number;
+  radius: number;
+  touched: Tile[];
+}
+
 /** Matter.js world: a floor and two side walls, open at the top, holding round letter tiles. */
 export class PhysicsWorld {
   readonly engine = Engine.create({ gravity: { x: 0, y: 1, scale: 0.00052 } });
@@ -44,15 +54,19 @@ export class PhysicsWorld {
   private height = 0;
   /** Bombs that hit something since the last step. */
   private readonly impacts = new Set<Tile>();
+  /** Magic hats that touched a tile since the last step, and their spells not yet taken. */
+  private readonly touches = new Set<Tile>();
+  private spells: Spell[] = [];
 
   constructor(width: number, height: number) {
     this.resize(width, height);
     Events.on(this.engine, 'collisionStart', ({ pairs }) => {
       for (const { bodyA, bodyB } of pairs) {
-        for (const body of [bodyA, bodyB]) {
-          const tile = this.tiles.get(body.id);
-          if (tile?.kind === 'bomb') this.impacts.add(tile);
-        }
+        const a = this.tiles.get(bodyA.id);
+        const b = this.tiles.get(bodyB.id);
+        for (const tile of [a, b]) if (tile?.kind === 'bomb') this.impacts.add(tile);
+        // A hat waits for a tile: the floor and the walls do not set it off.
+        if (a && b) for (const tile of [a, b]) if (tile.kind === 'hat') this.touches.add(tile);
       }
     });
   }
@@ -145,7 +159,8 @@ export class PhysicsWorld {
   }
 
   /**
-   * Advances the world; bombs that hit something explode. Returns those explosions. Ghosts
+   * Advances the world; bombs that hit something explode. Returns those explosions. Magic hats
+   * that touched a tile cast their spells (see takeSpells). Ghosts
    * drift down at a steady speed and are gone once they are below the field.
    */
   step(ms: number): Explosion[] {
@@ -162,7 +177,34 @@ export class PhysicsWorld {
       if (this.tiles.has(bomb.id)) explosions.push(this.explode(bomb));
     }
     this.impacts.clear();
+    for (const hat of this.touches) {
+      if (this.tiles.has(hat.id)) this.spells.push(this.cast(hat));
+    }
+    this.touches.clear();
     return explosions;
+  }
+
+  /** The spells of the magic hats that touched a tile in the steps since this was last called. */
+  takeSpells(): Spell[] {
+    const spells = this.spells;
+    this.spells = [];
+    return spells;
+  }
+
+  /**
+   * Removes the hat and finds the letter tiles its spell reaches (plain, ×2 and green ones, as
+   * far as a blast); the game gives them their new letters. Ghosts are out of reach.
+   */
+  cast(hat: Tile): Spell {
+    const { x, y } = hat.body.position;
+    const radius = (hat.body.circleRadius ?? 0) * BLAST_RADII;
+    this.remove(hat);
+    const touched = this.all().filter(
+      (tile) =>
+        (tile.kind === 'pumpkin' || tile.kind === 'double' || tile.kind === 'green') &&
+        Math.hypot(tile.body.position.x - x, tile.body.position.y - y) <= radius,
+    );
+    return { hat, x, y, radius, touched };
   }
 
   /**

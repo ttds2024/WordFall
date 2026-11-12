@@ -25,6 +25,10 @@ const COLORS = {
   starHalo: 'rgba(255, 246, 208, 0.45)',
   flash: '255, 236, 160',
   fire: '255, 122, 24',
+  hat: '#4b2a8f',
+  hatShade: '#2c1660',
+  hatBand: '#ffc83d',
+  magic: ['#ffe066', '#c9a2ff', '#7fe3ff', '#ffffff'],
 };
 
 /** How solid a ghost looks: the tiles behind it show through. */
@@ -39,6 +43,8 @@ export interface Blast {
   y: number;
   radius: number;
   start: number;
+  /** A magic hat's spell rather than a blast: a burst of stars. */
+  magic?: boolean;
 }
 
 /** Width over height of src/images/star.svg (its viewBox is 512 × 492.289). */
@@ -91,7 +97,7 @@ function drawCentred(
  * Draws the tiles: pumpkins with letters, ×2 pumpkins (src/images/pumpkin.svg) with a letter and
  * a ×2 badge, letterless bad pumpkins (src/images/bad.png) that explode, green pumpkins
  * (src/images/green.png) with a letter that explode when tapped, pale see-through ghost pumpkins
- * with a letter, and joker stars. In the 8-bit style they are square pixel blocks instead, and at
+ * with a letter, letterless magic hats that change the letters they touch, and joker stars. In the 8-bit style they are square pixel blocks instead, and at
  * Christmas baubles, a gold star and coal. Ghosts are drawn last, over the tiles they pass through.
  */
 export function drawTiles(
@@ -141,6 +147,11 @@ export function drawTiles(
 
     if (tile.kind === 'ghost') {
       drawGhost(ctx, r, tile.letter);
+      ctx.restore();
+      continue;
+    }
+    if (tile.kind === 'hat') {
+      drawHat(ctx, r, COLORS.hat, COLORS.hatShade, COLORS.hatBand);
       ctx.restore();
       continue;
     }
@@ -214,6 +225,85 @@ function drawGhost(ctx: CanvasRenderingContext2D, r: number, letter: string): vo
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(letter, 0, r * 0.14);
+}
+
+/** A magic hat: a tall pointed wizard's hat with a wide brim, a band and a few stars. */
+function drawHat(
+  ctx: CanvasRenderingContext2D,
+  r: number,
+  fill: string,
+  shade: string,
+  band: string,
+): void {
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = shade;
+  ctx.lineWidth = Math.max(1.5, r * 0.08);
+  // The brim.
+  ctx.fillStyle = shade;
+  ctx.beginPath();
+  ctx.ellipse(0, r * 0.62, r * 0.98, r * 0.3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // The cone, its tip bent to one side.
+  ctx.fillStyle = fill;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.6, r * 0.58);
+  ctx.quadraticCurveTo(-r * 0.3, -r * 0.3, r * 0.3, -r * 0.98);
+  ctx.quadraticCurveTo(r * 0.3, -r * 0.2, r * 0.6, r * 0.58);
+  ctx.quadraticCurveTo(0, r * 0.82, -r * 0.6, r * 0.58);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  // The band.
+  ctx.strokeStyle = band;
+  ctx.lineWidth = Math.max(2, r * 0.16);
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.52, r * 0.42);
+  ctx.quadraticCurveTo(0, r * 0.62, r * 0.52, r * 0.42);
+  ctx.stroke();
+  ctx.fillStyle = band;
+  for (const [sx, sy, size] of [
+    [-0.08, -0.05, 0.2],
+    [0.2, -0.5, 0.13],
+    [-0.75, -0.55, 0.14],
+    [0.78, -0.2, 0.11],
+  ] as const) {
+    sparkle(ctx, r * sx, r * sy, r * size);
+  }
+}
+
+/** A four-pointed twinkle centred at (x, y). */
+function sparkle(ctx: CanvasRenderingContext2D, x: number, y: number, size: number): void {
+  ctx.beginPath();
+  for (let i = 0; i < 8; i++) {
+    const radius = i % 2 === 0 ? size : size * 0.3;
+    const angle = (i * Math.PI) / 4;
+    ctx.lineTo(x + Math.sin(angle) * radius, y - Math.cos(angle) * radius);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** A magic hat's spell: twinkles flying out to its reach and fading, in the given colours. */
+function drawSpell(
+  ctx: CanvasRenderingContext2D,
+  blast: Blast,
+  now: number,
+  colors: readonly string[],
+): void {
+  const t = Math.max(0, now - blast.start) / BLAST_MS;
+  const reach = blast.radius * (0.25 + 0.75 * Math.sqrt(t));
+  const size = Math.max(2, (blast.radius / 6) * (1 - t * 0.5));
+  ctx.save();
+  ctx.translate(blast.x, blast.y);
+  ctx.globalAlpha = 1 - t * t;
+  for (let i = 0; i < 14; i++) {
+    const angle = (i / 14) * Math.PI * 2 + blast.start;
+    const distance = reach * (i % 2 === 0 ? 1 : 0.6);
+    ctx.fillStyle = colors[i % colors.length]!;
+    sparkle(ctx, Math.cos(angle) * distance, Math.sin(angle) * distance, size);
+  }
+  ctx.restore();
 }
 
 /** A glowing blue ring round a tile the bot has picked. */
@@ -296,14 +386,18 @@ export function drawExplosions(
   now: number,
   theme: Theme = 'halloween',
 ): Blast[] {
-  const running = blasts.filter((blast) => now - blast.start < BLAST_MS);
+  const all = blasts.filter((blast) => now - blast.start < BLAST_MS);
+  const spellColors =
+    theme === '8bit' ? PIXEL.sparks : theme === 'christmas' ? XMAS.snow : COLORS.magic;
+  for (const blast of all) if (blast.magic) drawSpell(ctx, blast, now, spellColors);
+  const running = all.filter((blast) => !blast.magic);
   if (theme === '8bit') {
     for (const blast of running) drawPixelBlast(ctx, blast, now);
-    return running;
+    return all;
   }
   if (theme === 'christmas') {
     for (const blast of running) drawSnowBlast(ctx, blast, now);
-    return running;
+    return all;
   }
   for (const blast of running) {
     const t = Math.max(0, now - blast.start) / BLAST_MS;
@@ -341,7 +435,7 @@ export function drawExplosions(
     }
     ctx.restore();
   }
-  return running;
+  return all;
 }
 
 /** The 8-bit style's colours (the PICO-8 palette). */
@@ -354,6 +448,7 @@ const PIXEL = {
   letter: { fill: '#ffa300', shade: '#ab5236', light: '#ffcc80' },
   joker: { fill: '#83769c', shade: '#5f574f', light: '#c2c3c7' },
   bomb: { fill: '#ff004d', shade: '#7e2553', light: '#ff77a8' },
+  hat: { fill: '#29adff', shade: '#1d2b53', light: '#c2c3c7' },
   green: { fill: '#00e436', shade: '#008751', light: '#a8ffb8' },
   ghost: { fill: '#fff1e8', shade: '#83769c', light: '#ffffff' },
   sparks: ['#ffec27', '#ffa300', '#ff004d', '#fff1e8'],
@@ -381,11 +476,13 @@ function drawPixelTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
       ? PIXEL.joker
       : tile.kind === 'bomb'
         ? PIXEL.bomb
-        : tile.kind === 'green'
-          ? PIXEL.green
-          : tile.kind === 'ghost'
-            ? PIXEL.ghost
-            : PIXEL.letter;
+        : tile.kind === 'hat'
+          ? PIXEL.hat
+          : tile.kind === 'green'
+            ? PIXEL.green
+            : tile.kind === 'ghost'
+              ? PIXEL.ghost
+              : PIXEL.letter;
 
   ctx.save();
   ctx.translate(Math.round(x), Math.round(y));
@@ -402,6 +499,8 @@ function drawPixelTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
 
   if (tile.kind === 'bomb') {
     drawPixelBomb(ctx, px);
+  } else if (tile.kind === 'hat') {
+    drawPixelHat(ctx, px);
   } else {
     ctx.fillStyle = tile.kind === 'joker' ? PIXEL.white : PIXEL.ink;
     ctx.font = `${Math.round(r * 0.8)}px 'Press Start 2P', monospace`;
@@ -430,6 +529,24 @@ function drawPixelBomb(ctx: CanvasRenderingContext2D, px: number): void {
     [-3, -1, 5, 4, PIXEL.ink],
     [-2, 3, 3, 1, PIXEL.ink],
     [-2, -1, 1, 1, PIXEL.white],
+  ];
+  for (const [cx, cy, w, h, color] of cells) {
+    ctx.fillStyle = color;
+    ctx.fillRect(cx * p, cy * p, w * p, h * p);
+  }
+}
+
+/** A pointed wizard's hat with a yellow band and star, drawn in squares `px` wide. */
+function drawPixelHat(ctx: CanvasRenderingContext2D, px: number): void {
+  const p = px * 1.5;
+  const cells: [number, number, number, number, string][] = [
+    [0, -4, 1, 1, PIXEL.hat.shade],
+    [-1, -3, 2, 1, PIXEL.hat.shade],
+    [-1, -2, 3, 1, PIXEL.hat.shade],
+    [-2, -1, 4, 2, PIXEL.hat.shade],
+    [-2, 1, 4, 1, PIXEL.you],
+    [-4, 2, 8, 1, PIXEL.hat.shade],
+    [0, -1, 1, 1, PIXEL.you],
   ];
   for (const [cx, cy, w, h, color] of cells) {
     ctx.fillStyle = color;
@@ -470,6 +587,8 @@ const XMAS = {
   lime: { fill: '#9be564', shade: '#4f8a2a', ink: '#173300' },
   /** The ghost: a frosted, see-through bauble. */
   frost: { fill: '#eef6fc', shade: '#a9c4d8', ink: '#1d4f73' },
+  /** The magic hat: a red elf's hat with white trim here. */
+  hat: { fill: '#d7263d', shade: '#8e1426', trim: '#fff6e5' },
   cap: '#f2c14e',
   capShade: '#b8862b',
   shine: 'rgba(255, 255, 255, 0.55)',
@@ -502,6 +621,9 @@ function drawChristmasTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
     drawStarShape(ctx, r * 1.05, XMAS.gold.fill, XMAS.gold.shade);
   } else if (tile.kind === 'bomb') {
     drawCoal(ctx, r);
+  } else if (tile.kind === 'hat') {
+    ctx.shadowBlur = 0;
+    drawHat(ctx, r, XMAS.hat.fill, XMAS.hat.shade, XMAS.hat.trim);
   } else {
     if (tile.kind === 'ghost') ctx.globalAlpha = GHOST_ALPHA;
     drawBauble(ctx, tile, r);
