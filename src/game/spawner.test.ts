@@ -9,18 +9,21 @@ describe('Spawner', () => {
     expect(spawner.update(2000, 0)).toBe(2);
   });
 
-  it('spawns in groups, the first after one interval, at the same average rate', () => {
-    const spawner = new Spawner(1000, 50, 3);
+  it('spawns groups of a random size, waiting one interval per tile of the last group', () => {
+    const rolls = [0.9, 0.1, 0.6];
+    const spawner = new Spawner(1000, 50, 2, () => rolls.shift() ?? 0);
     expect(spawner.update(900, 0)).toBe(0);
-    expect(spawner.update(100, 0)).toBe(3);
-    expect(spawner.update(2900, 3)).toBe(0);
-    expect(spawner.update(100, 3)).toBe(3);
+    expect(spawner.update(100, 0)).toBe(2);
+    expect(spawner.update(1900, 2)).toBe(0);
+    expect(spawner.update(100, 2)).toBe(1);
+    expect(spawner.update(1000, 3)).toBe(2);
   });
 
   it('cuts a group short at the tile limit', () => {
-    const spawner = new Spawner(1000, 5, 3);
+    const spawner = new Spawner(1000, 5, 2, () => 0.9);
     expect(spawner.update(1000, 4)).toBe(1);
-    expect(spawner.update(3000, 5)).toBe(0);
+    expect(spawner.update(1000, 5)).toBe(0);
+    expect(spawner.update(1000, 3)).toBe(2);
   });
 
   it('stops at the tile limit', () => {

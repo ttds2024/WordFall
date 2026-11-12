@@ -147,8 +147,8 @@ Supabase library. The site itself stays on GitHub Pages.
   Each round starts with **one** star in the stock, and it holds at most **3**: with a full stock
   a tapped star stays on the field and the game says "You can hold at most 3 stars". Stars on
   the field can still be blown up, and the bot never takes them.
-- **Speed:** constant; no difficulty curve yet. Tiles enter three at a time, one group every
-  2.7 seconds.
+- **Speed:** constant; no difficulty curve yet. Tiles enter one or two at a time, at random,
+  0.9 seconds apart per tile on average.
 - **Seeded tiles:** every tile's kind, letter and entry point come from the round's seed and the
   tile's number (`src/core/tiles.ts`). Offline the seed is random; online both players get the
   server's, so they see the same tiles.
