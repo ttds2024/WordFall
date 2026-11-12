@@ -1,6 +1,6 @@
 import type { Language } from '../i18n';
 import type { Theme } from '../settings';
-import { randomSeed, tileSpec } from '../core/tiles';
+import { mulberry32, randomSeed, tileSpec } from '../core/tiles';
 import { PhysicsWorld, type Explosion, type Tile } from './physics';
 import { drawExplosions, drawTiles, type Blast } from './renderer';
 import { maxTilesFor, Spawner, tileRadius } from './spawner';
@@ -8,8 +8,8 @@ import { maxTilesFor, Spawner, tileRadius } from './spawner';
 const STEP_MS = 1000 / 60;
 const MAX_FRAME_MS = 250;
 const SPAWN_INTERVAL_MS = 900;
-/** Tiles released together; the rate stays one per SPAWN_INTERVAL_MS on average. */
-const SPAWN_BATCH = 3;
+/** The most tiles released together: 1 to this many, at random. */
+const SPAWN_MAX_BATCH = 2;
 
 export interface GameHandlers {
   /** A tile was tapped. */
@@ -51,11 +51,7 @@ export class Game {
     const { width, height } = this.fitCanvas();
     this.world = new PhysicsWorld(width, height);
     this.radius = tileRadius(width);
-    this.spawner = new Spawner(
-      SPAWN_INTERVAL_MS,
-      maxTilesFor(width, height, this.radius),
-      SPAWN_BATCH,
-    );
+    this.spawner = this.newSpawner(maxTilesFor(width, height, this.radius));
 
     canvas.addEventListener('pointerdown', this.handlePointer);
     new ResizeObserver(this.handleResize).observe(canvas);
@@ -83,7 +79,7 @@ export class Game {
     this.seed = seed;
     this.nextSeq = 0;
     this.acc = 0;
-    this.spawner = new Spawner(SPAWN_INTERVAL_MS, this.spawner.maxTiles, SPAWN_BATCH);
+    this.spawner = this.newSpawner(this.spawner.maxTiles);
     for (const tile of this.world.all()) this.world.remove(tile);
     this.blasts = [];
     this.draw();
@@ -133,6 +129,12 @@ export class Game {
     this.draw();
     if (this.running) this.frame = requestAnimationFrame(this.tick);
   };
+
+  /** A spawner for a new round; the group sizes follow from the round's seed. */
+  private newSpawner(maxTiles: number): Spawner {
+    const random = mulberry32((this.seed ^ 0x5bd1e995) >>> 0);
+    return new Spawner(SPAWN_INTERVAL_MS, maxTiles, SPAWN_MAX_BATCH, random);
+  }
 
   private spawnDue(ms: number): void {
     const due = this.spawner.update(ms, this.world.count);

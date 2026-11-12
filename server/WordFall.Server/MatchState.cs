@@ -27,8 +27,8 @@ public sealed class MatchState(uint seed, string lang, WordList words)
     /// <summary>The game releases one tile every this-many ms on average (SPAWN_INTERVAL_MS).</summary>
     public const int SpawnIntervalMs = 900;
     /// <summary>
-    /// Tiles a player may be ahead of the clock by: tiles come three at a time (SPAWN_BATCH), so up
-    /// to two are early, and the rest is for a little lag and rounding.
+    /// Tiles a player may be ahead of the clock by: tiles come one or two at a time (SPAWN_MAX_BATCH),
+    /// so one may be early, and the rest is for a little lag and rounding.
     /// </summary>
     public const int SpawnSlack = 4;
     public const int StartStars = 1;
