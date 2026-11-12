@@ -21,6 +21,8 @@ friend**, which opens a private room with a 4-letter code (no I, L or O) for the
 - **Stars** are handed out by the server too, so the same star cannot be taken twice. Each player
   starts with one and holds at most three; a word with a star from the stock spends it.
 - **Bombs and green pumpkins** go off on each field separately.
+- **Ghost pumpkins** count as letters: a tapped one vanishes from your field only, and from the
+  other player's once your word scores. If they score with it first, it leaves your word.
 - **No pause.** ☰ opens the menu but the round goes on behind it; starting another game, or
   closing the page, leaves the match, and the other player wins.
 - The server's clock ends the round and decides the result: win, loss or draw, or "Your
@@ -45,7 +47,7 @@ friend**, which opens a private room with a 4-letter code (no I, L or O) for the
 - **The server is the referee.** It knows every tile from the seed (`server/WordFall.Server/Tiles.cs`
   ports `tileSpec` bit for bit) and loads the same word lists (`data/words_<lang>.txt`, cleaned
   the same way). For each word it checks that the tiles exist by now (one per 900 ms
-  since the start on average, plus a little slack: they fall one or two at a time), are letters (not bombs, green pumpkins or stars), are
+  since the start on average, plus a little slack: they fall one or two at a time), are letters (ghost pumpkins included; not bombs, green pumpkins or stars), are
   untaken, spell the word (a star from the stock standing for any one letter) and that the word
   is in the list and not found yet; then it scores it (`src/core/scoring.ts`: 100 per letter,
   ×2 per ×2 tile) and tells both players. A player cannot score a word the game would not.

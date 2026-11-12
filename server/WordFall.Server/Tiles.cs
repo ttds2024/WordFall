@@ -7,6 +7,7 @@ public enum TileKind
     Double,
     Bomb,
     Green,
+    Ghost,
     Joker,
 }
 
@@ -26,6 +27,7 @@ public static class Tiles
     public const double BombChance = 0.1;
     public const double DoubleChance = 0.08;
     public const double GreenChance = 0.05;
+    public const double GhostChance = 0.05;
 
     // Letter frequencies, in the same order as LETTER_WEIGHTS (the order changes the result).
     private static readonly (string Letter, double Weight)[] English =
@@ -60,6 +62,8 @@ public static class Tiles
             return new(TileKind.Double, PickLetter(lang, random), x);
         if (roll < JokerChance + BombChance + DoubleChance + GreenChance)
             return new(TileKind.Green, PickLetter(lang, random), x);
+        if (roll < JokerChance + BombChance + DoubleChance + GreenChance + GhostChance)
+            return new(TileKind.Ghost, PickLetter(lang, random), x);
         return new(TileKind.Pumpkin, PickLetter(lang, random), x);
     }
 

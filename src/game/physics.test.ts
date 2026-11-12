@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BLAST_RADII, PhysicsWorld, type Explosion } from './physics';
+import { BLAST_RADII, GHOST_RADII_PER_S, PhysicsWorld, type Explosion } from './physics';
 
 const STEP = 1000 / 60;
 
@@ -112,6 +112,41 @@ describe('bombs', () => {
     const [boom] = runUntilBoom(world, 3);
     expect(boom!.destroyed).toEqual([below]);
     expect(world.count).toBe(0);
+  });
+});
+
+describe('ghost pumpkins', () => {
+  it('drift down through other tiles and the floor, moving nothing, and then are gone', () => {
+    const world = new PhysicsWorld(100, 600);
+    const below = world.spawn('A', 50, 570, 30);
+    run(world, 1);
+    const resting = { ...below.body.position };
+    const ghost = world.spawn('B', 50, -30, 30, 'ghost');
+
+    run(world, 3);
+    expect(ghost.body.position.x).toBe(50);
+    expect(ghost.body.position.y).toBeCloseTo(-30 + 3 * 30 * GHOST_RADII_PER_S, 0);
+    run(world, 3.5);
+    expect(world.all()).toEqual([below]);
+    expect(below.body.position.x).toBeCloseTo(resting.x, 3);
+    expect(below.body.position.y).toBeCloseTo(resting.y, 3);
+  });
+
+  it('do not set bombs off and are untouched by blasts', () => {
+    const world = new PhysicsWorld(400, 600);
+    const bomb = world.spawn('', 200, 300, 30, 'bomb');
+    const ghost = world.spawn('A', 200, 300, 30, 'ghost');
+    expect(world.step(1000 / 60)).toEqual([]);
+    expect(world.explode(bomb).destroyed).toEqual([]);
+    expect(world.all()).toEqual([ghost]);
+  });
+
+  it('are tapped before a tile they are passing through', () => {
+    const world = new PhysicsWorld(400, 600);
+    const tile = world.spawn('A', 200, 300, 30);
+    const ghost = world.spawn('B', 220, 300, 30, 'ghost');
+    expect(world.tileAt(202, 300)).toBe(ghost);
+    expect(world.tileAt(175, 300)).toBe(tile);
   });
 });
 

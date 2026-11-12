@@ -5,9 +5,11 @@ import { JOKER } from './word';
 /**
  * A pumpkin is an ordinary letter; a double is a letter that doubles the score of a word using
  * it; a bomb (a bad pumpkin) has no letter and explodes when it hits something; a green pumpkin
- * shows a letter but explodes when tapped; a joker (a star, letter JOKER) stands for any one letter.
+ * shows a letter but explodes when tapped; a ghost is a letter that drifts straight down through
+ * the other tiles and out of the field, and is used up by a tap (it vanishes, its letter joins the
+ * word); a joker (a star, letter JOKER) stands for any one letter.
  */
-export type TileKind = 'pumpkin' | 'double' | 'bomb' | 'green' | 'joker';
+export type TileKind = 'pumpkin' | 'double' | 'bomb' | 'green' | 'ghost' | 'joker';
 
 /** Share of falling tiles that are jokers. */
 export const JOKER_CHANCE = 0.04;
@@ -17,6 +19,8 @@ export const BOMB_CHANCE = 0.1;
 export const DOUBLE_CHANCE = 0.08;
 /** Share of falling tiles that are green pumpkins (a letter; they explode when tapped). */
 export const GREEN_CHANCE = 0.05;
+/** Share of falling tiles that are ghost pumpkins (a letter; they pass through everything). */
+export const GHOST_CHANCE = 0.05;
 
 /** What the n-th tile of a round is, and where it enters: `x` is a share of the field's width. */
 export interface TileSpec {
@@ -60,6 +64,9 @@ export function tileSpec(seed: number, index: number, lang: Language): TileSpec 
   }
   if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE + GREEN_CHANCE) {
     return { kind: 'green', letter: pickLetter(lang, random), x };
+  }
+  if (roll < JOKER_CHANCE + BOMB_CHANCE + DOUBLE_CHANCE + GREEN_CHANCE + GHOST_CHANCE) {
+    return { kind: 'ghost', letter: pickLetter(lang, random), x };
   }
   return { kind: 'pumpkin', letter: pickLetter(lang, random), x };
 }

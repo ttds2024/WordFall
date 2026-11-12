@@ -9,6 +9,8 @@ const COLORS = {
   body: '#ff7a18',
   /** A green pumpkin while its picture loads. */
   green: '#76a95a',
+  ghost: '#eef3ff',
+  ghostGlow: 'rgba(190, 215, 255, 0.9)',
   bodySelected: '#ffd23f',
   rib: 'rgba(120, 40, 0, 0.35)',
   stem: '#3f6b2a',
@@ -24,6 +26,9 @@ const COLORS = {
   flash: '255, 236, 160',
   fire: '255, 122, 24',
 };
+
+/** How solid a ghost looks: the tiles behind it show through. */
+const GHOST_ALPHA = 0.72;
 
 /** How long an explosion is drawn for. */
 const BLAST_MS = 450;
@@ -85,14 +90,19 @@ function drawCentred(
 /**
  * Draws the tiles: pumpkins with letters, ×2 pumpkins (src/images/pumpkin.svg) with a letter and
  * a ×2 badge, letterless bad pumpkins (src/images/bad.png) that explode, green pumpkins
- * (src/images/green.png) with a letter that explode when tapped, and joker stars. In the 8-bit
- * style they are square pixel blocks instead, and at Christmas baubles, a gold star and coal.
+ * (src/images/green.png) with a letter that explode when tapped, pale see-through ghost pumpkins
+ * with a letter, and joker stars. In the 8-bit style they are square pixel blocks instead, and at
+ * Christmas baubles, a gold star and coal. Ghosts are drawn last, over the tiles they pass through.
  */
 export function drawTiles(
   ctx: CanvasRenderingContext2D,
   tiles: readonly Tile[],
   theme: Theme = 'halloween',
 ): void {
+  tiles = [
+    ...tiles.filter((tile) => tile.kind !== 'ghost'),
+    ...tiles.filter((tile) => tile.kind === 'ghost'),
+  ];
   if (theme === '8bit') {
     for (const tile of tiles) drawPixelTile(ctx, tile);
     return;
@@ -125,6 +135,12 @@ export function drawTiles(
       const image = picture(badUrl);
       if (image) drawCentred(ctx, image, r * 2.15, BAD_ASPECT);
       else drawPumpkin(ctx, r, false);
+      ctx.restore();
+      continue;
+    }
+
+    if (tile.kind === 'ghost') {
+      drawGhost(ctx, r, tile.letter);
       ctx.restore();
       continue;
     }
@@ -174,6 +190,30 @@ function drawPumpkin(
 
   ctx.fillStyle = COLORS.stem;
   ctx.fillRect(-r * 0.1, -r * 1.12, r * 0.2, r * 0.28);
+}
+
+/** A ghost pumpkin: pale, glowing and see-through, with a fading trail above it. */
+function drawGhost(ctx: CanvasRenderingContext2D, r: number, letter: string): void {
+  ctx.fillStyle = COLORS.ghost;
+  for (const [lift, size, alpha] of [
+    [1.5, 0.55, 0.12],
+    [0.8, 0.8, 0.22],
+  ] as const) {
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.ellipse(0, -r * lift, r * size, r * size * 0.92, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = GHOST_ALPHA;
+  ctx.shadowColor = COLORS.ghostGlow;
+  ctx.shadowBlur = r * 0.7;
+  drawPumpkin(ctx, r, false, COLORS.ghost);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = COLORS.letter;
+  ctx.font = `bold ${Math.round(r * 1.05)}px system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(letter, 0, r * 0.14);
 }
 
 /** A glowing blue ring round a tile the bot has picked. */
@@ -315,6 +355,7 @@ const PIXEL = {
   joker: { fill: '#83769c', shade: '#5f574f', light: '#c2c3c7' },
   bomb: { fill: '#ff004d', shade: '#7e2553', light: '#ff77a8' },
   green: { fill: '#00e436', shade: '#008751', light: '#a8ffb8' },
+  ghost: { fill: '#fff1e8', shade: '#83769c', light: '#ffffff' },
   sparks: ['#ffec27', '#ffa300', '#ff004d', '#fff1e8'],
 };
 
@@ -327,7 +368,8 @@ function notchedSquare(ctx: CanvasRenderingContext2D, half: number, notch: numbe
 /**
  * An 8-bit tile: a square block, upright whatever the body's spin, with a bevel and a frame
  * (yellow when you picked it, blue when the bot did). Letters orange (green for the ones that
- * explode when tapped), ×2 with a chip, the joker purple with ★, the bomb red with a pixel bomb.
+ * explode when tapped, white and see-through for ghosts), ×2 with a chip, the joker purple with
+ * ★, the bomb red with a pixel bomb.
  */
 function drawPixelTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
   const { x, y } = tile.body.position;
@@ -341,10 +383,13 @@ function drawPixelTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
         ? PIXEL.bomb
         : tile.kind === 'green'
           ? PIXEL.green
-          : PIXEL.letter;
+          : tile.kind === 'ghost'
+            ? PIXEL.ghost
+            : PIXEL.letter;
 
   ctx.save();
   ctx.translate(Math.round(x), Math.round(y));
+  if (tile.kind === 'ghost') ctx.globalAlpha = GHOST_ALPHA;
   ctx.fillStyle = tile.selected ? PIXEL.you : tile.bot ? PIXEL.bot : PIXEL.edge;
   notchedSquare(ctx, half, px * 2);
   const inner = half - px * (tile.selected || tile.bot ? 2 : 1);
@@ -423,6 +468,8 @@ const XMAS = {
   gold: { fill: '#f2c14e', shade: '#b8862b', ink: '#3a2a00' },
   /** The bauble that explodes when tapped: lime, with a lit fuse on its cap. */
   lime: { fill: '#9be564', shade: '#4f8a2a', ink: '#173300' },
+  /** The ghost: a frosted, see-through bauble. */
+  frost: { fill: '#eef6fc', shade: '#a9c4d8', ink: '#1d4f73' },
   cap: '#f2c14e',
   capShade: '#b8862b',
   shine: 'rgba(255, 255, 255, 0.55)',
@@ -440,7 +487,7 @@ const XMAS = {
 /**
  * A Christmas tile, hanging upright whatever the body's spin: a bauble with a gold cap and a
  * shine (red, green or blue; gold with a ×2 tag for ×2 letters; lime with a lit fuse for the ones
- * that explode when tapped), the joker as a gold star and the bomb as a lump of coal with a lit fuse. Your picks glow gold, the bot's ice blue.
+ * that explode when tapped; frosted and see-through for ghosts), the joker as a gold star and the bomb as a lump of coal with a lit fuse. Your picks glow gold, the bot's ice blue.
  */
 function drawChristmasTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
   const { x, y } = tile.body.position;
@@ -456,6 +503,7 @@ function drawChristmasTile(ctx: CanvasRenderingContext2D, tile: Tile): void {
   } else if (tile.kind === 'bomb') {
     drawCoal(ctx, r);
   } else {
+    if (tile.kind === 'ghost') ctx.globalAlpha = GHOST_ALPHA;
     drawBauble(ctx, tile, r);
   }
   ctx.restore();
@@ -467,7 +515,9 @@ function drawBauble(ctx: CanvasRenderingContext2D, tile: Tile, r: number): void 
       ? XMAS.gold
       : tile.kind === 'green'
         ? XMAS.lime
-        : XMAS.baubles[tile.body.id % XMAS.baubles.length]!;
+        : tile.kind === 'ghost'
+          ? XMAS.frost
+          : XMAS.baubles[tile.body.id % XMAS.baubles.length]!;
   const ball = r * 0.9;
   const cy = r * 0.1;
   if (tile.selected || tile.bot) {

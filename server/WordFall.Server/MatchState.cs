@@ -77,8 +77,8 @@ public sealed class MatchState(uint seed, string lang, WordList words)
         {
             if (seq < 0 || seq > last) return new(Rejection.Invalid);
             var spec = Tiles.Spec(seed, seq, lang);
-            // Only plain and ×2 letters go into words.
-            if (spec.Kind is not (TileKind.Pumpkin or TileKind.Double)) return new(Rejection.Invalid);
+            // Only plain, ×2 and ghost letters go into words.
+            if (spec.Kind is not (TileKind.Pumpkin or TileKind.Double or TileKind.Ghost)) return new(Rejection.Invalid);
             specs[seq] = spec;
         }
         if (seqs.Any(claimed.Contains)) return new(Rejection.Taken);

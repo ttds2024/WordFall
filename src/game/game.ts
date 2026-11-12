@@ -12,7 +12,7 @@ const SPAWN_INTERVAL_MS = 900;
 const SPAWN_MAX_BATCH = 2;
 
 export interface GameHandlers {
-  /** A tile was tapped. */
+  /** A tile was tapped (a ghost too: it is still on the field then). */
   onTap(tile: Tile): void;
   /** The field was tapped away from any tile. */
   onTapEmpty(): void;
