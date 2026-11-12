@@ -24,9 +24,12 @@ public readonly record struct WordResult(Rejection Rejection, string Word = "", 
 public sealed class MatchState(uint seed, string lang, WordList words)
 {
     public const int RoundMs = 2 * 60 * 1000;
-    /// <summary>The game releases at most one tile every this-many ms (SPAWN_INTERVAL_MS).</summary>
+    /// <summary>The game releases one tile every this-many ms on average (SPAWN_INTERVAL_MS).</summary>
     public const int SpawnIntervalMs = 900;
-    /// <summary>Tiles a player may be ahead of the clock by: a little lag and rounding.</summary>
+    /// <summary>
+    /// Tiles a player may be ahead of the clock by: tiles come three at a time (SPAWN_BATCH), so up
+    /// to two are early, and the rest is for a little lag and rounding.
+    /// </summary>
     public const int SpawnSlack = 4;
     public const int StartStars = 1;
     public const int MaxStars = 3;

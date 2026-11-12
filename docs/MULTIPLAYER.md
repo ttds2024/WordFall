@@ -44,8 +44,8 @@ friend**, which opens a private room with a 4-letter code (no I, L or O) for the
   positions or physics, so JSON is plenty and a binary format would gain nothing.
 - **The server is the referee.** It knows every tile from the seed (`server/WordFall.Server/Tiles.cs`
   ports `tileSpec` bit for bit) and loads the same word lists (`data/words_<lang>.txt`, cleaned
-  the same way). For each word it checks that the tiles exist by now (at most one per 900 ms
-  since the start, plus a little slack), are letters (not bombs, green pumpkins or stars), are
+  the same way). For each word it checks that the tiles exist by now (one per 900 ms
+  since the start on average, plus a little slack: they fall three at a time), are letters (not bombs, green pumpkins or stars), are
   untaken, spell the word (a star from the stock standing for any one letter) and that the word
   is in the list and not found yet; then it scores it (`src/core/scoring.ts`: 100 per letter,
   ×2 per ×2 tile) and tells both players. A player cannot score a word the game would not.

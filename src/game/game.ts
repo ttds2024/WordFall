@@ -8,6 +8,8 @@ import { maxTilesFor, Spawner, tileRadius } from './spawner';
 const STEP_MS = 1000 / 60;
 const MAX_FRAME_MS = 250;
 const SPAWN_INTERVAL_MS = 900;
+/** Tiles released together; the rate stays one per SPAWN_INTERVAL_MS on average. */
+const SPAWN_BATCH = 3;
 
 export interface GameHandlers {
   /** A tile was tapped. */
@@ -49,7 +51,11 @@ export class Game {
     const { width, height } = this.fitCanvas();
     this.world = new PhysicsWorld(width, height);
     this.radius = tileRadius(width);
-    this.spawner = new Spawner(SPAWN_INTERVAL_MS, maxTilesFor(width, height, this.radius));
+    this.spawner = new Spawner(
+      SPAWN_INTERVAL_MS,
+      maxTilesFor(width, height, this.radius),
+      SPAWN_BATCH,
+    );
 
     canvas.addEventListener('pointerdown', this.handlePointer);
     new ResizeObserver(this.handleResize).observe(canvas);
@@ -77,7 +83,7 @@ export class Game {
     this.seed = seed;
     this.nextSeq = 0;
     this.acc = 0;
-    this.spawner = new Spawner(SPAWN_INTERVAL_MS, this.spawner.maxTiles);
+    this.spawner = new Spawner(SPAWN_INTERVAL_MS, this.spawner.maxTiles, SPAWN_BATCH);
     for (const tile of this.world.all()) this.world.remove(tile);
     this.blasts = [];
     this.draw();
@@ -132,11 +138,15 @@ export class Game {
     const due = this.spawner.update(ms, this.world.count);
     const { width } = this.world.size;
     const r = this.radius;
+    // Tiles of one group enter side by side; one that would overlap another starts a row higher.
+    const placed: { x: number; y: number }[] = [];
     for (let i = 0; i < due; i++) {
       const seq = this.nextSeq++;
       const spec = tileSpec(this.seed, seq, this.lang);
       const x = r + spec.x * Math.max(0, width - 2 * r);
-      const y = -r - i * r * 2.2;
+      let y = -r;
+      while (placed.some((p) => p.y === y && Math.abs(p.x - x) < r * 2.2)) y -= r * 2.2;
+      placed.push({ x, y });
       this.world.spawn(spec.letter, x, y, r, spec.kind, seq);
     }
   }
@@ -161,7 +171,7 @@ export class Game {
   private readonly handleResize = (): void => {
     const { width, height } = this.fitCanvas();
     this.world.resize(width, height);
-    this.spawner = new Spawner(SPAWN_INTERVAL_MS, maxTilesFor(width, height, this.radius));
+    this.spawner.maxTiles = maxTilesFor(width, height, this.radius);
     this.draw();
   };
 

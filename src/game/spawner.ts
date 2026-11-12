@@ -1,19 +1,28 @@
-/** Releases a new tile at a constant rate while the screen has room for more. */
+/**
+ * Releases tiles in groups: `batch` tiles at once, every `batch` intervals, so the rate stays one
+ * tile per interval on average. The first group comes one interval after the start, and no tile
+ * comes more than `batch - 1` intervals before a one-at-a-time spawner would release it (the
+ * multiplayer server allows for that: SpawnSlack in MatchState.cs).
+ */
 export class Spawner {
-  private elapsed = 0;
+  private elapsed: number;
 
   constructor(
     readonly intervalMs: number,
-    readonly maxTiles: number,
-  ) {}
+    public maxTiles: number,
+    readonly batch = 1,
+  ) {
+    this.elapsed = intervalMs * (batch - 1);
+  }
 
   /** Advances time; returns how many tiles to spawn now, given how many are on screen. */
   update(ms: number, tileCount: number): number {
+    const period = this.intervalMs * this.batch;
     this.elapsed += ms;
     let due = 0;
-    while (this.elapsed >= this.intervalMs) {
-      this.elapsed -= this.intervalMs;
-      if (tileCount + due < this.maxTiles) due++;
+    while (this.elapsed >= period) {
+      this.elapsed -= period;
+      due += Math.max(0, Math.min(this.batch, this.maxTiles - tileCount - due));
     }
     return due;
   }
