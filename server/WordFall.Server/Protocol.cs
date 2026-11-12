@@ -14,6 +14,7 @@ public sealed record ClientMessage(
     string? Code = null,
     int?[]? Tiles = null,
     int? Tile = null,
+    int? Hat = null,
     int? Id = null,
     string? Word = null);
 
@@ -30,6 +31,8 @@ public sealed record StartMessage(uint Seed, string Lang, int DurationMs, string
 public sealed record PickMessage(int[] Tiles) : ServerMessage("pick");
 
 public sealed record StarMessage(string By, int Tile, int Stars) : ServerMessage("star");
+
+public sealed record HatMessage(int[] Tiles) : ServerMessage("hat");
 
 public sealed record ClaimedMessage(
     string By,

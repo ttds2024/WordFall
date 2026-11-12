@@ -137,6 +137,15 @@ Supabase library. The site itself stays on GitHub Pages.
   (clearing the word loses it). It is drawn over the tiles it passes, and a tap on it takes it
   rather than the tile behind. The bot never picks it. In the 8-bit style it is a see-through
   white block; at Christmas a frosted see-through bauble.
+- **Magic hats:** about 1 tile in 25 is a wizard's hat with no letter. It falls and rolls like any
+  tile, and the moment it touches another tile (not the floor or a wall: there it waits) it
+  vanishes in a burst of stars and gives every letter within a blast's reach a new, different
+  letter: plain, ×2 and green pumpkins change; stars, bad pumpkins and ghosts do not. A changed
+  letter stays in the word being built, with its new letter; a word the bot was about to try with
+  it is dropped. A bomb that hits a hat destroys it first. Taps do nothing to it. The new letter
+  follows from the round's seed, the tile's number and how many times it has changed
+  (`changedLetter`). In the 8-bit style it is a blue block with a pixel hat; at Christmas a red
+  elf's hat with white trim.
 - **×2 pumpkins:** about 1 tile in 12 is a plain pumpkin (`src/images/pumpkin.svg`) with a letter
   and a gold ×2 mark. A correct word scores its letters times **2 × N**, N being the number of ×2
   pumpkins in it (one: ×2, two: ×4, three: ×6); the word bar shows the multiplier while the word

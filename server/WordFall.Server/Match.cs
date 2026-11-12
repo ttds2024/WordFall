@@ -93,6 +93,13 @@ public sealed class Match
                     other.Send(new StarMessage("opponent", tile, state.Stars[1 - seat]));
                     break;
 
+                case "hat" when message.Hat is int hat && message.Tiles is not null:
+                    // A hat that cannot be is ignored: the letters stay as the server has them.
+                    var changed = message.Tiles.OfType<int>().ToArray();
+                    if (changed.Length == message.Tiles.Length && state.CastHat(seat, hat, changed, elapsed))
+                        other.Send(new HatMessage(changed));
+                    break;
+
                 case "word" when message.Tiles is not null && message.Word is not null:
                     var result = state.ClaimWord(seat, message.Tiles, message.Word, elapsed);
                     if (result.Rejection != Rejection.None)

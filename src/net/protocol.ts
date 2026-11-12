@@ -16,6 +16,8 @@ export type ClientMessage =
   | { type: 'pick'; tiles: number[] }
   /** Take a star from the field into the stock. */
   | { type: 'star'; tile: number }
+  /** Magic hat number `hat` touched a tile on this field and changed these tiles' letters. */
+  | { type: 'hat'; hat: number; tiles: number[] }
   /** Claim a word: `word` is the dictionary word it spells (a star filled in). */
   | { type: 'word'; id: number; tiles: (number | null)[]; word: string }
   | { type: 'leave' };
@@ -40,6 +42,8 @@ export type ServerMessage =
   | { type: 'pick'; tiles: number[] }
   /** Someone took a star; `stars` is your stock. */
   | { type: 'star'; by: Side; tile: number; stars: number }
+  /** The other player's magic hat changed these tiles' letters (each to its next one). */
+  | { type: 'hat'; tiles: number[] }
   /** Someone scored a word. `id` echoes your claim when it was yours. */
   | {
       type: 'claimed';

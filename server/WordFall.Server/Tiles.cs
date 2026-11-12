@@ -8,10 +8,11 @@ public enum TileKind
     Bomb,
     Green,
     Ghost,
+    Hat,
     Joker,
 }
 
-/// <summary>The n-th tile of a round: its kind, its letter (upper case; empty for a bomb) and where it enters.</summary>
+/// <summary>The n-th tile of a round: its kind, its letter (upper case; empty for a bomb or a magic hat) and where it enters.</summary>
 public readonly record struct TileSpec(TileKind Kind, string Letter, double X);
 
 /// <summary>
@@ -28,6 +29,7 @@ public static class Tiles
     public const double DoubleChance = 0.08;
     public const double GreenChance = 0.05;
     public const double GhostChance = 0.05;
+    public const double HatChance = 0.04;
 
     // Letter frequencies, in the same order as LETTER_WEIGHTS (the order changes the result).
     private static readonly (string Letter, double Weight)[] English =
@@ -64,7 +66,27 @@ public static class Tiles
             return new(TileKind.Green, PickLetter(lang, random), x);
         if (roll < JokerChance + BombChance + DoubleChance + GreenChance + GhostChance)
             return new(TileKind.Ghost, PickLetter(lang, random), x);
+        if (roll < JokerChance + BombChance + DoubleChance + GreenChance + GhostChance + HatChance)
+            return new(TileKind.Hat, "", x);
         return new(TileKind.Pumpkin, PickLetter(lang, random), x);
+    }
+
+    /// <summary>
+    /// The letter of tile number <paramref name="index"/> once magic hats have changed it
+    /// <paramref name="changes"/> times: changedLetter in src/core/tiles.ts.
+    /// </summary>
+    public static string Letter(uint seed, int index, string lang, int changes)
+    {
+        var letter = Spec(seed, index, lang).Letter;
+        for (var n = 1; n <= changes; n++)
+        {
+            var random = new Mulberry32(
+                seed ^ unchecked((uint)(index + 1) * 0x9E3779B1u) ^ unchecked((uint)n * 0x85EBCA6Bu));
+            var next = PickLetter(lang, random);
+            while (next == letter) next = PickLetter(lang, random);
+            letter = next;
+        }
+        return letter;
     }
 
     private static string PickLetter(string lang, Mulberry32 random)

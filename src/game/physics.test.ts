@@ -164,3 +164,39 @@ describe('green pumpkins', () => {
     expect(world.all()).toEqual([far]);
   });
 });
+
+describe('magic hats', () => {
+  it('wait on the floor until a tile touches them, then reach the letters around', () => {
+    const world = new PhysicsWorld(600, 600);
+    const hat = world.spawn('', 300, 500, 30, 'hat');
+    run(world, 2);
+    expect(world.takeSpells()).toEqual([]);
+    expect(world.all()).toEqual([hat]);
+
+    const near = world.spawn('A', 250, 570, 30);
+    const double = world.spawn('B', 350, 570, 30, 'double');
+    const far = world.spawn('C', 560, 570, 30);
+    const star = world.spawn('★', 300, 440, 30, 'joker');
+    const ghost = world.spawn('D', 300, 560, 30, 'ghost');
+    const touching = world.spawn('E', 300, 500, 30, 'green');
+    world.step(STEP);
+
+    const spells = world.takeSpells();
+    expect(spells).toHaveLength(1);
+    expect(spells[0]!.hat).toBe(hat);
+    expect(spells[0]!.touched.sort((a, b) => a.id - b.id)).toEqual([near, double, touching]);
+    expect(world.all()).toEqual([near, double, far, star, ghost, touching]);
+    expect(world.takeSpells()).toEqual([]);
+  });
+
+  it('are destroyed by a bomb that hits them, casting nothing', () => {
+    const world = new PhysicsWorld(400, 600);
+    world.spawn('', 200, 570, 30, 'hat');
+    world.spawn('', 200, 400, 30, 'bomb');
+    const blasts: Explosion[] = [];
+    for (let i = 0; i < 120; i++) blasts.push(...world.step(STEP));
+    expect(blasts).toHaveLength(1);
+    expect(world.takeSpells()).toEqual([]);
+    expect(world.all()).toEqual([]);
+  });
+});

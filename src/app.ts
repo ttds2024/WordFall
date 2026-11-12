@@ -198,9 +198,11 @@ export function startApp(defaultLanguage: Language): void {
 
   const game = new Game(element<HTMLCanvasElement>('#field'), settings.lang, {
     onTap(tile) {
-      // Bombs carry no letter; they only explode. Letters the bot has picked are its own; online
-      // the other player's picks are fair game, whoever claims the word first gets them.
-      if (tile.kind === 'bomb' || (tile.bot && round?.kind !== 'pvp')) return;
+      // Bombs and magic hats carry no letter; they act by themselves. Letters the bot has picked
+      // are its own; online the other player's picks are fair game, whoever claims the word first
+      // gets them.
+      if (tile.kind === 'bomb' || tile.kind === 'hat') return;
+      if (tile.bot && round?.kind !== 'pvp') return;
       // Online, the word sent to the server stays as it is until the server answers.
       if (pendingClaim !== undefined) return;
       // A green pumpkin blows up, with the tiles around it.
@@ -228,6 +230,15 @@ export function startApp(defaultLanguage: Language): void {
     onTapEmpty: clearWord,
     onExplode(destroyed) {
       tracker.remove(destroyed);
+      render();
+    },
+    onSpell(hat, changed) {
+      if (changed.length === 0) return;
+      // The bot's word is not what it picked any more: it gives up on it.
+      if (botTry?.tiles.some((tile) => changed.includes(tile))) stopBot();
+      // Online the other player's letters change too.
+      if (round?.kind === 'pvp')
+        server?.send({ type: 'hat', hat, tiles: changed.map((tile) => tile.seq) });
       render();
     },
     onFrame(_now, elapsed) {
@@ -281,7 +292,7 @@ export function startApp(defaultLanguage: Language): void {
   }
 
   /**
-   * The bot picks letters from the field (never a star, a ghost, a bad pumpkin or a green one): a real word not found
+   * The bot picks letters from the field (never a star, a ghost, a magic hat, a bad pumpkin or a green one): a real word not found
    * yet with probability BOT_ACCURACY, otherwise letters that spell nothing. It goes for letters
    * the player has not picked first; only if those give it nothing does it take the player's.
    */
@@ -718,6 +729,11 @@ export function startApp(defaultLanguage: Language): void {
           sounds.play('clicked');
           bumpScore(ui.jokerButton);
         }
+        render();
+        break;
+      case 'hat':
+        // The other player's magic hat: the same letters change here.
+        game.changeLetters(message.tiles);
         render();
         break;
       case 'claimed':

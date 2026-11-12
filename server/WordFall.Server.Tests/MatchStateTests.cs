@@ -115,6 +115,36 @@ public class MatchStateTests
     }
 
     [Fact]
+    public void AMagicHatChangesLettersOncePerField()
+    {
+        const double End = 400_000;
+        // A hat far enough into the round not to have fallen at its start.
+        var hat = TilesOf(Seed, "en", s => s.Kind == TileKind.Hat, 400).Last().Seq;
+        var (seqs, old, _) = ThreeLetters();
+        var changed = Tiles.Letter(Seed, seqs[0], "en", 1);
+        Assert.NotEqual(Tiles.Spec(Seed, seqs[0], "en").Letter, changed);
+        var word = (changed + old[1..]).ToLowerInvariant();
+        var claim = seqs.Select(seq => (int?)seq).ToArray();
+        var state = NewState(old, word);
+
+        // Not a hat, not there yet, a tile with no letter to change: nothing happens.
+        Assert.False(state.CastHat(0, seqs[1], [seqs[0]], End));
+        Assert.False(state.CastHat(0, hat, [seqs[0]], 0));
+        Assert.False(state.CastHat(0, hat, [hat], End));
+        Assert.Equal(Rejection.Invalid, state.ClaimWord(0, claim, word, End).Rejection);
+
+        Assert.True(state.CastHat(0, hat, [seqs[0]], End));
+        Assert.False(state.CastHat(0, hat, [seqs[0]], End));
+        Assert.Equal(changed, state.LetterOf(seqs[0]));
+        Assert.Equal(Rejection.Invalid, state.ClaimWord(0, claim, old, End).Rejection);
+        Assert.Equal(Rejection.None, state.ClaimWord(1, claim, word, End).Rejection);
+
+        // The same hat on the other field changes the letter again.
+        Assert.True(state.CastHat(1, hat, [seqs[0]], End));
+        Assert.Equal(Tiles.Letter(Seed, seqs[0], "en", 2), state.LetterOf(seqs[0]));
+    }
+
+    [Fact]
     public void AStarFromTheStockStandsForALetterAndIsSpent()
     {
         var (seqs, word, _) = ThreeLetters();

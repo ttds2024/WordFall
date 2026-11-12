@@ -35,9 +35,15 @@ public sealed class MatchState(uint seed, string lang, WordList words)
     public const int MaxStars = 3;
     public const int PointsPerLetter = 100;
     public const int MaxWordLength = 24;
+    /// <summary>The most tiles one magic hat can reach (a few more than fit round it).</summary>
+    public const int MaxHatTiles = 12;
 
     private readonly HashSet<int> claimed = [];
     private readonly HashSet<string> used = [];
+    /// <summary>How many times magic hats have changed each tile's letter.</summary>
+    private readonly Dictionary<int, int> changes = [];
+    /// <summary>The magic hats each player's field has used up.</summary>
+    private readonly HashSet<int>[] hats = [[], []];
 
     public uint Seed => seed;
     public string Lang => lang;
@@ -58,6 +64,31 @@ public sealed class MatchState(uint seed, string lang, WordList words)
         Stars[seat]++;
         return Rejection.None;
     }
+
+    /// <summary>
+    /// Magic hat <paramref name="hat"/> touched a tile on player <paramref name="seat"/>'s field
+    /// and changes these tiles' letters, each to its next one. Each field has its own physics, so
+    /// the same hat works once on each, on whichever letters it lands among there. Returns
+    /// whether the letters changed.
+    /// </summary>
+    public bool CastHat(int seat, int hat, IReadOnlyList<int> tiles, double elapsedMs)
+    {
+        var last = LastTile(elapsedMs);
+        if (hat < 0 || hat > last || Tiles.Spec(seed, hat, lang).Kind != TileKind.Hat) return false;
+        if (tiles.Count == 0 || tiles.Count > MaxHatTiles || tiles.Distinct().Count() != tiles.Count) return false;
+        foreach (var tile in tiles)
+        {
+            if (tile < 0 || tile > last) return false;
+            // A hat changes plain, ×2 and green letters.
+            if (Tiles.Spec(seed, tile, lang).Kind is not (TileKind.Pumpkin or TileKind.Double or TileKind.Green)) return false;
+        }
+        if (!hats[seat].Add(hat)) return false;
+        foreach (var tile in tiles) changes[tile] = changes.GetValueOrDefault(tile) + 1;
+        return true;
+    }
+
+    /// <summary>The letter tile <paramref name="tile"/> shows now, magic hats' changes included.</summary>
+    public string LetterOf(int tile) => Tiles.Letter(seed, tile, lang, changes.GetValueOrDefault(tile));
 
     /// <summary>
     /// Player <paramref name="seat"/> claims a word made of these tiles, in order (null: a star
@@ -87,7 +118,7 @@ public sealed class MatchState(uint seed, string lang, WordList words)
         if (normal.Length != tiles.Count) return new(Rejection.Invalid);
         for (var i = 0; i < tiles.Count; i++)
         {
-            if (tiles[i] is int seq && WordList.Normalize(specs[seq].Letter)[0] != normal[i]) return new(Rejection.Invalid);
+            if (tiles[i] is int seq && WordList.Normalize(LetterOf(seq))[0] != normal[i]) return new(Rejection.Invalid);
         }
         if (!words.Contains(normal)) return new(Rejection.Invalid);
         if (used.Contains(normal)) return new(Rejection.Used);
