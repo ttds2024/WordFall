@@ -130,6 +130,13 @@ Supabase library. The site itself stays on GitHub Pages.
   destroying the tiles around it (letters it destroys leave the word and score nothing). It does
   not go off by itself, and the bot never picks it. In the 8-bit style it is a green block; at
   Christmas a lime bauble with a lit fuse.
+- **Ghost pumpkins:** about 1 tile in 20 is a pale, see-through ghost pumpkin with a letter. It
+  drifts straight down at a steady speed, through the other tiles and the floor, touching and
+  moving nothing, and leaves the field at the bottom; bombs do not go off on it and blasts do not
+  harm it. Tapping it uses it up: it vanishes at once and its letter joins the word being built
+  (clearing the word loses it). It is drawn over the tiles it passes, and a tap on it takes it
+  rather than the tile behind. The bot never picks it. In the 8-bit style it is a see-through
+  white block; at Christmas a frosted see-through bauble.
 - **×2 pumpkins:** about 1 tile in 12 is a plain pumpkin (`src/images/pumpkin.svg`) with a letter
   and a gold ×2 mark. A correct word scores its letters times **2 × N**, N being the number of ×2
   pumpkins in it (one: ×2, two: ×4, three: ×6); the word bar shows the multiplier while the word

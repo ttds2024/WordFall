@@ -24,6 +24,8 @@ export const BLAST_RADII = 2.6;
 const PUSH_RADII = 5;
 /** Speed, in px per step, given to a pushed tile right at the edge of the blast. */
 const PUSH_SPEED = 6;
+/** A ghost drifts down this many of its radii per second. */
+export const GHOST_RADII_PER_S = 3.5;
 
 /** A bomb or green pumpkin that went off: where, how far its blast reached, and the tiles it destroyed. */
 export interface Explosion {
@@ -70,7 +72,9 @@ export class PhysicsWorld {
     for (const tile of this.tiles.values()) {
       const r = tile.body.circleRadius ?? 0;
       const x = Math.min(Math.max(tile.body.position.x, r), width - r);
-      const y = Math.min(tile.body.position.y, height - r);
+      // A ghost is not held by the floor: it may be on its way out below it.
+      const y =
+        tile.kind === 'ghost' ? tile.body.position.y : Math.min(tile.body.position.y, height - r);
       Matter.Body.setPosition(tile.body, { x, y });
     }
   }
@@ -79,7 +83,10 @@ export class PhysicsWorld {
     return { width: this.width, height: this.height };
   }
 
-  /** Adds a tile centred at (x, y). */
+  /**
+   * Adds a tile centred at (x, y). A ghost touches nothing: the engine neither moves it nor
+   * collides it, and step() carries it down.
+   */
   spawn(
     letter: string,
     x: number,
@@ -88,12 +95,15 @@ export class PhysicsWorld {
     kind: TileKind = 'pumpkin',
     seq = -1,
   ): Tile {
-    const body = Bodies.circle(x, y, radius, {
-      restitution: 0.3,
-      friction: 0.05,
-      frictionAir: 0.02,
-      density: 0.002,
-    });
+    const body =
+      kind === 'ghost'
+        ? Bodies.circle(x, y, radius, { isStatic: true, collisionFilter: { mask: 0 } })
+        : Bodies.circle(x, y, radius, {
+            restitution: 0.3,
+            friction: 0.05,
+            frictionAir: 0.02,
+            density: 0.002,
+          });
     const tile: Tile = { id: body.id, letter, kind, body, seq, selected: false, bot: false };
     this.tiles.set(tile.id, tile);
     Composite.add(this.engine.world, body);
@@ -114,24 +124,38 @@ export class PhysicsWorld {
 
   /**
    * The tile under a point, or the nearest one within `slop` pixels of its edge,
-   * so near-misses on small screens still count.
+   * so near-misses on small screens still count. A ghost under the point comes first: it is
+   * drawn over the tiles it passes through.
    */
   tileAt(x: number, y: number, slop = 0): Tile | undefined {
     let best: Tile | undefined;
     let bestGap = slop;
+    let bestGhost = false;
     for (const tile of this.tiles.values()) {
       const { x: tx, y: ty } = tile.body.position;
       const gap = Math.hypot(tx - x, ty - y) - (tile.body.circleRadius ?? 0);
-      if (gap <= bestGap) {
+      const ghost = tile.kind === 'ghost' && gap <= 0;
+      if (ghost === bestGhost ? gap <= bestGap : ghost) {
         best = tile;
         bestGap = gap;
+        bestGhost = ghost;
       }
     }
     return best;
   }
 
-  /** Advances the world; bombs that hit something explode. Returns those explosions. */
+  /**
+   * Advances the world; bombs that hit something explode. Returns those explosions. Ghosts
+   * drift down at a steady speed and are gone once they are below the field.
+   */
   step(ms: number): Explosion[] {
+    for (const tile of this.tiles.values()) {
+      if (tile.kind !== 'ghost') continue;
+      const r = tile.body.circleRadius ?? 0;
+      const { x, y } = tile.body.position;
+      if (y - r > this.height) this.remove(tile);
+      else Body.setPosition(tile.body, { x, y: y + (r * GHOST_RADII_PER_S * ms) / 1000 });
+    }
     Engine.update(this.engine, ms);
     const explosions: Explosion[] = [];
     for (const bomb of this.impacts) {
@@ -143,7 +167,7 @@ export class PhysicsWorld {
 
   /**
    * Removes the bomb (or green pumpkin) and every tile in its blast, and pushes the tiles just
-   * beyond it away.
+   * beyond it away. Ghosts are untouched.
    */
   explode(bomb: Tile): Explosion {
     const { x, y } = bomb.body.position;
@@ -152,6 +176,7 @@ export class PhysicsWorld {
     this.remove(bomb);
     const destroyed: Tile[] = [];
     for (const tile of this.tiles.values()) {
+      if (tile.kind === 'ghost') continue;
       const dx = tile.body.position.x - x;
       const dy = tile.body.position.y - y;
       const distance = Math.hypot(dx, dy);

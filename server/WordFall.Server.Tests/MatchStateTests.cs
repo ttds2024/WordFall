@@ -15,7 +15,7 @@ public class MatchStateTests
             .Where(t => keep(t.Item2))
             .ToList();
 
-    internal static bool IsLetter(TileSpec spec) => spec.Kind is TileKind.Pumpkin or TileKind.Double;
+    internal static bool IsLetter(TileSpec spec) => spec.Kind is TileKind.Pumpkin or TileKind.Double or TileKind.Ghost;
 
     /// <summary>Three letter tiles and the "word" they spell, which the test word list accepts.</summary>
     private static (int[] Seqs, string Word, int Doubles) ThreeLetters(int skip = 0)
@@ -99,6 +99,19 @@ public class MatchStateTests
         var claim = AsClaim(seqs);
         claim[0] = notLetter.Seq;
         Assert.Equal(Rejection.Invalid, NewState(word).ClaimWord(0, claim, word, Late).Rejection);
+    }
+
+    [Fact]
+    public void AGhostPumpkinGoesIntoAWordOnce()
+    {
+        var ghost = TilesOf(Seed, "en", s => s.Kind == TileKind.Ghost, 400).First();
+        var (seqs, _, _) = ThreeLetters();
+        var claim = new int?[] { ghost.Seq, seqs[1], seqs[2] };
+        var word = string.Concat(claim.Select(seq => Tiles.Spec(Seed, seq!.Value, "en").Letter)).ToLowerInvariant();
+        var state = NewState(word);
+        const double End = 400_000;
+        Assert.Equal(Rejection.None, state.ClaimWord(0, claim, word, End).Rejection);
+        Assert.Equal(Rejection.Taken, state.ClaimWord(1, claim, word, End).Rejection);
     }
 
     [Fact]

@@ -91,7 +91,7 @@
     "lang": "en",
     "seed": 0,
     "index": 11,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "N",
     "x": 0.22621116740629077
   },
@@ -603,7 +603,7 @@
     "lang": "en",
     "seed": 1,
     "index": 35,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "U",
     "x": 0.7827090518549085
   },
@@ -675,7 +675,7 @@
     "lang": "en",
     "seed": 123456789,
     "index": 4,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "A",
     "x": 0.9539151035714895
   },
@@ -755,7 +755,7 @@
     "lang": "en",
     "seed": 123456789,
     "index": 14,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "T",
     "x": 0.2836497381795198
   },
@@ -1259,7 +1259,7 @@
     "lang": "en",
     "seed": 4294967295,
     "index": 37,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "E",
     "x": 0.6329056562390178
   },
@@ -1475,7 +1475,7 @@
     "lang": "en",
     "seed": 2654435769,
     "index": 24,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "M",
     "x": 0.39016247261315584
   },
@@ -1507,7 +1507,7 @@
     "lang": "en",
     "seed": 2654435769,
     "index": 28,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "S",
     "x": 0.06626304844394326
   },
@@ -1691,7 +1691,7 @@
     "lang": "ru",
     "seed": 0,
     "index": 11,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "С",
     "x": 0.22621116740629077
   },
@@ -2203,7 +2203,7 @@
     "lang": "ru",
     "seed": 1,
     "index": 35,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "Я",
     "x": 0.7827090518549085
   },
@@ -2275,7 +2275,7 @@
     "lang": "ru",
     "seed": 123456789,
     "index": 4,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "А",
     "x": 0.9539151035714895
   },
@@ -2355,7 +2355,7 @@
     "lang": "ru",
     "seed": 123456789,
     "index": 14,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "Е",
     "x": 0.2836497381795198
   },
@@ -2859,7 +2859,7 @@
     "lang": "ru",
     "seed": 4294967295,
     "index": 37,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "О",
     "x": 0.6329056562390178
   },
@@ -3075,7 +3075,7 @@
     "lang": "ru",
     "seed": 2654435769,
     "index": 24,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "Я",
     "x": 0.39016247261315584
   },
@@ -3107,7 +3107,7 @@
     "lang": "ru",
     "seed": 2654435769,
     "index": 28,
-    "kind": "pumpkin",
+    "kind": "ghost",
     "letter": "С",
     "x": 0.06626304844394326
   },

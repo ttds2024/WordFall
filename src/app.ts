@@ -218,7 +218,9 @@ export function startApp(defaultLanguage: Language): void {
         submitWord();
         return;
       }
-      tile.selected = true;
+      // A ghost is used up by the tap: it vanishes, and its letter stays in the word.
+      if (tile.kind === 'ghost') game.removeTiles([tile]);
+      else tile.selected = true;
       tracker.add(tile);
       sounds.play('clicked');
       render();
@@ -279,7 +281,7 @@ export function startApp(defaultLanguage: Language): void {
   }
 
   /**
-   * The bot picks letters from the field (never a star, a bad pumpkin or a green one): a real word not found
+   * The bot picks letters from the field (never a star, a ghost, a bad pumpkin or a green one): a real word not found
    * yet with probability BOT_ACCURACY, otherwise letters that spell nothing. It goes for letters
    * the player has not picked first; only if those give it nothing does it take the player's.
    */
@@ -779,9 +781,11 @@ export function startApp(defaultLanguage: Language): void {
       sounds.play('success');
       bumpScore(ui.vsYouScore);
     } else {
-      // Their letters leave the word being built here.
+      // Their letters leave the word being built here (a ghost in it has left the field already).
       for (const tile of tiles) tile.selected = false;
-      tracker.remove(tiles);
+      tracker.remove(
+        tracker.items.filter((item) => isTile(item) && message.tiles.includes(item.seq)),
+      );
       showScoreFloat(ui.fieldWrap, at, `${rivalName} ${pointsText(message.points)}`, word, 'bot');
       bumpScore(ui.vsBotScore);
     }

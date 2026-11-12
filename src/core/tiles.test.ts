@@ -32,7 +32,7 @@ describe('tileSpec', () => {
 
   it('covers every kind of tile', () => {
     const kinds = new Set(fixture.map((tile) => tile.kind));
-    expect([...kinds].sort()).toEqual(['bomb', 'double', 'green', 'joker', 'pumpkin']);
+    expect([...kinds].sort()).toEqual(['bomb', 'double', 'ghost', 'green', 'joker', 'pumpkin']);
   });
 
   it('differs between seeds', () => {
