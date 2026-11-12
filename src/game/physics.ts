@@ -35,7 +35,7 @@ export interface Explosion {
 
 /** Matter.js world: a floor and two side walls, open at the top, holding round letter tiles. */
 export class PhysicsWorld {
-  readonly engine = Engine.create({ gravity: { x: 0, y: 1, scale: 0.001 } });
+  readonly engine = Engine.create({ gravity: { x: 0, y: 1, scale: 0.0008 } });
   private readonly tiles = new Map<number, Tile>();
   private walls: Matter.Body[] = [];
   private width = 0;
